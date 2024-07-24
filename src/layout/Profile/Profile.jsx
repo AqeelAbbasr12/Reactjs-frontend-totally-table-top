@@ -32,19 +32,19 @@ const   Profile = () => {
 
               <div>
                 <div className='flex justify-start items-center gap-x-5 mt-3'>
-                  <Input name={"firstname"} className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue `} placeholder={"Marry"} />
-                  <Input name={"lastname"} className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue `} placeholder={"Harward"} />
+                  <Input name={"firstname"} className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue text-white `} placeholder={"Marry"} />
+                  <Input name={"lastname"} className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue text-white `} placeholder={"Harward"} />
                 </div>
-                <Input name={"email"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 `} placeholder={"Marry@email.com"} />
+                <Input name={"email"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 text-white `} placeholder={"Marry@email.com"} />
                 <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2 '>@gamestories2</p>
                 <p className='mt-2 text-[#F2F0EF] pb-2 '>Username cannot be change</p>
 
                 <div className="pb-4">
                   <div className="relative w-[23.3rem] h-[2.3rem] mt-3">
                     <Input
-                      name="location"
-                      className="w-full h-full rounded-md px-3 bg-darkBlue pr-10" // Adjust padding-right for the icon
-                      placeholder="Bristol"
+                      name={"location"}
+                      className={`w-full h-full rounded-md px-3 bg-darkBlue pr-10 text-white`}
+                      placeholder={"Bristol"}
                     />
                     <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
                       <img src={MapIcon} alt="Location Icon" className="w-[15px] h-[20px]" />
@@ -56,7 +56,7 @@ const   Profile = () => {
                 <div>
                   <div className="relative w-full min-w-[200px] pb-4">
                     <Textarea
-                       name={"biography"} className={`peer h-full min-h-[100px] w-full resize-none rounded-md px-3 bg-darkBlue mt-3 px-3 py-2.5 font-sans text-sm font-normal text-white`}
+                       name={"biography"} className={`peer h-full min-h-[100px] w-full resize-none rounded-md px-3 bg-darkBlue mt-3 px-3 py-2.5 text-white`}
                       placeholder={"Your biography (160 characters)"}></Textarea>
                   </div>
                 </div>
@@ -76,9 +76,9 @@ const   Profile = () => {
 
             <div className='pb-4'>
               <h1 className='text-white font-semibold mt-3'>Your password</h1>
-              <Input name={"email"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block `} placeholder={"Current Password"} />
-              <Input name={"email"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block `} placeholder={"New Password"} />
-              <Input name={"email"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block `} placeholder={"Confirm New Password "} />
+              <Input name={"cpassword"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white `} placeholder={"Current Password"} />
+              <Input name={"npassword"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white `} placeholder={"New Password"} />
+              <Input name={"cnfpsw"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white`} placeholder={"Confirm New Password "} />
             </div>
 
             <div className='pb-4'>
