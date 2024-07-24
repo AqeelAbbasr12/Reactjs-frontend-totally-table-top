@@ -70,7 +70,7 @@ const DraggableList = () => {
                     >
                         <div className='flex gap-x-6 items-center'>
                             <Input
-                                type={"-"}
+                                type={"checkbox"}
                                 name={item.id}
                                 checked={item.checked}
                                 onChange={() => handleCheckboxChange(item.id)}
