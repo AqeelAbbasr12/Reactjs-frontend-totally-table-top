@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import Left from '../../components/Left'
 import FaceImage from '../../assets/face.avif'
+import MapIcon from '../../assets/mapMarker.png'
 import Input from '../../components/Input'
 import Textarea from '../../components/Textarea'
 
@@ -38,9 +39,19 @@ const   Profile = () => {
                 <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2 '>@gamestories2</p>
                 <p className='mt-2 text-[#F2F0EF] pb-2 '>Username cannot be change</p>
 
-                <div className='pb-4'>
-                <Input name={"location"} className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 `} placeholder={"Bristol"} />
+                <div className="pb-4">
+                  <div className="relative w-[23.3rem] h-[2.3rem] mt-3">
+                    <Input
+                      name="location"
+                      className="w-full h-full rounded-md px-3 bg-darkBlue pr-10" // Adjust padding-right for the icon
+                      placeholder="Bristol"
+                    />
+                    <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
+                      <img src={MapIcon} alt="Location Icon" className="w-[15px] h-[20px]" />
+                    </div>
+                  </div>
                 </div>
+
 
                 <div>
                   <div className="relative w-full min-w-[200px] pb-4">
