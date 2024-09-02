@@ -11,6 +11,10 @@ const Navbar = ({ type }) => {
     const nav = useNavigate()
     const [showMenu, setshowMenu] = useState(false)
     const [showSuggestion, setshowSuggestion] = useState(false)
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        nav("/"); // Redirect to the login page
+    };
     return (
 
         <>
@@ -53,7 +57,15 @@ const Navbar = ({ type }) => {
                                     showMenu && (
                                         <div className=' absolute left-0 top-[3.4rem] w-full h-[fit] p-2 rounded-md bg-[#0d2539] z-50'>
                                             <Link to={"/profile"} className='text-white mb-2 cursor-pointer block'>View profile</Link>
-                                            <Link to={"/logout"} className='text-white cursor-pointer block '>Logout</Link>
+                                            <Link
+                                                to="#" // Prevent the default link behavior
+                                                onClick={(e) => {
+                                                    e.preventDefault(); // Prevent the default link action
+                                                    handleLogout();
+                                                }}
+                                                className='text-white cursor-pointer block'>
+                                                Logout
+                                            </Link>
                                         </div>
                                     )
                                 }
