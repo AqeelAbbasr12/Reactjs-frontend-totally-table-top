@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from './Button'
 import Input from './Input'
 import { Link, useNavigate } from 'react-router-dom'
@@ -7,14 +7,44 @@ import { BiSolidMessage } from 'react-icons/bi'
 import FaceImage from '../assets/face.avif'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import logoImage from '../assets/logo.png'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Navbar = ({ type }) => {
     const nav = useNavigate()
     const [showMenu, setshowMenu] = useState(false)
     const [showSuggestion, setshowSuggestion] = useState(false)
-    const handleLogout = () => {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(`${API_BASE_URL}/user/get`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+              }
+            });
+            
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            setUser(data);
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        };
+    
+        fetchUserData();
+      }, []);
+      const handleLogout = () => {
         localStorage.removeItem('authToken');
-        nav("/"); // Redirect to the login page
+        navigate('/');
     };
+
     return (
 
         <>
@@ -49,23 +79,15 @@ const Navbar = ({ type }) => {
                             </Link>
                             <div className=' relative flex justify-between items-center px-2 rounded-xl py-1 bg-darkBlue w-[10rem] cursor-pointer'>
                                 <div onClick={() => setshowMenu(!showMenu)} className='flex gap-x-3 items-center'>
-                                    <p className='text-white'>Helen</p>
+                                    <p className='text-white'>{user ? user.username : 'Loading...'}</p>
                                     <BsFillCaretDownFill className='text-white' />
                                 </div>
-                                <img onClick={() => setshowMenu(!showMenu)} src={FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full' />
+                                <img onClick={() => setshowMenu(!showMenu)} src={user ? user.profile_picture : FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full' />
                                 {
                                     showMenu && (
                                         <div className=' absolute left-0 top-[3.4rem] w-full h-[fit] p-2 rounded-md bg-[#0d2539] z-50'>
                                             <Link to={"/profile"} className='text-white mb-2 cursor-pointer block'>View profile</Link>
-                                            <Link
-                                                to="#" // Prevent the default link behavior
-                                                onClick={(e) => {
-                                                    e.preventDefault(); // Prevent the default link action
-                                                    handleLogout();
-                                                }}
-                                                className='text-white cursor-pointer block'>
-                                                Logout
-                                            </Link>
+                                            <Link onClick={handleLogout} className='text-white cursor-pointer block '>Logout</Link>
                                         </div>
                                     )
                                 }
