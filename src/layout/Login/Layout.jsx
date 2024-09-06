@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import logoImage from '../../assets/image.png';
 import Icon from '../../assets/Icon-check-circle.svg';
+import toastr from 'toastr';
 
 // Make sure to use REACT_APP_ prefix in .env file and access it as shown below
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -48,6 +49,7 @@ const Layout = () => {
       if (response.ok) {
         localStorage.setItem('authToken', result.token);
         // Navigate to the home page or handle successful login
+        toastr.success('Log in successfully');
         nav("/home");
         
       } else {

@@ -7,6 +7,8 @@ import { BiSolidMessage } from 'react-icons/bi'
 import FaceImage from '../assets/face.avif'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import logoImage from '../assets/logo.png'
+import toastr from 'toastr';
+import NotificationComponent from './NotificationComponent'; 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -42,6 +44,7 @@ const Navbar = ({ type }) => {
       }, []);
       const handleLogout = () => {
         localStorage.removeItem('authToken');
+        toastr.success('Log out successfully');
         navigate('/');
     };
 
@@ -112,6 +115,7 @@ const Navbar = ({ type }) => {
                     </div>
 
             }
+            <NotificationComponent />
         </>
     )
 }

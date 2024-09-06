@@ -13,6 +13,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
+  
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -20,6 +21,7 @@ const Profile = () => {
     location: '',
     bio: '',
   });
+  const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureURL, setProfilePictureURL] = useState(null);
   const [passwordErrors, setPasswordErrors] = useState({});
@@ -34,41 +36,41 @@ const Profile = () => {
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch(`${API_BASE_URL}/user/get`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-          });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user/get`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          },
+        });
 
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          const data = await response.json();
-          console.log(data);
-          setUserData(data);
-          setFormData({
-            first_name: data.first_name || '',
-            last_name: data.last_name || '',
-            email: data.email || '',
-            location: data.location || '',
-            bio: data.bio || '',
-            profilePicture: data.profile_picture || '',
-          });
-          // Set initial profile picture URL
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      };
 
-      fetchUserData();
-    }, []);
+        const data = await response.json();
+        
+        setUserData(data);
+        setFormData({
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          email: data.email || '',
+          location: data.location || '',
+          bio: data.bio || '',
+          profilePicture: data.profile_picture || '',
+        });
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setLoading(false); // Set loading to false even if there's an error
+      }
+    };
 
+    fetchUserData();
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -120,7 +122,6 @@ const Profile = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log('Profile updated:', result);
         toastr.success('Profile updated successfully');
         // Handle successful update here
         setErrors({});
@@ -165,7 +166,6 @@ const Profile = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log('Password updated:', result);
         toastr.success('Password updated successfully');
         setPasswordFormData({
           cpassword: '',
@@ -203,16 +203,13 @@ const Profile = () => {
   };
 
 
-
-
-
-
-  if (!userData) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className='flex flex-col w-[100vw] h-[100vh]'>
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
+          <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
+        </div>
+      )}
       <Navbar type={"verified"} />
       <div className='pt-[2.3rem] flex justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] md:h-[86rem] w-[100vw] gap-x-6'>
         {/* LEFT */}
@@ -258,7 +255,7 @@ const Profile = () => {
                 />
                 {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
 
-                <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2'>@{userData.username}</p>
+                <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2'> @{userData?.username || ''}</p>
                 <p className='mt-2 text-[#F2F0EF] pb-2'>Username cannot be changed</p>
 
                 <div className="pb-4">
