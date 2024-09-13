@@ -48,6 +48,7 @@ const Layout = () => {
 
       if (response.ok) {
         localStorage.setItem('authToken', result.token);
+        localStorage.setItem('current_user_id', result.user_id);
         // Navigate to the home page or handle successful login
         toastr.success('Log in successfully');
         nav("/home");

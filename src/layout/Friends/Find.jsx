@@ -7,6 +7,7 @@ import FaceImage from "../../assets/Icon-user-circle.png";
 import { TbGridDots } from "react-icons/tb";
 import { IoListSharp } from "react-icons/io5";
 import toastr from 'toastr';
+import { fetchWithAuth } from "../../services/apiService";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -24,7 +25,7 @@ const Layout = () => {
   const fetchUserData = async () => {
     setLoading(true); // Show loading spinner while fetching
     try {
-      const response = await fetch(`${API_BASE_URL}/user/findfriend`, {
+      const response = await fetchWithAuth(`/user/findfriend`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +49,7 @@ const Layout = () => {
   const sendFriendRequest = async (friendId) => {
     setLoadingId(friendId); // Set loading for the specific button
     try {
-      const response = await fetch(`${API_BASE_URL}/user/friend`, {
+      const response = await fetchWithAuth(`/user/friend`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

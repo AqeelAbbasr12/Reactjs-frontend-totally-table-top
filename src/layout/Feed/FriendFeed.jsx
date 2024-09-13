@@ -1,18 +1,65 @@
-import React from 'react'
+
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar'
 import { FaCaretDown, FaRegStar } from 'react-icons/fa'
 import FaceImage from '../../assets/face.avif'
 import Button from '../../components/Button'
 import { FaMessage } from 'react-icons/fa6'
-import { useLocation } from 'react-router-dom'
 import { IoIosAlert } from 'react-icons/io'
+import { useParams, useLocation } from 'react-router-dom';
 import Input from '../../components/Input'
+import { fetchWithAuth } from '../../services/apiService';
+
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const FriendFeed = () => {
     const data = [1, 2, 3, 4, 5, 6, 7]
+    const [friendDetail, setFriendDetail] = useState([]);
     const currentLocation = useLocation().pathname
+    const [loading, setLoading] = useState(true);
+    const { friendId } = useParams();
+
+
+    useEffect(() => {
+        if (friendId) {
+            fetchFriendDetail(friendId);  // Pass the friendId to fetchFriendDetail
+        }
+    }, [friendId]);
+
+    const fetchFriendDetail = async (friendId) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/frienddetail/${friendId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log(data);
+            setFriendDetail(data);
+        } catch (error) {
+            console.error('Error fetching friends data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-darkBlue'>
+            {/* Loading Spinner */}
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
+          <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
+        </div>
+      )}
             <Navbar type={"verified"} />
             {
                 currentLocation.includes("ownFeed") && (
@@ -24,7 +71,7 @@ const FriendFeed = () => {
             }
 
             <div className='flex justify-between items-center md:px-[2rem] px-[1rem] mt-4'>
-                <h1 className='text-xl text-white font-semibold'>Daphne’s feed</h1>
+                <h1 className='text-xl text-white font-semibold'>{friendDetail.username}’s feed</h1>
                 <div className='flex items-center gap-x-4'>
                     {
                         currentLocation.includes("ownFeed") && (
@@ -41,17 +88,17 @@ const FriendFeed = () => {
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
-                    <img src={FaceImage} alt="" className=' absolute top-[-3rem] left-[40%] md:left-[27%] w-[6rem] h-[6rem] rounded-full' />
-                    <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>Daphne Moon</p>
-                    <p className='text-center text-white mt-2'>@msmoon</p>
+                    <img src={friendDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[40%] md:left-[27%] w-[6rem] h-[6rem] rounded-full' />
+                    <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{friendDetail.first_name} {friendDetail.last_name}</p>
+                    <p className='text-center text-white mt-2'>@{friendDetail.username}</p>
                     {
                         !currentLocation.includes("ownFeed") && (
                             <Button title={"Add as friend"} className={`w-full h-[2.3rem] text-white rounded-md bg-lightOrange my-2`} />
                         )
                     }
                     <Button title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
-                    <p className='text-center text-white mt-2'>413 friends</p>
-                    <p className='text-center text-white my-2'>Member since 2024</p>
+                    <p className='text-center text-white mt-2'>{friendDetail.total_friends} friends</p>
+                    <p className='text-center text-white my-2'>Member since {friendDetail.member_since}</p>
 
                 </div>
                 <div className='flex-1'>

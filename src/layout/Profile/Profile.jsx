@@ -7,6 +7,7 @@ import FaceImage from '../../assets/face.avif';
 import MapIcon from '../../assets/mapMarker.png';
 import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
+import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -39,7 +40,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/user/get`, {
+        const response = await fetchWithAuth(`/user/get`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ const Profile = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/update-profile`, {
+      const response = await fetchWithAuth(`/user/update-profile`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -154,7 +155,7 @@ const Profile = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/update-password`, {
+      const response = await fetchWithAuth(`/user/update-password`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

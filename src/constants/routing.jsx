@@ -77,10 +77,10 @@ export const routing = [
   { id: 28, link: "/findfriends", element: <FindFriendPage />, protected: true },
   { id: 29, link: "/notification", element: <NotificationPage />, protected: true },
   { id: 30, link: "/sales", element: <SalesPage />, protected: true },
-  { id: 31, link: "/feed", element: <FeedPage />, protected: true },
+  { id: 31, link: "/feed/:friendId?", element: <FeedPage />, protected: true },
   { id: 32, link: "/profile", element: <ProfilePage />, protected: true },
   { id: 33, link: "/ownFeed", element: <FeedPage />, protected: true },
-  { id: 34, link: "/messages", element: <MessagesPage />, protected: true },
+  { id: 34, link: "/messages/:receiver_id?", element: <MessagesPage />, protected: true },
   { id: 35, link: "/settings", element: <SettingsPage />, protected: true },
   { id: 36, link: "/staying-safe", element: <StayingSafePage />, protected: true },
   { id: 37, link: "/terms", element: <TermsPage /> },
@@ -94,16 +94,16 @@ const AppRoutes = () => (
   <Routes>
     {routing.map((route) =>
       route.protected ? (
-        <ProtectedRoute
+        <Route
           key={route.id}
           path={route.link}
-          element={route.element}
+          element={<ProtectedRoute element={route.element} />}
         />
       ) : route.public ? (
-        <PublicRoute
+        <Route
           key={route.id}
           path={route.link}
-          element={route.element}
+          element={<PublicRoute element={route.element} />}
         />
       ) : (
         <Route

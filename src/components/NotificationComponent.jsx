@@ -28,6 +28,8 @@ const NotificationComponent = ({ onNotificationCountChange }) => {
     channel.bind('App\\Events\\NotificationSent', function (data) {
       const userIdFromNotification = parseInt(data.notification.user_id);
       const currentUserIdNum = parseInt(currentUserId);
+      // console.log(data.notification.user_id);
+      localStorage.setItem('notification', data.notification.user_id);
 
       if (userIdFromNotification === currentUserIdNum) {
         switch (data.notification.type) {
@@ -45,11 +47,7 @@ const NotificationComponent = ({ onNotificationCountChange }) => {
           audio.play().catch(error => console.error('Error playing sound:', error));
         }
 
-        // Update and persist notification count
-        let count = parseInt(localStorage.getItem('notificationCount') || '0', 10);
-        count += 1;
-        localStorage.setItem('notificationCount', count);
-        onNotificationCountChange(count);
+       
       }
     });
 

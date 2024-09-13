@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import FaceImage from '../../assets/face.avif';
+import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -18,7 +19,7 @@ const Layout = () => {
     const fetchNotificationData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/user/notification`, {
+            const response = await fetchWithAuth(`/user/notification`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ const Layout = () => {
     const acceptFriendRequest = async (friendId, notificationId) => {
         setLoadingId(friendId); // Set loading for the specific button
         try {
-            const response = await fetch(`${API_BASE_URL}/user/friend/${friendId}`, {
+            const response = await fetchWithAuth(`/user/friend/${friendId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ const Layout = () => {
     const ignoreFriendRequest = async (friendId, notificationId) => {
         setLoadingId(friendId); // Set loading for the specific button
         try {
-            const response = await fetch(`${API_BASE_URL}/user/friend/${friendId}`, {
+            const response = await fetchWithAuth(`/user/friend/${friendId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
