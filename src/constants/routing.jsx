@@ -20,6 +20,7 @@ import AttendConventionPage from '../pages/AttendConventionPage';
 import UserConventionPage from '../pages/UserConventionPage';
 import AttendanceConventionPage from '../pages/AttendanceConventionPage';
 import AgendaPage from '../pages/AgendaPage';
+import ConventionAttendancePage from '../pages/ConventionAttendancePage';
 import NextAgendaPage from '../pages/NextAgendaPage';
 import FinalAgendaPage from '../pages/FinalAgendaPage';
 import AccomodationPage from '../pages/AccomodationPage';
@@ -35,6 +36,7 @@ import NotificationPage from '../pages/NotificationPage';
 import SalesPage from '../pages/SalesPage';
 import FeedPage from '../pages/FeedPage';
 import ProfilePage from '../pages/ProfilePage';
+import ViewProfilePage from '../pages/ViewProfilePage';
 import MessagesPage from '../pages/MessagesPage';
 import SettingsPage from '../pages/SettingsPage';
 import StayingSafePage from '../pages/StayingSafePage';
@@ -62,15 +64,15 @@ export const routing = [
   { id: 13, link: "/attend", element: <AttendConventionPage />, protected: true },
   { id: 14, link: "/user/convention", element: <UserConventionPage />, protected: true },
   { id: 15, link: "/user/announcements", element: <UserAnnouncementsPage />, protected: true },
-  { id: 16, link: "/convention/attendance", element: <AttendanceConventionPage />, protected: true },
-  { id: 17, link: "/agenda", element: <AgendaPage />, protected: true },
-  { id: 18, link: "/next/agenda", element: <NextAgendaPage />, protected: true },
+  { id: 16, link: "/convention/attendance/:convention_id", element: <AttendanceConventionPage />, protected: true },
+  { id: 17, link: "/agenda/:convention_id", element: <AgendaPage />, protected: true },
+  { id: 18, link: "/next/agenda/:convention_id", element: <NextAgendaPage />, protected: true },
   { id: 19, link: "/final/agenda", element: <FinalAgendaPage />, protected: true },
-  { id: 20, link: "/accomodation", element: <AccomodationPage />, protected: true },
+  { id: 20, link: "/accomodation/:convention_id", element: <AccomodationPage />, protected: true },
   { id: 21, link: "/new/accomodation", element: <CreateAccomodationPage />, protected: true },
-  { id: 22, link: "/event", element: <EventPage />, protected: true },
+  { id: 22, link: "/event/:convention_id", element: <EventPage />, protected: true },
   { id: 23, link: "/new/event", element: <CreateEventPage />, protected: true },
-  { id: 24, link: "/game/sale", element: <GamesPage />, protected: true },
+  { id: 24, link: "/game/sale/:convention_id", element: <GamesPage />, protected: true },
   { id: 25, link: "/new/game", element: <CreateGamePage />, protected: true },
   { id: 26, link: "/game/single", element: <SingleGamePage />, protected: true },
   { id: 27, link: "/friends", element: <FriendPage />, protected: true },
@@ -88,6 +90,8 @@ export const routing = [
   { id: 39, link: "/privacy", element: <PrivacyPolicyPage /> },
   { id: 40, link: "/contactus", element: <ContactUsPage /> },
   { id: 41, link: "/feedback", element: <FeedbackPage />, protected: true },
+  { id: 42, link: "/viewprofile/:user_id?", element: <ViewProfilePage />, protected: true },
+  { id: 43, link: "/conventionAttendance/:convention_id", element: <ConventionAttendancePage />, protected: true },
 ];
 
 const AppRoutes = () => (

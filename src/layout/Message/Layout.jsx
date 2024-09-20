@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../../components/Navbar';
 import MessageComponent from '../../components/MessageComponent';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import FaceImage from '../../assets/face.avif';
 import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
+import { useParams } from 'react-router-dom';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -13,18 +14,49 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Layout = () => {
     const nav = useNavigate();
     const [friends, setFriends] = useState([]);
+    const [users, setUsers] = useState([]);
     const [currentUser, setcurrentUser] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { receiver_id } = useParams();
     const [messages, setMessages] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [replyContent, setReplyContent] = useState('');
     const currentUserId = localStorage.getItem('current_user_id'); // Ensure this ID is stored in local storage
+    const messageEndRef = useRef(null);
 
+    const scrollToBottom = () => {
+        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
     useEffect(() => {
         fetchFriends();
         fetchCurrentUser();
+        fetchUsers();
     }, []);
-
+    // Scroll to the latest message whenever 'messages' array updates
+    useEffect(() => {
+        if (messages.length > 0) {
+            scrollToBottom();
+        }
+    }, [messages]);
+    useEffect(() => {
+        if (receiver_id) {
+            // First check in friends array
+            let friend = friends.find(f => f.id === parseInt(receiver_id));
+    
+            // If not found in friends, check in users array
+            if (!friend) {
+                friend = users.find(u => u.id === parseInt(receiver_id));
+            }
+    
+            console.log('friend list', friend);
+            
+            // If a match is found either in friends or users, proceed with handling the friend click
+            if (friend) {
+                handleFriendClick(friend);
+            }
+        }
+    }, [receiver_id, friends, users]);
+    
     const fetchFriends = async () => {
         setLoading(true);
         try {
@@ -41,8 +73,15 @@ const Layout = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setFriends(data);
+            // Check if a friend should be auto-selected based on receiver_id
+            if (receiver_id) {
+                const friend = data.find(f => f.id === parseInt(receiver_id));
+                if (friend) {
+                    handleFriendClick(friend);
+                }
+            }
         } catch (error) {
             console.error('Error fetching friends data:', error);
         } finally {
@@ -50,6 +89,30 @@ const Layout = () => {
         }
     };
 
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/users`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json()
+            setUsers(data);
+            
+        } catch (error) {
+            console.error('Error fetching friends data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
     const fetchMessages = async (receiverId) => {
         setLoading(true);
         try {
@@ -219,7 +282,8 @@ const Layout = () => {
                             {friends.map((friend, index) => (
                                 <div
                                     key={index}
-                                    className='flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer'
+                                    className={`flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer 
+                                ${selectedFriend?.id === friend.id ? 'border-lightOrange' : 'border-gray-500'}`}
                                     onClick={() => handleFriendClick(friend)}
                                 >
                                     <div className='flex justify-between items-center'>
@@ -250,7 +314,6 @@ const Layout = () => {
                                             </span>
                                         )}
                                     </div>
-
                                 </div>
                             ))}
                         </div>
@@ -309,6 +372,8 @@ const Layout = () => {
                                                 )}
                                             </div>
                                         ))}
+                                        {/* Invisible div at the end of the messages container for scrolling */}
+                                        <div ref={messageEndRef} />
                                     </div>
 
                                     {/* Message input area */}
@@ -337,10 +402,7 @@ const Layout = () => {
                                 </div>
                             )}
                         </div>
-
-
-
-
+                        );
                     </div>
                 </div>
             </div>

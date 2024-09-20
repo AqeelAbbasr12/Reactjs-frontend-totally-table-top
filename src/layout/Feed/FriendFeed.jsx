@@ -91,11 +91,11 @@ const FriendFeed = () => {
                     <img src={friendDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[40%] md:left-[27%] w-[6rem] h-[6rem] rounded-full' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{friendDetail.first_name} {friendDetail.last_name}</p>
                     <p className='text-center text-white mt-2'>@{friendDetail.username}</p>
-                    {
+                    {/* {
                         !currentLocation.includes("ownFeed") && (
                             <Button title={"Add as friend"} className={`w-full h-[2.3rem] text-white rounded-md bg-lightOrange my-2`} />
                         )
-                    }
+                    } */}
                     <Button title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
                     <p className='text-center text-white mt-2'>{friendDetail.total_friends} friends</p>
                     <p className='text-center text-white my-2'>Member since {friendDetail.member_since}</p>

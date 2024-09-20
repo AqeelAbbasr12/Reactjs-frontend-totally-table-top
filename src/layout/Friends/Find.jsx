@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Left from "../../components/Left";
 import FaceImage from "../../assets/Icon-user-circle.png";
+import IconMessage from "../../assets/Icon-message.png";
+import IconUsrCircle from "../../assets/Icon-user-circle.png";
 import { TbGridDots } from "react-icons/tb";
 import { IoListSharp } from "react-icons/io5";
 import toastr from 'toastr';
@@ -117,7 +119,7 @@ const Layout = () => {
               {userData.map((user) => (
                 <div
                   key={user.id}
-                  className="bg-[#0d2539] w-[15rem] h-[15rem] rounded-md p-3 flex justify-center items-center flex-col"
+                  className="bg-[#0d2539] w-[15rem] h-[18rem] rounded-md p-3 flex justify-center items-center flex-col"
                 >
                   <div className="flex justify-center items-center">
                     <img
@@ -129,14 +131,31 @@ const Layout = () => {
                   <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
                   <p className="text-white mt-1 font-thin">@{user.user_name}</p>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
-                    <Button 
-                      title={
-                        loadingId === user.id ? 'Sending...' : 'Send Request'
-                      }
-                      className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} 
-                      onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
-                      loading={loadingId === user.id} // Show loading indicator for the specific button
-                    />
+                  {
+                    user.friend_status === 'pending' ? (
+                      <Button
+                        title={'Request Sent'}
+                        className={'w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-2'}
+                      />
+                    ) : (
+                      <Button
+                        title={loadingId === user.id ? 'Sending...' : 'Add As Friend'}
+                        className={'w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange sm:mt-0 mt-2'}
+                        onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
+                        loading={loadingId === user.id} // Show loading indicator for the specific button
+                      />
+                    )
+                  }
+                  </div>
+                  <div className="flex justify-center items-center gap-x-4 mt-4">
+                    {/* <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="" /> */}
+                    <Link to={`/viewprofile/${user.id}`}>
+                      <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
+                    </Link>
+                    {/* Link to messages */}
+                    <Link to={`/messages/${user.id}`}>
+                      <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -167,13 +186,20 @@ const Layout = () => {
                   <div className="flex items-center gap-x-4 mr-4">
                     <Button 
                       title={
-                        loadingId === user.id ? 'Sending...' : 'Send Request'
+                        loadingId === user.id ? 'Sending...' : 'Add As Friend'
                       }
-                      className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} 
+                      className={'w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange sm:mt-0 mt-2'} 
                       onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
                       loading={loadingId === user.id} // Show loading indicator for the specific button
                     />
+                     <Link to={`/viewprofile/${user.id}`}>
+                      <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
+                    </Link>
+                    <Link to={`/messages`}>
+                      <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
+                    </Link>
                   </div>
+                  
                 </div>
               ))} 
             </div>
