@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Input = ({ name, type, placeholder, onChangeFunc, className, onFocusFunction, value, onChange, checked }) => {
+const Input = ({ name, type, placeholder, onChangeFunc, className, onFocusFunction, value, onChange, checked, min }) => {
     return (
         <input
             name={name}
@@ -11,6 +11,7 @@ const Input = ({ name, type, placeholder, onChangeFunc, className, onFocusFuncti
             className={className}
             value={value}  // Bind the value
             checked={checked}
+            min={min} // Add min prop here
         />
     );
 };

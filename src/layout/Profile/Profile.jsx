@@ -72,6 +72,7 @@ const Profile = () => {
 
     fetchUserData();
   }, []);
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -111,7 +112,7 @@ const Profile = () => {
     }
 
     try {
-      const response = await fetchWithAuth(`/user/update-profile`, {
+      const response = await fetch(`${API_BASE_URL}/user/update-profile`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

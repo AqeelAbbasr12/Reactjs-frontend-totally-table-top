@@ -146,10 +146,21 @@ const ConventionAttendance = () => {
             )}
             <Navbar type={"verified"} />
 
-            <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3 '>
-                <span className='text-white'>Account</span>
+            
+            <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
+                <a href="#" className='text-white'>
+                Account
+                </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-                <span className='text-white'>Your conventions Attendance</span>
+
+                <a href="/user/convention" className='text-white'>
+                Your conventions
+                </a>
+                <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
+
+                <a href="#" className='text-white'>
+                Your conventions Attendance
+                </a>
             </div>
 
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] pt-3 flex justify-center items-center'>

@@ -12,10 +12,12 @@ const Layout = () => {
   const [loading, setLoading] = useState(true);
   const [conventions, setConvention] = useState([]);
   const [attendance, setAttendance] = useState();
+  const [AgendaItems, setItems] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
 
-  useEffect(() => {
+  useEffect((id) => {
     fetchConventions();
+    fetchAgendas();
   }, []);
 
   const fetchConventions = async () => {
@@ -48,6 +50,7 @@ const Layout = () => {
       conventionId: id
     }));
     fetchAttendanceData(id);
+    fetchAgendas(id);
   };
 
    // Fetch saved attendance data
@@ -69,11 +72,29 @@ const Layout = () => {
 
         const data = await response.json();
         // Extract and format the dates from the response
-        console.log(data);
+        // console.log(data);
         setAttendance(data);
     } catch (error) {
         console.error('Error fetching attendance data:', error);
     }
+};
+const fetchAgendas = async () => {
+  try {
+      const response = await fetchWithAuth(`/user/convention_agenda`);
+      if (!response.ok) throw new Error('Failed to fetch agendas');
+
+      const data = await response.json();
+      // console.log('Agenda Items', data);
+      if (Array.isArray(data)) {
+          setItems(data);  // Only set if the response is an array
+      } else {
+          console.error('Invalid data structure:', data);
+          setItems([]);
+      }
+  } catch (error) {
+      console.error('Error fetching agendas:', error);
+      setItems([]);
+  }
 };
 
   return (
@@ -113,7 +134,10 @@ const Layout = () => {
 
                 {/* 3rd Column */}
                 <div className='flex items-center gap-x-3 flex-1 min-w-[8rem] md:flex-[1_1_25%]'>
-                  <FaList className='text-white cursor-pointer' />
+                <FaList 
+                    className='cursor-pointer' 
+                    color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  />
                   <FaBuilding className='text-white cursor-pointer' />
                   <FaCalendarAlt className='text-white cursor-pointer' />
                   <FaDiceFive className='text-white cursor-pointer' />
@@ -130,9 +154,9 @@ const Layout = () => {
                       {attendance && attendance.length > 0 && (
                         <>
                           <Link to={`/next/agenda/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Agenda</Link>
-                          <Link to={`/accommodation`} className='block mb-1 cursor-pointer text-white'>Accommodations</Link>
-                          <Link to={`/event`} className='block mb-1 cursor-pointer text-white'>Events</Link>
-                          <Link to={`/game/sale`} className='block mb-1 cursor-pointer text-white'>Games for sale</Link>
+                          <Link to={`/accomodation/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Accommodations</Link>
+                          <Link to={`/event/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Events</Link>
+                          <Link to={`/game/sale/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Games for sale</Link>
                         </>
                       )}
                     </div>

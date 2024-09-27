@@ -25,8 +25,11 @@ import NextAgendaPage from '../pages/NextAgendaPage';
 import FinalAgendaPage from '../pages/FinalAgendaPage';
 import AccomodationPage from '../pages/AccomodationPage';
 import CreateAccomodationPage from '../pages/CreateAccomodationPage';
+import EditAccomodationPage from '../pages/EditAccomodationPage';
 import EventPage from '../pages/EventPage';
 import CreateEventPage from '../pages/CreateEventPage';
+import EditEventPage from '../pages/EditEventPage';
+import EditGamePage from '../pages/EditGamePage';
 import GamesPage from '../pages/GamesPage';
 import CreateGamePage from '../pages/CreateGamePage';
 import SingleGamePage from '../pages/SingleGamePage';
@@ -69,11 +72,11 @@ export const routing = [
   { id: 18, link: "/next/agenda/:convention_id", element: <NextAgendaPage />, protected: true },
   { id: 19, link: "/final/agenda", element: <FinalAgendaPage />, protected: true },
   { id: 20, link: "/accomodation/:convention_id", element: <AccomodationPage />, protected: true },
-  { id: 21, link: "/new/accomodation", element: <CreateAccomodationPage />, protected: true },
+  { id: 21, link: "/new/accomodation/:convention_id", element: <CreateAccomodationPage />, protected: true },
   { id: 22, link: "/event/:convention_id", element: <EventPage />, protected: true },
-  { id: 23, link: "/new/event", element: <CreateEventPage />, protected: true },
+  { id: 23, link: "/new/event/:convention_id", element: <CreateEventPage />, protected: true },
   { id: 24, link: "/game/sale/:convention_id", element: <GamesPage />, protected: true },
-  { id: 25, link: "/new/game", element: <CreateGamePage />, protected: true },
+  { id: 25, link: "/new/game/:convention_id", element: <CreateGamePage />, protected: true },
   { id: 26, link: "/game/single", element: <SingleGamePage />, protected: true },
   { id: 27, link: "/friends", element: <FriendPage />, protected: true },
   { id: 28, link: "/findfriends", element: <FindFriendPage />, protected: true },
@@ -92,6 +95,10 @@ export const routing = [
   { id: 41, link: "/feedback", element: <FeedbackPage />, protected: true },
   { id: 42, link: "/viewprofile/:user_id?", element: <ViewProfilePage />, protected: true },
   { id: 43, link: "/conventionAttendance/:convention_id", element: <ConventionAttendancePage />, protected: true },
+  { id: 44, link: "/edit/accommodation/:accommodation_id/convention/:convention_id", element: <EditAccomodationPage />, protected: true },
+  { id: 45, link: "/edit/event/:event_id/convention/:convention_id", element: <EditEventPage />, protected: true },
+  { id: 46, link: "/edit/game/:game_id/convention/:convention_id", element: <EditGamePage />, protected: true },
+  
 ];
 
 const AppRoutes = () => (

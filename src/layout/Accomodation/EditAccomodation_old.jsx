@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { FaList } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,15 +6,45 @@ import { BsFillCaretDownFill } from 'react-icons/bs';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { fetchWithAuth } from '../../services/apiService';
-import ConventionImage from '../../assets/convention.jpeg'
 import toastr from 'toastr';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const CreateAccommodation = () => {
+const EditAccommodation = () => {
     const nav = useNavigate();
-    const { convention_id } = useParams();
-    const [loading, setLoading] = useState();
-    // console.log(convention_id);
+    const [accommodation, setAccommodation] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const {accommodation_id, convention_id } = useParams();
+    
+    
+    useEffect(() => {
+        fetchAccommodation(accommodation_id);
+    }, []);
+
+    const fetchAccommodation = async (accommodation_id) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/get_convention_accommodation/${accommodation_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            
+              console.log(data);
+              setAccommodation(data);
+        } catch (error) {
+            console.error('Error fetching conventions data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
     const [formData, setFormData] = useState({
         location_name: '',
         from_date: '',
@@ -59,13 +89,6 @@ const CreateAccommodation = () => {
         if (!formData.to_date) {
             errors.to_date = 'To Date is required';
         }
-
-         // Validate URL for location_website
-         const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/; // Basic URL pattern
-         if (formData.location_website && !urlPattern.test(formData.location_website)) {
-             errors.location_website = 'Please enter a valid URL';
-         }
-        
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -94,7 +117,7 @@ const CreateAccommodation = () => {
         console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
     
         try {
-            const response = await fetch(`${API_BASE_URL}/user/convention_accommodation`, {
+            const response = await fetch(`${API_BASE_URL}/user/convention_accommodation/${accommodation.id}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -102,7 +125,7 @@ const CreateAccommodation = () => {
                 body: formDataToSend,
             });
     
-            console.log('Form data submitted:', formData);
+            console.log("Response status:", response.status); // Log response status
             
             if (!response.ok) {
                 const result = await response.json();
@@ -115,7 +138,7 @@ const CreateAccommodation = () => {
     
             const result = await response.json();
             console.log("Success response:", result); // Log the success response
-            toastr.success('Accommodation created successfully!');
+            toastr.success('Accommodation updated successfully!');
     
             // Clear form fields, image preview, and form errors
             setFormData({
@@ -162,12 +185,13 @@ const CreateAccommodation = () => {
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
-                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new accommodation</h1>
+                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Edit accommodation</h1>
 
                     <Input 
                         name="location_name" 
                         placeholder="Location Name" 
                         type="text" 
+                        value={accommodation.location_name}
                         onChange={handleChange} 
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} 
                     />
@@ -178,6 +202,7 @@ const CreateAccommodation = () => {
                             name="from_date"
                             placeholder="Date From"
                             type="date"
+                            value={accommodation.from_date}
                             min={today} // Disable dates before today
                             onChange={handleChange}
                             className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 outline-none bg-darkBlue`}
@@ -188,6 +213,7 @@ const CreateAccommodation = () => {
                             name="to_date"
                             placeholder="Date To"
                             type="date"
+                            value={accommodation.to_date}
                             min={formData.from_date || today} // Disable dates before the selected "From Date"
                             onChange={handleChange}
                             className={`w-[100%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
@@ -199,6 +225,7 @@ const CreateAccommodation = () => {
                         name="location_address" 
                         placeholder="Location Address" 
                         type="text" 
+                        value={accommodation.location_address}
                         onChange={handleChange} 
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} 
                     />
@@ -207,26 +234,28 @@ const CreateAccommodation = () => {
                         name="location_website" 
                         placeholder="Location Website" 
                         type="text" 
+                        value={accommodation.location_website}
                         onChange={handleChange} 
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} 
                     />
-                    {formErrors.location_website && <p className="text-red">{formErrors.location_website}</p>}
+
                     <Input 
                         name="location_phone_number" 
                         placeholder="Location Phone Number" 
-                        type="number" 
+                        type="text" 
+                        value={accommodation.location_phone_number}
                         onChange={handleChange} 
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} 
                     />
 
                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                        
+                       
                             <img
-                                src={imagePreview || ConventionImage}
+                                src={imagePreview || accommodation.location_image}
                                 alt="Preview"
                                 className='w-[10rem] h-[10rem] rounded-full mb-2'
                             />
-                        
+                    
                         <input
                             type="file"
                             id="locationPictureInput"
@@ -251,4 +280,4 @@ const CreateAccommodation = () => {
     );
 };
 
-export default CreateAccommodation;
+export default EditAccommodation;

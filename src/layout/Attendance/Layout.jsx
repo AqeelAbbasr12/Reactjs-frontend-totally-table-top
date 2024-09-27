@@ -20,13 +20,15 @@ const Layout = () => {
     const [convention, setConvention] = useState([]);
     const [attendance, setAttendance] = useState();
     const { convention_id } = useParams();
-    // console.log(convention_id);
+    const [AgendaItems, setItems] = useState([]);
 
     useEffect(() => {
         fetchConventions(convention_id);
         fetchAttendanceData(convention_id);
+        fetchAgendas(convention_id);
     }, []);
 
+    //Fetch Convention
     const fetchConventions = async (convention_id) => {
         setLoading(true);
         try {
@@ -70,13 +72,31 @@ const Layout = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setAttendance(data); // Expecting data to be an array of attendance records
         } catch (error) {
             console.error('Error fetching attendance data:', error);
         }
     };
 
+    const fetchAgendas = async (convention_id) => {
+        try {
+            const response = await fetchWithAuth(`/user/convention_agenda/${convention_id}`);
+            if (!response.ok) throw new Error('Failed to fetch agendas');
+    
+            const data = await response.json();
+            // console.log('Agenda Items', data);
+            if (Array.isArray(data)) {
+                setItems(data);  // Only set if the response is an array
+            } else {
+                console.error('Invalid data structure:', data);
+                setItems([]);
+            }
+        } catch (error) {
+            console.error('Error fetching agendas:', error);
+            setItems([]);
+        }
+    };
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
@@ -87,10 +107,20 @@ const Layout = () => {
             )}
             <Navbar type={"verified"} />
 
-            <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3 '>
-                <span className='text-white'>Account</span>
+            
+
+            <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
+                <a href="#" className='text-white'>
+                Account
+                </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-                <span className='text-white'>Your conventions</span>
+
+                <a href="/user/convention" className='text-white'>
+                Your conventions
+                </a>
+                <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
+
+                
             </div>
 
 
@@ -153,9 +183,15 @@ const Layout = () => {
                                 <p className='text-white'>Agenda</p>
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                <p className='text-white'>Not Started</p>
+                                 {/* Conditionally render text based on the length of AgendaItems */}
+                                <p className='text-white'>
+                                    {AgendaItems.length > 0
+                                        ? `Started, you have created ${AgendaItems.length} Agenda`
+                                        : 'Not Started'}
+                                </p>
+    
                                 <Button 
-                                    onClickFunc={() => { nav(`/agenda/${convention_id}`) }} 
+                                    onClickFunc={() => { nav(`/next/agenda/${convention_id}`) }} 
                                     title={"Create"} 
                                     className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
                                     />
@@ -168,7 +204,11 @@ const Layout = () => {
                             </div>
                             <div className='flex justify-between items-center mt-3'>
                                 <p className='text-white'>1 Stay</p>
-                                <Button title={"Edit"} className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} />
+                                <Button 
+                                    onClickFunc={() => { nav(`/accomodation/${convention_id}`) }} 
+                                    title={"Edit"} 
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
+                                    />
                             </div>
                         </div>
                     </div>
@@ -183,7 +223,11 @@ const Layout = () => {
                             </div>
                             <div className='flex justify-between items-center mt-3'>
                                 <p className='text-white'>Nothing Yet</p>
-                                <Button title={"Create"} className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} />
+                                <Button 
+                                    onClickFunc={() => { nav(`/event/${convention_id}`) }} 
+                                    title={"Create"} 
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
+                                    />
                             </div>
                         </div>
                         <div className='flex-1 bg-[#0d2539] p-3 rounded-md sm:mt-0 mt-3'>
@@ -193,7 +237,11 @@ const Layout = () => {
                             </div>
                             <div className='flex justify-between items-center mt-3'>
                                 <p className='text-white'>1 For Sale</p>
-                                <Button title={"Games"} className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} />
+                                <Button 
+                                    onClickFunc={() => { nav(`/game/sale/${convention_id}`) }} 
+                                    title={"Games"} 
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
+                                    />
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { FaList } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,12 +7,13 @@ import Button from "../../components/Button";
 import Input from "../../components/Input";
 import IconCaretSvg from "../../assets/icon-caret-down.svg";
 import ConventionImage from '../../assets/convention.jpeg'
+import { fetchWithAuth } from '../../services/apiService';
 import toastr from 'toastr';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const CreateGame = () => {
+const EditGame = () => {
   const nav = useNavigate();
-  const { convention_id } = useParams();
+  const { convention_id, game_id } = useParams();
   const [loading, setLoading] = useState();
   const CONDITIONS = [
     "Brand new",
@@ -32,6 +33,49 @@ const CreateGame = () => {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [formErrors, setFormErrors] = useState({}); // State for form errors
+
+  useEffect(() => {
+    fetchGame(game_id);
+}, [game_id]);
+
+  const fetchGame = async (game_id) => {
+    setLoading(true); // Show loading spinner while fetching
+    try {
+        const response = await fetchWithAuth(`/user/get_convention_game/${game_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        // Transform data into the format required by react-select
+        console.log(data);
+        // setGames(data);
+
+        setFormData({
+          name: data.name || '',
+          price: data.price || '',
+          currency: data.currency || '',
+          currency_tag: data.currency_tag || '',
+          condition: data.condition || '',
+          desc: data.desc || '',
+          game_image: data.game_image || null,
+
+      });
+
+      setImagePreview(data.game_image);
+    } catch (error) {
+        console.error('Error fetching Events data:', error);
+    } finally {
+        setLoading(false); // Hide loading spinner
+    }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -194,7 +238,7 @@ const CreateGame = () => {
 
           <div className="pb-4">
             <h1 className="text-3xl mt-3 text-center text-white font-semibold">
-              Add new game
+              Edit Game
             </h1>
           </div>
 
@@ -203,6 +247,7 @@ const CreateGame = () => {
               name={"name"}
               placeholder={"Game Name"}
               type={"text"}
+              value={formData.name}
               onChange={handleChange}
               className={`w-[100%] h-[3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
             />
@@ -282,6 +327,7 @@ const CreateGame = () => {
             <textarea
               name="desc"
               id="description"
+              value={formData.desc}
               placeholder="Description"
               onChange={handleChange}
               className={`w-[100%] h-[10rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue resize-none`}
@@ -324,4 +370,4 @@ const CreateGame = () => {
 
 };
 
-export default CreateGame;
+export default EditGame;
