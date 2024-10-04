@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Select from 'react-select';  // Import react-select for multi-select dropdown
+import Select from 'react-select';
 import { FaList } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { BsFillCaretDownFill, BsPrinterFill } from 'react-icons/bs';

@@ -13,11 +13,17 @@ const Layout = () => {
   const [conventions, setConvention] = useState([]);
   const [attendance, setAttendance] = useState();
   const [AgendaItems, setItems] = useState([]);
+  const [AccommodationItem, setAccommodation] = useState([]);
+  const [EventItem, setEvent] = useState([]);
+  const [GameItem, setGame] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
 
   useEffect((id) => {
     fetchConventions();
     fetchAgendas();
+    fetchAccommodation();
+    fetchEvent();
+    fetchGame();
   }, []);
 
   const fetchConventions = async () => {
@@ -97,6 +103,62 @@ const fetchAgendas = async () => {
   }
 };
 
+const fetchAccommodation = async () => {
+  try {
+      const response = await fetchWithAuth(`/user/convention_accommodation`);
+      if (!response.ok) throw new Error('Failed to fetch accommodation');
+
+      const data = await response.json();
+      console.log('Agenda Items', data);
+      if (Array.isArray(data)) {
+        setAccommodation(data);  // Only set if the response is an array
+      } else {
+          console.error('Invalid data structure:', data);
+          setItems([]);
+      }
+  } catch (error) {
+      console.error('Error fetching agendas:', error);
+      setItems([]);
+  }
+};
+
+const fetchEvent = async () => {
+  try {
+      const response = await fetchWithAuth(`/user/convention_event`);
+      if (!response.ok) throw new Error('Failed to fetch Event');
+
+      const data = await response.json();
+      console.log('Agenda Event', data);
+      if (Array.isArray(data)) {
+        setEvent(data);  // Only set if the response is an array
+      } else {
+          console.error('Invalid data structure:', data);
+          setItems([]);
+      }
+  } catch (error) {
+      console.error('Error fetching agendas:', error);
+      setItems([]);
+  }
+};
+
+const fetchGame = async () => {
+  try {
+      const response = await fetchWithAuth(`/user/convention_game`);
+      if (!response.ok) throw new Error('Failed to fetch Game');
+
+      const data = await response.json();
+      console.log('Agenda Games', data);
+      if (Array.isArray(data)) {
+        setGame(data);  // Only set if the response is an array
+      } else {
+          console.error('Invalid data structure:', data);
+          setGame([]);
+      }
+  } catch (error) {
+      console.error('Error fetching games:', error);
+      setGame([]);
+  }
+};
   return (
     <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto bg-darkBlue'>
       {loading && (
@@ -138,9 +200,18 @@ const fetchAgendas = async () => {
                     className='cursor-pointer' 
                     color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
                   />
-                  <FaBuilding className='text-white cursor-pointer' />
-                  <FaCalendarAlt className='text-white cursor-pointer' />
-                  <FaDiceFive className='text-white cursor-pointer' />
+                  <FaBuilding 
+                    className='cursor-pointer' 
+                    color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  />
+                   <FaCalendarAlt 
+                    className='cursor-pointer' 
+                    color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  />
+                  <FaDiceFive 
+                    className='cursor-pointer' 
+                    color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  />
                 </div>
 
                 {/* 4th Column */}

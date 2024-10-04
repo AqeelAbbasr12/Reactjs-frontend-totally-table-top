@@ -140,6 +140,7 @@ const EditGame = () => {
     }
 
     const formDataToSend = new FormData();
+    formDataToSend.append('convention_game_id', game_id);
     formDataToSend.append('convention_id', convention_id);
     formDataToSend.append('name', formData.name);
     formDataToSend.append('price', formData.price);
@@ -155,7 +156,7 @@ const EditGame = () => {
     console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/convention_game`, {
+      const response = await fetch(`${API_BASE_URL}/user/update_convention_game`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -163,12 +164,12 @@ const EditGame = () => {
         body: formDataToSend,
       });
 
-      console.log('Form data submitted:', formData);
+      console.log('Form data updated:', formData);
 
       if (response.ok) {
         const result = await response.json();
         console.log("Success response:", result); // Log the success response
-        toastr.success('Game added successfully!');
+        toastr.success('Game updated successfully!');
 
         // Clear form fields, image preview, and form errors
         setFormData({
@@ -359,7 +360,7 @@ const EditGame = () => {
           <div className="flex justify-center items-center mt-4">
             <Button
               type="submit"
-              title={"List Game"}
+              title={"Update Game"}
               className={`w-[12rem] h-[3rem] rounded-md text-white bg-lightOrange`}
             />
           </div>

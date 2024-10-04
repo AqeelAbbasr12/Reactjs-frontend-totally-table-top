@@ -80,7 +80,7 @@ const Layout = () => {
 
             const data = await response.json();
 
-            console.log(data);
+            // console.log(data);
             setAccommodation(data);
         } catch (error) {
             console.error('Error fetching conventions data:', error);

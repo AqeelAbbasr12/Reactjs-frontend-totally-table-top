@@ -35,7 +35,7 @@ const Profile = () => {
 
   const [errors, setErrors] = useState({});
 
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -221,7 +221,7 @@ const Profile = () => {
         <div className='flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4'>
           <div className='sm:flex justify-between items-center'>
             <h1 className='text-white text-2xl font-semibold'>Edit your profile</h1>
-            <Button onClick={() => navigate("/ownFeed")} title={"View Profile"} className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} />
+            <Button onClickFunc={() => nav("/ownFeed")} title={"View Profile"} className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} />
           </div>
 
           <form onSubmit={handleSubmit} className='w-[100%] h-[fit] mt-4 bg-[#0d2539] rounded-md p-3'>

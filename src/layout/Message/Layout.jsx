@@ -17,7 +17,7 @@ const Layout = () => {
     const [users, setUsers] = useState([]);
     const [currentUser, setcurrentUser] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { receiver_id } = useParams();
+    const { receiver_id, game_id } = useParams();
     const [messages, setMessages] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [replyContent, setReplyContent] = useState('');
@@ -31,7 +31,10 @@ const Layout = () => {
         fetchFriends();
         fetchCurrentUser();
         fetchUsers();
-    }, []);
+        if (game_id) {
+            fetchGame(game_id);  // Only fetch game and send message if game_id is available
+        }
+    }, [game_id]);
     // Scroll to the latest message whenever 'messages' array updates
     useEffect(() => {
         if (messages.length > 0) {
@@ -42,21 +45,21 @@ const Layout = () => {
         if (receiver_id) {
             // First check in friends array
             let friend = friends.find(f => f.id === parseInt(receiver_id));
-    
+
             // If not found in friends, check in users array
             if (!friend) {
                 friend = users.find(u => u.id === parseInt(receiver_id));
             }
-    
-            console.log('friend list', friend);
-            
+
+            // console.log('friend list', friend);
+
             // If a match is found either in friends or users, proceed with handling the friend click
             if (friend) {
                 handleFriendClick(friend);
             }
         }
     }, [receiver_id, friends, users]);
-    
+
     const fetchFriends = async () => {
         setLoading(true);
         try {
@@ -106,7 +109,7 @@ const Layout = () => {
 
             const data = await response.json()
             setUsers(data);
-            
+
         } catch (error) {
             console.error('Error fetching friends data:', error);
         } finally {
@@ -125,7 +128,7 @@ const Layout = () => {
             });
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             if (!response.ok) {
                 toastr.error(data.errors || 'Failed to fetch messages');
                 throw new Error('Network response was not ok');
@@ -156,7 +159,7 @@ const Layout = () => {
             });
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
 
             if (!response.ok) {
                 toastr.error(data.errors || 'Failed to update messages');
@@ -240,7 +243,7 @@ const Layout = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setcurrentUser(data)
             // console.log(data);
         } catch (error) {
@@ -258,6 +261,43 @@ const Layout = () => {
         // Update the messages state with the new message
         setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
+
+    const fetchGame = async (game_id) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/message_game/${game_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+    
+            const data = await response.json();
+           
+            if (!response.ok) {
+                toastr.error(data.errors || 'Failed to fetch messages');
+                throw new Error('Network response was not ok');
+            }
+    
+    
+           // Construct the pre-written message using 'data' directly
+        if (data && data.name && data.convention_name) {
+            const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
+            console.log(preWrittenMessage);
+            setReplyContent(preWrittenMessage)
+            
+        } else {
+            console.error('Invalid game data:', data);
+        }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
+        finally {
+            setLoading(false); // Hide loading spinner
+        }
+    };
+    
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-[#0d2539]'>
             {loading && (

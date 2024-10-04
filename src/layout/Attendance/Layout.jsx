@@ -21,11 +21,17 @@ const Layout = () => {
     const [attendance, setAttendance] = useState();
     const { convention_id } = useParams();
     const [AgendaItems, setItems] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [accommodations, setAccommodation] = useState([]);
+    const [games, setGames] = useState([]);
 
     useEffect(() => {
         fetchConventions(convention_id);
         fetchAttendanceData(convention_id);
         fetchAgendas(convention_id);
+        fetchEvents(convention_id);
+        fetchAccommodation(convention_id);
+        fetchGames(convention_id);
     }, []);
 
     //Fetch Convention
@@ -89,15 +95,92 @@ const Layout = () => {
             if (Array.isArray(data)) {
                 setItems(data);  // Only set if the response is an array
             } else {
-                console.error('Invalid data structure:', data);
+                // console.error('Invalid data structure:', data);
                 setItems([]);
             }
         } catch (error) {
-            console.error('Error fetching agendas:', error);
+            // console.error('Error fetching agendas:', error);
             setItems([]);
         }
     };
 
+    const fetchEvents = async () => {
+        setLoading(true); // Show loading spinner while fetching
+        try {
+            const response = await fetchWithAuth(`/user/convention_event/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            // Transform data into the format required by react-select
+            console.log(data);
+            setEvents(data);
+        } catch (error) {
+            console.error('Error fetching Events data:', error);
+        } finally {
+            setLoading(false); // Hide loading spinner
+        }
+    };
+
+    const fetchAccommodation = async (convention_id) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/convention_accommodation/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            // console.log(data);
+            setAccommodation(data);
+        } catch (error) {
+            console.error('Error fetching conventions data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchGames = async () => {
+        setLoading(true); // Show loading spinner while fetching
+        try {
+            const response = await fetchWithAuth(`/user/convention_game/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            // Transform data into the format required by react-select
+            console.log(data);
+            setGames(data);
+        } catch (error) {
+            console.error('Error fetching Events data:', error);
+        } finally {
+            setLoading(false); // Hide loading spinner
+        }
+    };
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
             {loading && (
@@ -203,7 +286,11 @@ const Layout = () => {
                                 <p className='text-white'>Accommodation</p>
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                <p className='text-white'>1 Stay</p>
+                                <p className='text-white'>
+                                    {accommodations.length > 0
+                                        ? `${accommodations.length} Stay`
+                                        : '0 Stay'}
+                                </p>
                                 <Button 
                                     onClickFunc={() => { nav(`/accomodation/${convention_id}`) }} 
                                     title={"Edit"} 
@@ -220,9 +307,15 @@ const Layout = () => {
                             <div className='flex items-center gap-x-4'>
                                 <FaCalendarAlt className='text-white' />
                                 <p className='text-white'>Events</p>
+                                
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                <p className='text-white'>Nothing Yet</p>
+                                
+                                <p className='text-white'>
+                                    {events.length > 0
+                                        ? `Started, you have created ${events.length} Event(s)`
+                                        : 'Not Started'}
+                                </p>
                                 <Button 
                                     onClickFunc={() => { nav(`/event/${convention_id}`) }} 
                                     title={"Create"} 
@@ -236,7 +329,12 @@ const Layout = () => {
                                 <p className='text-white'>Games</p>
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                <p className='text-white'>1 For Sale</p>
+                                
+                                <p className='text-white'>
+                                    {games.length > 0
+                                        ? `${games.length} For Sale`
+                                        : '0 For Sale'}
+                                </p>
                                 <Button 
                                     onClickFunc={() => { nav(`/game/sale/${convention_id}`) }} 
                                     title={"Games"} 

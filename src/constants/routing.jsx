@@ -38,6 +38,7 @@ import FindFriendPage from '../pages/FindFriendPage';
 import NotificationPage from '../pages/NotificationPage';
 import SalesPage from '../pages/SalesPage';
 import FeedPage from '../pages/FeedPage';
+import OwnFeedPage from '../pages/OwnFeedPage';
 import ProfilePage from '../pages/ProfilePage';
 import ViewProfilePage from '../pages/ViewProfilePage';
 import MessagesPage from '../pages/MessagesPage';
@@ -75,17 +76,18 @@ export const routing = [
   { id: 21, link: "/new/accomodation/:convention_id", element: <CreateAccomodationPage />, protected: true },
   { id: 22, link: "/event/:convention_id", element: <EventPage />, protected: true },
   { id: 23, link: "/new/event/:convention_id", element: <CreateEventPage />, protected: true },
-  { id: 24, link: "/game/sale/:convention_id", element: <GamesPage />, protected: true },
+  { id: 24, link: "/game/sale/:convention_id?", element: <GamesPage />, protected: true },
   { id: 25, link: "/new/game/:convention_id", element: <CreateGamePage />, protected: true },
-  { id: 26, link: "/game/single", element: <SingleGamePage />, protected: true },
+  { id: 26, link: "/game/single/:game_id", element: <SingleGamePage />, protected: true },
   { id: 27, link: "/friends", element: <FriendPage />, protected: true },
   { id: 28, link: "/findfriends", element: <FindFriendPage />, protected: true },
   { id: 29, link: "/notification", element: <NotificationPage />, protected: true },
   { id: 30, link: "/sales", element: <SalesPage />, protected: true },
   { id: 31, link: "/feed/:friendId?", element: <FeedPage />, protected: true },
   { id: 32, link: "/profile", element: <ProfilePage />, protected: true },
-  { id: 33, link: "/ownFeed", element: <FeedPage />, protected: true },
+  { id: 33, link: "/ownFeed", element: <OwnFeedPage />, protected: true },
   { id: 34, link: "/messages/:receiver_id?", element: <MessagesPage />, protected: true },
+  { id: 36, link: "/messages/:receiver_id/game/:game_id", element: <MessagesPage />, protected: true },
   { id: 35, link: "/settings", element: <SettingsPage />, protected: true },
   { id: 36, link: "/staying-safe", element: <StayingSafePage />, protected: true },
   { id: 37, link: "/terms", element: <TermsPage /> },

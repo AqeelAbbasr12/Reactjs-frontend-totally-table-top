@@ -128,8 +128,8 @@ const Layout = () => {
                       className="w-[6rem] h-[6rem] rounded-full"
                     />
                   </div>
-                  <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
-                  <p className="text-white mt-1 font-thin">@{user.user_name}</p>
+                    <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
+                    <p className="text-white mt-1 font-thin">@{user.user_name}</p>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
                   {
                     user.friend_status === 'pending' ? (

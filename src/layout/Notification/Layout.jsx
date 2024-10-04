@@ -32,6 +32,7 @@ const Layout = () => {
             }
 
             const data = await response.json();
+            console.log('Notifications', data);
             setNotificationData(data);
         } catch (error) {
             console.error('Error fetching notifications:', error);
@@ -99,6 +100,67 @@ const Layout = () => {
         }
     };
 
+    const acceptInvitation = async (invitationId, notificationId) => {
+        console.log(invitationId);
+        setLoadingId(invitationId); // Set loading for the specific button
+        try {
+            const response = await fetchWithAuth(`/user/invitations/${invitationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                body: JSON.stringify({ status: 'accepted', id: notificationId }),
+            });
+
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message || 'Failed to accept invitation request');
+                return;
+            }
+
+            const result = await response.json();
+            toastr.success(result.message || 'Invitation request accepted');
+
+            fetchNotificationData();
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+            toastr.error('An error occurred while accepting the friend request.');
+        } finally {
+            setLoadingId(null); // Reset loading state
+        }
+    };
+    const ignoreInvitation = async (invitationId, notificationId) => {
+        console.log(invitationId);
+        setLoadingId(invitationId); // Set loading for the specific button
+        try {
+            const response = await fetchWithAuth(`/user/invitations/${invitationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                body: JSON.stringify({ status: 'rejected', id: notificationId }),
+            });
+
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message || 'Failed to ignore invitation request');
+                return;
+            }
+
+            const result = await response.json();
+            toastr.success(result.message || 'Invitation request ignore');
+
+            fetchNotificationData();
+        } catch (error) {
+            console.error('Error ignore friend request:', error);
+            toastr.error('An error occurred while ignore the friend request.');
+        } finally {
+            setLoadingId(null); // Reset loading state
+        }
+    };
+
     return (
         <div className="flex flex-col w-[100vw] overflow-y-auto bg-[#0d2539]">
             <Navbar type={"verified"} />
@@ -132,6 +194,26 @@ const Layout = () => {
                                             className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
                                             onClickFunc={() => acceptFriendRequest(notification.friend_request_id, notification.id)}
                                             loading={loadingId === notification.friend_request_id}
+                                        />
+                                    </div>
+                                 )} 
+                                 {notification.type === 'invitation' && (
+                                    <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
+                                        <Button
+                                            title={
+                                                loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'
+                                            }
+                                            className="text-white cursor-pointer"
+                                            onClickFunc={() => ignoreInvitation(notification.invitation_id, notification.id)}
+                                            loading={loadingId === notification.invitation_id}
+                                        />
+                                        <Button
+                                            title={
+                                                loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'
+                                            }
+                                            className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
+                                            onClickFunc={() => acceptInvitation(notification.invitation_id, notification.id)}
+                                            loading={loadingId === notification.invitation_id}
                                         />
                                     </div>
                                  )} 

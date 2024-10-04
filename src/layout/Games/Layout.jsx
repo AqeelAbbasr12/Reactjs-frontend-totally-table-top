@@ -11,6 +11,8 @@ import { FaLocationDot } from 'react-icons/fa6'
 import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Layout = () => {
     const data = [1, 2, 3, 4, 5]
     const { convention_id } = useParams();
@@ -47,6 +49,73 @@ const Layout = () => {
             setLoading(false); // Hide loading spinner
         }
     };
+
+    const handleDelete = async (id) => {
+        // Show confirmation dialog
+        const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
+        
+        if (!confirmed) {
+            return; // Exit the function if the user cancels
+        }
+    
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/convention_game/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+    
+            if (response.ok) {
+                // Show success message
+                toastr.success('Game deleted successfully!');
+                fetchGames(convention_id); // Refresh the events list
+            } else {
+                console.error('Failed to delete game', response.statusText);
+                // Optionally show an error message
+            }
+        } catch (error) {
+            console.error('Error deleting game:', error);
+            // Optionally show an error message
+        }
+    };
+
+    
+    const handleMarkAsSold = async (id) => {
+        // Show confirmation dialog
+        const confirmed = window.confirm("Are you sure you want to Mark this Game as Sold? This action cannot be undone.");
+        
+        if (!confirmed) {
+            return; // Exit the function if the user cancels
+        }
+    
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/mark_game_as_sold/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                body: JSON.stringify({
+                    status: 'sold' // Set the status to 'sold'
+                })
+            });
+    
+            if (response.ok) {
+                // Show success message
+                toastr.success('Game marked as sold successfully!');
+                fetchGames(convention_id); // Refresh the game list
+            } else {
+                console.error('Failed to update game', response.statusText);
+                // Optionally show an error message
+            }
+        } catch (error) {
+            console.error('Error updating game:', error);
+            // Optionally show an error message
+        }
+    };
+    
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
@@ -105,11 +174,21 @@ const Layout = () => {
                                     </div>
 
                                     <div className='sm:absolute bottom-6 flex items-center gap-x-3 mt-4 '>
-                                        <Button onClickFunc={() => nav("/game/sale")} title={"Mark as sold"} className={`w-[8rem] h-[2.3rem] rounded-md bg-lightOrange text-white`} />
+                                    <Button
+                                        onClickFunc={game.game_status === "publish" ? () => handleMarkAsSold(game.id) : null}
+                                        title={game.game_status === "publish" ? "Mark as sold" : "Sold"}
+                                        className={`w-[8rem] h-[2.3rem] rounded-md text-white ${
+                                            game.game_status === "publish" ? "bg-lightOrange cursor-pointer" : "bg-red cursor-not-allowed"
+                                        }`}
+                                        />
                                         <Button onClickFunc={() => {
                                                 nav(`/edit/game/${game.id}/convention/${convention_id}`);
                                             }} title={"Edit"} className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white`} />
-                                        <Button onClickFunc={() => nav("/game/sale")} title={"Delete"} className={`w-[8rem] h-[2.3rem] rounded-md border border-red text-white`} />
+                                        <Button
+                                        onClickFunc={() => handleDelete(game.id)}
+                                        title={"Delete"}
+                                        className={`w-[8rem] h-[2.3rem] rounded-md border border-red text-white`}
+                                    />
                                     </div>
                                 </div>
 
