@@ -77,11 +77,11 @@ const Layout = () => {
 
     const handleSubmitWhoCan = async (e) => {
         e.preventDefault(); // Prevent default form submission
-    
+
         // Create a JSON object from the settings
         const jsonData = JSON.stringify(settings);
-    
-    
+
+
         try {
             const response = await fetchWithAuth(`/user/who_can_see_settings`, {
                 method: 'POST',
@@ -91,18 +91,18 @@ const Layout = () => {
                 },
                 body: jsonData, // Send the JSON data
             });
-    
+
             if (!response.ok) {
                 const result = await response.json();
                 console.error('Error updating settings:', result);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             if (response.ok) {
                 const result = await response.json();
                 toastr.success(result.message);
             }
-           
+
         } catch (error) {
             console.error('Error submitting settings:', error);
         }
@@ -118,14 +118,14 @@ const Layout = () => {
             return updatedSettings;
         });
     };
-    
+
     const handleSubmitFindBy = async (e) => {
         e.preventDefault(); // Prevent default form submission
-    
+
         // Create a JSON object from the settings
         const jsonData = JSON.stringify(settings);
-    
-    
+
+
         try {
             const response = await fetchWithAuth(`/user/find_by_settings`, {
                 method: 'POST',
@@ -135,23 +135,23 @@ const Layout = () => {
                 },
                 body: jsonData, // Send the JSON data
             });
-    
+
             if (!response.ok) {
                 const result = await response.json();
                 console.error('Error updating settings:', result);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             if (response.ok) {
                 const result = await response.json();
                 toastr.success(result.message);
             }
-           
+
         } catch (error) {
             console.error('Error submitting settings:', error);
         }
     };
-    
+
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh]'>
@@ -185,15 +185,15 @@ const Layout = () => {
                             {/* Profile Changes Dropdown */}
                             <form onSubmit={handleSubmitWhoCan} className="space-y-4">
                                 {/* Profile Changes Dropdown */}
-                                <div className='flex justify-between items-center flex-wrap'>
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
                                     <h1 className='text-white text-md font-semibold'>Changes to your profile</h1>
-                                    <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="profile_changes"
                                             name="profile_changes"
                                             value={settings.profile_changes}
                                             onChange={handleChangeWhoCanSee}
-                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                            className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
                                             <option value="private">Private</option>
@@ -202,15 +202,15 @@ const Layout = () => {
                                 </div>
 
                                 {/* Your Updates Dropdown */}
-                                <div className='flex justify-between items-center flex-wrap'>
-                                    <h1 className='text-white text-md font-semibold'>Your updated</h1>
-                                    <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
+                                    <h1 className='text-white text-md font-semibold'>Your updates</h1>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="your_updates"
                                             name="your_updates"
                                             value={settings.your_updates}
                                             onChange={handleChangeWhoCanSee}
-                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                            className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
                                             <option value="private">Private</option>
@@ -219,15 +219,15 @@ const Layout = () => {
                                 </div>
 
                                 {/* Your New Friendships Dropdown */}
-                                <div className='flex justify-between items-center flex-wrap'>
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
                                     <h1 className='text-white text-md font-semibold'>Your new friendships</h1>
-                                    <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="your_new_friendship"
                                             name="your_new_friendship"
                                             value={settings.your_new_friendship}
                                             onChange={handleChangeWhoCanSee}
-                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                            className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
                                             <option value="private">Private</option>
@@ -236,15 +236,15 @@ const Layout = () => {
                                 </div>
 
                                 {/* Your Convention Attendance Dropdown */}
-                                <div className='flex justify-between items-center flex-wrap'>
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
                                     <h1 className='text-white text-md font-semibold'>Your convention attendance</h1>
-                                    <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="your_convention_attendance"
                                             name="your_convention_attendance"
                                             value={settings.your_convention_attendance}
                                             onChange={handleChangeWhoCanSee}
-                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                            className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
                                             <option value="private">Private</option>
@@ -253,15 +253,15 @@ const Layout = () => {
                                 </div>
 
                                 {/* Your Accommodation Dropdown */}
-                                <div className='flex justify-between items-center flex-wrap'>
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
                                     <h1 className='text-white text-md font-semibold'>Your accommodation</h1>
-                                    <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="your_convention_accommodation"
                                             name="your_convention_accommodation"
                                             value={settings.your_convention_accommodation}
                                             onChange={handleChangeWhoCanSee}
-                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                            className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
                                             <option value="private">Private</option>
@@ -270,68 +270,72 @@ const Layout = () => {
                                 </div>
 
                                 <div className='flex justify-end mt-2'>
-                                    <Button type='submit' title={"Save Changes"} className={"w-[8rem] h-[2.3rem] rounded-md text-white bg-[#F77F00]"} />
+                                    <Button type='submit' title={"Save Changes"} className={"w-full sm:w-[8rem] h-[2.3rem] rounded-md text-white bg-[#F77F00]"} />
                                 </div>
                             </form>
+
 
 
                             <p className='text-white text-lg font-semibold mt-2'>All other users to find by ?</p>
 
                             {/* Find By Username Dropdown */}
                             <form onSubmit={handleSubmitFindBy} className="space-y-4">
-                            <div className='flex justify-between items-center flex-wrap'>
-                                <h1 className='text-white text-md font-semibold'>Username</h1>
-                                <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
-                                    <select
-                                        id="find_by_username"
-                                        name="find_by_username"
-                                        value={settings.find_by_username}
-                                        onChange={handleChangeFindBy}
-                                        className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
-                                    >
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                {/* Username Dropdown */}
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
+                                    <h1 className='text-white text-md font-semibold'>Username</h1>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
+                                        <select
+                                            id="find_by_username"
+                                            name="find_by_username"
+                                            value={settings.find_by_username}
+                                            onChange={handleChangeFindBy}
+                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                        >
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Find By Real Name Dropdown */}
-                            <div className='flex justify-between items-center flex-wrap'>
-                                <h1 className='text-white text-md font-semibold'>Real Name</h1>
-                                <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
-                                    <select
-                                        id="find_by_real_name"
-                                        name="find_by_real_name"
-                                        value={settings.find_by_real_name}
-                                        onChange={handleChangeFindBy}
-                                        className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
-                                    >
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                {/* Real Name Dropdown */}
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
+                                    <h1 className='text-white text-md font-semibold'>Real Name</h1>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
+                                        <select
+                                            id="find_by_real_name"
+                                            name="find_by_real_name"
+                                            value={settings.find_by_real_name}
+                                            onChange={handleChangeFindBy}
+                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                        >
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Find By Email Dropdown */}
-                            <div className='flex justify-between items-center flex-wrap'>
-                                <h1 className='text-white text-md font-semibold'>Email</h1>
-                                <div className='flex justify-between items-center w-[12rem] px-2 rounded-md h-[2.3rem] mb-2'>
-                                    <select
-                                        id="find_by_email"
-                                        name="find_by_email"
-                                        value={settings.find_by_email}
-                                        onChange={handleChangeFindBy}
-                                        className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
-                                    >
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                {/* Email Dropdown */}
+                                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
+                                    <h1 className='text-white text-md font-semibold'>Email</h1>
+                                    <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
+                                        <select
+                                            id="find_by_email"
+                                            name="find_by_email"
+                                            value={settings.find_by_email}
+                                            onChange={handleChangeFindBy}
+                                            className="h-[2.3rem] w-full rounded-md text-white bg-darkBlue border border-gray-500"
+                                        >
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className='flex justify-end mt-2'>
-                                <Button type='submit' title={"Save Changes"} className={"w-[8rem] h-[2.3rem] rounded-md text-white bg-[#F77F00]"} />
-                            </div>
+
+                                <div className='flex justify-end mt-2'>
+                                    <Button type='submit' title={"Save Changes"} className={"w-full sm:w-[8rem] h-[2.3rem] rounded-md text-white bg-[#F77F00]"} />
+                                </div>
                             </form>
+
                         </div>
                     </div>
                 </div>

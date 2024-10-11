@@ -15,7 +15,7 @@ import { formatDistanceToNow, parseISO } from 'date-fns';
 
 const Layout = () => {
     const nav = useNavigate()
-    const [showData, setshowData] = useState(false)
+    const [showData, setshowData] = useState(true)
     const [loading, setLoading] = useState();
     const [activityFeeds, setActivityFeed] = useState([]);
     const data = [1, 2, 3, 4, 5, 6, 7]
@@ -42,7 +42,7 @@ const Layout = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setActivityFeed(data);
             }
 
@@ -66,7 +66,7 @@ const Layout = () => {
             const formattedLine = line.split(urlRegex).map((part, i) => {
                 if (urlRegex.test(part)) {
                     return (
-                        <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-lightOrange underline">
+                        <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-lightOrange underline break-all">
                             {part}
                         </a>
                     );
@@ -101,21 +101,21 @@ const Layout = () => {
 
 
     return (
-        <div className='flex flex-col w-[100vw] h-[100vh]'>
+        <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-darkBlue'>
             {loading && (
                 <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
                     <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
                 </div>
             )}
             <Navbar type={"verified"} />
-            <div className='pt-[2.3rem] flex  justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] md:h-[86rem] w-[100vw] gap-x-6'>
+            <div className='pt-[2.3rem] flex  justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] w-[100vw] gap-x-6'>
 
                 {/* LEFT  */}
                 <Left />
 
                 {/* RIGHT  */}
                 <div className='flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4'>
-                    <div className='sm:flex justify-between items-center'>
+                    <div className='sm:flex pb-7 justify-between items-center'>
                         <h1 className='text-white text-2xl font-semibold'>Your activity feed</h1>
                         <div className='flex items-center gap-x-4 sm:mt-0 mt-2'>
                             <div onClick={() => setshowData(!showData)} className='flex justify-between px-2 items-center w-[11rem] h-[2.3rem] rounded-md border border-gray-300 cursor-pointer'>
@@ -144,8 +144,8 @@ const Layout = () => {
                                             case 'convention_attendance':
                                                 return (
                                                     <>
-                                                        <div className='flex justify-between items-center'>
-                                                            <div className='flex items-center gap-x-4'>
+                                                        <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                            <div className='flex items-center gap-x-3'>
                                                                 <div className='flex items-center'>
                                                                     <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
                                                                     <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
@@ -162,7 +162,7 @@ const Layout = () => {
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <p className='text-white'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
+                                                            <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
                                                         </div>
                                                         <p className='text-white mt-3'>
                                                             You will attend {feedItem.convention_attendance.convention_name} on {feedItem.convention_attendance.attendance_date}
@@ -176,20 +176,21 @@ const Layout = () => {
                                                         </div>
                                                     </>
                                                 );
-        
+
+
                                             case 'post_creation':
                                                 return (
                                                     <>
-                                                        <div className='flex justify-between items-center'>
-                                                            <div className='flex items-center gap-x-4'>
+                                                        <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                            <div className='flex items-center gap-x-3'>
                                                                 <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
                                                                 <div>
                                                                     <p className='text-white'>
-                                                                        <span className='text-lightOrange'>{feedItem.post.user_name} </span> posted on update:
+                                                                        <span className='text-lightOrange'>{feedItem.post.user_name}</span> posted on update:
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <p className='text-white'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
+                                                            <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
                                                         </div>
                                                         <p className='text-white mt-3'>{formatDescription(feedItem.post.content)}</p>
                                                         <div className='flex items-center gap-x-4 mt-4'>
@@ -201,101 +202,120 @@ const Layout = () => {
                                                         </div>
                                                     </>
                                                 );
-        
-                                            case 'convention_accommodation':
-                                                return (
-                                                    <>
-                                                        <div className='flex justify-between items-center'>
-                                                            <div className='flex items-center gap-x-4'>
-                                                                <div className='flex items-center'>
-                                                                    <img src={feedItem.convention_accommodation.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
-                                                                    <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+
+
+                                                case 'convention_accommodation':
+                                                    return (
+                                                        <>
+                                                            <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                                <div className='flex items-start md:items-center gap-x-3'>
+                                                                    <div className='flex items-center'>
+                                                                        <img src={feedItem.convention_accommodation.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                        <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                                    </div>
+                                                                    <div className='mt-2 md:mt-0'>
+                                                                        <p className='text-white'>
+                                                                            <span className='text-lightOrange'>{feedItem.convention_accommodation.user_name}</span> is staying at <span className='text-lightOrange'>{feedItem.convention_accommodation.location_name}</span>
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
-                                                                <div>
-                                                                    <p className='text-white'>
-                                                                        <span className='text-lightOrange'>{feedItem.convention_accommodation.user_name}</span> is staying at <span className='text-lightOrange'>{feedItem.convention_accommodation.location_name}</span>
+                                                                <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
+                                                            </div>
+                                                            <p className='text-white mt-3'>
+                                                                From <span className='text-lightOrange'>{formatDate(feedItem.convention_accommodation.from_date)}</span> To <span className='text-lightOrange'>{formatDate(feedItem.convention_accommodation.to_date)}</span> for
+                                                                <span onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)} className='text-lightOrange underline ml-1 cursor-pointer'>{feedItem.convention_accommodation.convention_name}</span>
+                                                            </p>
+                                                            <p className='text-white'>{formatDescription(feedItem.convention_accommodation.location_website)}</p>
+                                                            <div className='flex items-center gap-x-4 mt-4'>
+                                                                <div className='flex items-center gap-x-2'>
+                                                                    <FaMessage className='text-white' />
+                                                                    <p className='text-white'>0</p>
+                                                                </div>
+                                                                <FaRegStar className='text-white' />
+                                                            </div>
+                                                        </>
+                                                    );
+                                                
+
+                                                    case 'profile_update':
+                                                        return (
+                                                            <>
+                                                                <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                                    <div className='flex items-start md:items-center gap-x-3'>
+                                                                        <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                        <div className='mt-2 md:mt-0'>
+                                                                            <p className='text-white'>
+                                                                                <span className='text-lightOrange'>{feedItem.user.user_name} </span> updated thier <span className='text-lightOrange'>Profile</span>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
+                                                                </div>
+                                                                <div className='flex items-center gap-x-4 mt-4'>
+                                                                    <div className='flex items-center gap-x-2'>
+                                                                        <FaMessage className='text-white' />
+                                                                        <p className='text-white'>0</p>
+                                                                    </div>
+                                                                    <FaRegStar className='text-white' />
+                                                                </div>
+                                                            </>
+                                                        );
+                                                    
+
+                                                        case 'convention_game':
+                                                            return (
+                                                                <>
+                                                                    <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                                        <div className='flex items-start md:items-center gap-x-3'>
+                                                                            <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                            <div className='mt-2 md:mt-0'>
+                                                                                <p className='text-white'>
+                                                                                    <span className='text-lightOrange'>{feedItem.convention_game.user_name} </span> is selling
+                                                                                    <span 
+                                                                                        onClick={() => nav(`/game/single/${feedItem.convention_game.id}`)} 
+                                                                                        className='text-lightOrange underline ml-1 cursor-pointer'
+                                                                                    > 
+                                                                                        {feedItem.convention_game.game_name}
+                                                                                    </span> under
+                                                                                    <span 
+                                                                                        onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)} 
+                                                                                        className='text-lightOrange underline ml-1 cursor-pointer'
+                                                                                    >
+                                                                                        {feedItem.convention_game.convention_name}
+                                                                                    </span>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className='text-white mt-2 md:mt-0'>
+                                                                            {formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}
+                                                                        </p>
+                                                                    </div>
+                                                                    <p className='text-white mt-3'>
+                                                                        <b>{feedItem.convention_game.game_currency_tag}{feedItem.convention_game.game_price}</b> ({feedItem.convention_game.game_condition})
                                                                     </p>
-                                                                </div>
-                                                            </div>
-                                                            <p className='text-white'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
-                                                        </div>
-                                                        <p className='text-white mt-3'>
-                                                            From  <span className='text-lightOrange'>{formatDate(feedItem.convention_accommodation.from_date)}</span> To <span className='text-lightOrange'>{formatDate(feedItem.convention_accommodation.to_date)}</span> for
-                                                            <span onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)} className='text-lightOrange underline ml-1 cursor-pointer'>{feedItem.convention_accommodation.convention_name}</span>
-                                                        </p>
-                                                        <div className='flex items-center gap-x-4 mt-4'>
-                                                            <div className='flex items-center gap-x-2'>
-                                                                <FaMessage className='text-white' />
-                                                                <p className='text-white'>0</p>
-                                                            </div>
-                                                            <FaRegStar className='text-white' />
-                                                        </div>
-                                                    </>
-                                                );
-        
-                                            case 'profile_update':
-                                                return (
-                                                    <>
-                                                        <div className='flex justify-between items-center'>
-                                                            <div className='flex items-center gap-x-4'>
-                                                                <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
-                                                                <div>
-                                                                    <p className='text-white'>
-                                                                        <span className='text-lightOrange'>{feedItem.user.user_name} </span> updated your <span className='text-lightOrange'> Profile</span>
+                                                                    <p className='text-white mt-3'>
+                                                                        {formatDescription(feedItem.convention_game.game_desc)}
                                                                     </p>
-                                                                </div>
-                                                            </div>
-                                                            <p className='text-white'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
-                                                        </div>
-                                                        <div className='flex items-center gap-x-4 mt-4'>
-                                                            <div className='flex items-center gap-x-2'>
-                                                                <FaMessage className='text-white' />
-                                                                <p className='text-white'>0</p>
-                                                            </div>
-                                                            <FaRegStar className='text-white' />
-                                                        </div>
-                                                    </>
-                                                );
-        
-                                            case 'convention_game':
-                                                return (
-                                                    <>
-                                                        <div className='flex justify-between items-center'>
-                                                            <div className='flex items-center gap-x-4'>
-                                                                <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
-                                                                <div>
-                                                                    <p className='text-white'>
-                                                                        <span className='text-lightOrange'>{feedItem.convention_game.user_name} </span> is selling
-                                                                        <span onClick={() => nav(`/game/single/${feedItem.convention_game.id}`)} className='text-lightOrange underline ml-1 cursor-pointer' > {feedItem.convention_game.game_name}</span> under
-        
-                                                                        <span onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)} className='text-lightOrange underline ml-1 cursor-pointer'> {feedItem.convention_game.convention_name}</span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            <p className='text-white'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
-                                                        </div>
-                                                        <p className='text-white mt-3'><b>{feedItem.convention_game.game_currency_tag}{feedItem.convention_game.game_price}</b> ({feedItem.convention_game.game_condition})</p>
-                                                        <p className='text-white mt-3'>{formatDescription(feedItem.convention_game.game_desc)}</p>
-                                                        <div className='flex items-center gap-x-4 mt-4'>
-                                                            <div className='flex items-center gap-x-2'>
-                                                                <FaMessage className='text-white' />
-                                                                <p className='text-white'>0</p>
-                                                            </div>
-                                                            <FaRegStar className='text-white' />
-                                                        </div>
-        
-                                                    </>
-                                                );
-        
+                                                                    <div className='flex items-center gap-x-4 mt-4'>
+                                                                        <div className='flex items-center gap-x-2'>
+                                                                            <FaMessage className='text-white' />
+                                                                            <p className='text-white'>0</p>
+                                                                        </div>
+                                                                        <FaRegStar className='text-white' />
+                                                                    </div>
+                                                                </>
+                                                            );
+                                                        
+
                                             // Handle other types (like 'convention_game', 'convention_accommodation', etc.) similarly.
-        
+
                                             default:
                                                 return null;
                                         }
                                     })()}
-        
+
                                     {/* This part stays the same across all feed types */}
-        
+
                                 </div>
                             ))
                     }

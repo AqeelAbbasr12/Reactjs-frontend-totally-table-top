@@ -90,33 +90,33 @@ const Layout = () => {
     };
 
     const handleDelete = async (id) => {
-        
-            try {
-                    const response = await fetch(`${API_BASE_URL}/user/convention_accommodation/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                        // Add other headers if necessary, such as Authorization
-                    },
-                });
 
-                if (response.ok) {
-                    // Optionally show a success message
-                    toastr.success('Accommodation deleted successfully!');
-                    
-                    fetchAccommodation(convention_id);
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/convention_accommodation/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    // Add other headers if necessary, such as Authorization
+                },
+            });
 
-                     // Change to the desired route
-                } else {
-                    console.error('Failed to delete accommodation', response.statusText);
-                    // Optionally show an error message
-                }
-            } catch (error) {
-                console.error('Error deleting accommodation:', error);
+            if (response.ok) {
+                // Optionally show a success message
+                toastr.success('Accommodation deleted successfully!');
+
+                fetchAccommodation(convention_id);
+
+                // Change to the desired route
+            } else {
+                console.error('Failed to delete accommodation', response.statusText);
                 // Optionally show an error message
             }
-        
+        } catch (error) {
+            console.error('Error deleting accommodation:', error);
+            // Optionally show an error message
+        }
+
     }
 
     return (
@@ -130,17 +130,17 @@ const Layout = () => {
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
                 <a href="#" className='text-white'>
-                Account
+                    Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="/user/convention" className='text-white'>
-                Your conventions
+                    Your conventions
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="#" className='text-white'>
-                UK Games Expo
+                    UK Games Expo
                 </a>
             </div>
 
@@ -159,44 +159,52 @@ const Layout = () => {
                 <div className='mt-6'>
                     {
                         accommodations.map((accommodation) => (
-                            <div key={accommodation.id} className='w-[100%] sm:h-[10rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4'>
-                                <div className=''>
-                                    <h1 className='text-lg font-semibold text-white'>{accommodation.location_name}</h1>
+                            <div
+                                key={accommodation.id}
+                                className="w-full sm:h-[10rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                            >
+                                <div className="w-full sm:w-auto">
+                                    <h1 className="text-lg font-semibold text-white truncate">{accommodation.location_name}</h1>
 
-                                    <div className='flex items-center gap-x-3 mt-4'>
-                                        {/* from date */}
-                                        <FaCalendarAlt className='text-lightOrange' />
-                                        <span className='text-white'>From Date:</span>
-                                        <p className='text-white'>{formatDate(accommodation.from_date)}</p>
-                                        {/* <p className='text-white'>Friday 31st May 2024</p> */}
-                                        {/* too Date */}
-                                        <FaCalendarAlt className='text-lightOrange' />
-                                        <span className='text-white'>To Date:</span>
-                                        <p className='text-white'>{formatDate(accommodation.to_date)}</p>
-                                        {/* <p className='text-white'>Friday 31st May 2024</p> */}
+                                    <div className="flex flex-wrap items-center gap-2 mt-4">
+                                        {/* From Date */}
+                                        <FaCalendarAlt className="text-lightOrange" />
+                                        <span className="text-white">From Date:</span>
+                                        <p className="text-white">{formatDate(accommodation.from_date)}</p>
+
+                                        {/* To Date */}
+                                        <FaCalendarAlt className="text-lightOrange" />
+                                        <span className="text-white">To Date:</span>
+                                        <p className="text-white">{formatDate(accommodation.to_date)}</p>
                                     </div>
-                                    <div className='sm:absolute bottom-6 flex items-center gap-x-3 mt-4 '>
+
+                                    {/* Buttons Section */}
+                                    <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
                                         <Button
                                             onClickFunc={() => {
                                                 nav(`/edit/accommodation/${accommodation.id}/convention/${convention_id}`);
                                             }}
                                             title={"Edit"}
-                                            className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white`}
+                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
                                         />
-
                                         <Button
                                             onClickFunc={() => handleDelete(accommodation.id)}
                                             title={"Delete"}
-                                            className={`w-[8rem] h-[2.3rem] rounded-md border border-red text-white`}
+                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
                                         />
-
                                     </div>
                                 </div>
 
-                                <div className='sm:mt-0 mt-4'>
-                                    <img src={ConventionImage && accommodation.location_image} alt="" className='h-[10rem] sm:absolute top-0 right-0' />
+                                {/* Image Section */}
+                                <div className="sm:mt-0 mt-4 w-full sm:w-auto">
+                                    <img
+                                        src={ConventionImage && accommodation.location_image}
+                                        alt=""
+                                        className="h-[10rem] w-full sm:w-auto object-cover"
+                                    />
                                 </div>
                             </div>
+
                         ))
                     }
 

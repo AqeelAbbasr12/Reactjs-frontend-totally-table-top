@@ -179,7 +179,7 @@ const Navbar = ({ type }) => {
                     <div className='w-[100%] min-h-[10vh] md:h-[10vh] bg-[#0d2539] px-[1rem] md:px-[2rem] flex justify-between items-center border-b-4 border-lightYellow'>
 
                         <div className='flex gap-x-[1rem] items-center'>
-                            <div onClick={() => nav("/home")} className='md:w-[5rem] cursor-pointer w-[2.4rem] md:h-[3rem] h-[2.4rem]  flex justify-center items-center'>
+                            <div onClick={() => navigate("/home")} className='md:w-[5rem] cursor-pointer w-[2.4rem] md:h-[3rem] h-[2.4rem]  flex justify-center items-center'>
                                 <img src={logoImage} alt='' />
                             </div>
                             <div className='relative w-[18rem] sm:block hidden'>

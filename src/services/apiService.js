@@ -19,26 +19,26 @@ const fetchWithAuth = async (url, options = {}) => {
     },
   });
 
-  // if (response.status === 500) { // If unauthorized, try to refresh token
-  //   try {
-  //     const newAuthToken = await refreshToken(); // Attempt to refresh token
-  //     // Retry the original request with the new token
-  //     const retryResponse = await fetch(`${API_BASE_URL}${url}`, {
-  //       ...options,
-  //       headers: {
-  //         ...defaultHeaders,
-  //         'Authorization': `Bearer ${newAuthToken}`,
-  //       },
-  //     });
-  //     return retryResponse; // Return the retried response
-  //   } catch (error) {
-  //     console.error("Token refresh failed:", error);
-  //     // Optionally, handle redirection to login page or logout
-  //     localStorage.removeItem('authToken');
-  //     localStorage.removeItem('refreshToken');
-  //     window.location.href = '/'; // Redirect to login
-  //   }
-  // }
+  if (response.status === 500) { // If unauthorized, try to refresh token
+    try {
+      const newAuthToken = await refreshToken(); // Attempt to refresh token
+      // Retry the original request with the new token
+      const retryResponse = await fetch(`${API_BASE_URL}${url}`, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          'Authorization': `Bearer ${newAuthToken}`,
+        },
+      });
+      return retryResponse; // Return the retried response
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      // Optionally, handle redirection to login page or logout
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/'; // Redirect to login
+    }
+  }
 
   return response;
 };

@@ -80,9 +80,9 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex flex-col w-[100vw] overflow-y-auto">
-       {/* Loading Spinner */}
-       {loading && (
+    <div className="flex flex-col w-full min-h-screen overflow-y-auto">
+      {/* Loading Spinner */}
+      {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
           <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
         </div>
@@ -100,15 +100,13 @@ const Layout = () => {
               <div className="border border-lightOrange flex items-center w-[fit] justify-center h-[2rem]">
                 <IoListSharp
                   onClick={() => setCurrentView("list")}
-                  className={`text-white h-full w-[2rem] p-2 cursor-pointer ${
-                    currentView === "list" && "bg-lightOrange"
-                  }`}
+                  className={`text-white h-full w-[2rem] p-2 cursor-pointer ${currentView === "list" && "bg-lightOrange"
+                    }`}
                 />
                 <TbGridDots
                   onClick={() => setCurrentView("grid")}
-                  className={`text-white h-full w-[2rem] p-2 cursor-pointer ${
-                    currentView === "grid" && "bg-lightOrange"
-                  }`}
+                  className={`text-white h-full w-[2rem] p-2 cursor-pointer ${currentView === "grid" && "bg-lightOrange"
+                    }`}
                 />
               </div>
             </div>
@@ -128,24 +126,24 @@ const Layout = () => {
                       className="w-[6rem] h-[6rem] rounded-full"
                     />
                   </div>
-                    <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
-                    <p className="text-white mt-1 font-thin">@{user.user_name}</p>
+                  <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
+                  <p className="text-white mt-1 font-thin">@{user.user_name}</p>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
-                  {
-                    user.friend_status === 'pending' ? (
-                      <Button
-                        title={'Request Sent'}
-                        className={'w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-2'}
-                      />
-                    ) : (
-                      <Button
-                        title={loadingId === user.id ? 'Sending...' : 'Add As Friend'}
-                        className={'w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange sm:mt-0 mt-2'}
-                        onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
-                        loading={loadingId === user.id} // Show loading indicator for the specific button
-                      />
-                    )
-                  }
+                    {
+                      user.friend_status === 'pending' ? (
+                        <Button
+                          title={'Request Sent'}
+                          className={'w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-2'}
+                        />
+                      ) : (
+                        <Button
+                          title={loadingId === user.id ? 'Sending...' : 'Add As Friend'}
+                          className={'w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange sm:mt-0 mt-2'}
+                          onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
+                          loading={loadingId === user.id} // Show loading indicator for the specific button
+                        />
+                      )
+                    }
                   </div>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
                     {/* <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="" /> */}
@@ -165,44 +163,44 @@ const Layout = () => {
               {userData.map((user) => (
                 <div
                   onClick={() => {
-                    // Assuming nav is a function from react-router-dom or similar for navigation
-                    // nav(`/user/${user.id}`); // Adjust navigation as needed
                     console.log(user.id); // Example action on click
                   }}
                   key={user.id}
-                  className="rounded-md bg-[#0D2539] cursor-pointer flex justify-between gap-x-5 items-left mb-2 p-3"
+                  className="rounded-md bg-[#0D2539] cursor-pointer flex flex-col md:flex-row justify-between gap-4 mb-2 p-3"
                 >
-                  <div className="flex gap-x-12">
+                  <div className="flex gap-4 items-center">
                     <img
                       src={user.profile_image || FaceImage} // Use user.profile_image if available, else fallback to FaceImage
                       alt={`${user.first_name} ${user.last_name}`}
                       className="w-[6rem] h-[6rem] rounded-full"
                     />
                     <div>
-                      <p className="text-white mt-3 font-bold">{user.first_name} {user.last_name}</p>
+                      <p className="text-white mt-1 font-bold">{user.first_name} {user.last_name}</p>
                       <p className="text-white mt-1 font-thin">@{user.user_name}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-x-4 mr-4">
-                    <Button 
-                      title={
-                        loadingId === user.id ? 'Sending...' : 'Add As Friend'
-                      }
-                      className={'w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange sm:mt-0 mt-2'} 
+
+                  <div className="flex flex-col md:flex-row items-center gap-4 mt-2 md:mt-0">
+                    <Button
+                      title={loadingId === user.id ? 'Sending...' : 'Add As Friend'}
+                      className={'w-full md:w-[8rem] h-[2.3rem] rounded-md text-white bg-lightOrange'}
                       onClickFunc={() => sendFriendRequest(user.id)} // Attach click handler
                       loading={loadingId === user.id} // Show loading indicator for the specific button
                     />
-                     <Link to={`/viewprofile/${user.id}`}>
-                      <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
-                    </Link>
-                    <Link to={`/messages`}>
-                      <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
-                    </Link>
+
+                    <div className="flex gap-4 justify-center items-center mt-2 md:mt-0">
+                      <Link to={`/viewprofile/${user.id}`} className="flex justify-center items-center">
+                        <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
+                      </Link>
+                      <Link to={`/messages`} className="flex justify-center items-center">
+                        <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
+                      </Link>
+                    </div>
                   </div>
-                  
                 </div>
-              ))} 
+              ))}
             </div>
+
           )}
         </div>
       </div>

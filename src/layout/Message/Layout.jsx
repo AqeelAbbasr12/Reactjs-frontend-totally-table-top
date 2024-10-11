@@ -425,7 +425,7 @@ const Layout = () => {
                                         />
                                         <textarea
                                             type="text"
-                                            className='w-full bg-darkBlue h-[10rem] rounded-md outline-none text-white resize-none'
+                                            className='w-full bg-darkBlue h-[10rem] rounded-md outline-none text-white resize-none p-3'
                                             placeholder='Write a reply'
                                             value={replyContent}
                                             onChange={(e) => setReplyContent(e.target.value)}

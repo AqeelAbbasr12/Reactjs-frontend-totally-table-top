@@ -48,8 +48,22 @@ import TermsPage from '../pages/TermsAndConditionsPage';
 import CookiesPage from '../pages/CookiesPage';
 import PrivacyPolicyPage from '../pages/PrivacyPolicyPage';
 import UserAnnouncementsPage from '../pages/UserAnnouncementsPage';
+import SingleAnnouncementPage from '../pages/SingleAnnouncementPage';
 import ContactUsPage from '../pages/ContactUsPage';
 import FeedbackPage from '../pages/FeedbackPage';
+// Admin
+
+import AdminLoginPage from '../pages/Admin/LoginPage';
+import DashboardPage from '../pages/Admin/DashboardPage';
+import ConventionPage from '../pages/Admin/ConventionPage';
+import CreateConventionPage from '../pages/Admin/CreateConventionPage';
+import EditConventionPage from '../pages/Admin/EditConventionPage';
+import AnnouncementPage from '../pages/Admin/AnnouncementPage';
+import CreateAnnouncementPage from '../pages/Admin/CreateAnnouncementPage';
+import EditAnnouncementPage from '../pages/Admin/EditAnnouncementPage';
+import SponserPage from '../pages/Admin/SponserPage';
+import CreateSponserPage from '../pages/Admin/CreateSponserPage';
+import EditSponserPage from '../pages/Admin/EditSponserPage';
 
 export const routing = [
   { id: 1, link: "/", element: <LoginPage />, public: true },
@@ -100,7 +114,20 @@ export const routing = [
   { id: 44, link: "/edit/accommodation/:accommodation_id/convention/:convention_id", element: <EditAccomodationPage />, protected: true },
   { id: 45, link: "/edit/event/:event_id/convention/:convention_id", element: <EditEventPage />, protected: true },
   { id: 46, link: "/edit/game/:game_id/convention/:convention_id", element: <EditGamePage />, protected: true },
-  
+  { id: 15, link: "/single/announcement/:announcement_id", element: <SingleAnnouncementPage />, protected: true },
+  // Admin
+  { id: 47, link: "/admin-login", element: <AdminLoginPage />, public: true },
+  { id: 48, link: "/admin/dashboard", element: <DashboardPage />, protected: true },
+  { id: 49, link: "/admin/conventions", element: <ConventionPage />, protected: true },
+  { id: 49, link: "/admin/create/convention", element: <CreateConventionPage />, protected: true },
+  { id: 49, link: "/admin/edit/convention/:convention_id", element: <EditConventionPage />, protected: true },
+  { id: 49, link: "/admin/announcement", element: <AnnouncementPage />, protected: true },
+  { id: 49, link: "/admin/create/announcement", element: <CreateAnnouncementPage />, protected: true },
+  { id: 49, link: "/admin/edit/announcement/:announcement_id", element: <EditAnnouncementPage />, protected: true },
+  { id: 49, link: "/admin/sponser", element: <SponserPage />, protected: true },
+  { id: 49, link: "/admin/create/sponser", element: <CreateSponserPage />, protected: true },
+  { id: 49, link: "/admin/edit/sponser/:sponser_id", element: <EditSponserPage />, protected: true },
+
 ];
 
 const AppRoutes = () => (

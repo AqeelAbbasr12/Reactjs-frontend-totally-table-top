@@ -207,7 +207,7 @@ const Layout = () => {
             </div>
 
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] pt-3'>
+            <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3'>
 
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>

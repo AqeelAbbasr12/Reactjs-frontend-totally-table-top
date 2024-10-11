@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaGripLines, FaTrash } from 'react-icons/fa';
 import Input from './Input';
 import { fetchWithAuth } from '../services/apiService';
-import Button from './Button'
-
+import Button from './Button';
 import toastr from 'toastr';
 
 const DraggableList = ({ convention_id }) => {
@@ -13,7 +12,6 @@ const DraggableList = ({ convention_id }) => {
     const [agendaItem, setAgendaItem] = useState('');
 
     useEffect(() => {
-
         if (convention_id) {
             fetchAgendas();
         }
@@ -26,7 +24,7 @@ const DraggableList = ({ convention_id }) => {
 
             const data = await response.json();
             if (Array.isArray(data)) {
-                setItems(data);  // Only set if the response is an array
+                setItems(data);
             } else {
                 console.error('Invalid data structure:', data);
                 setItems([]);
@@ -36,6 +34,7 @@ const DraggableList = ({ convention_id }) => {
             setItems([]);
         }
     };
+
     const handleCheckboxChange = (id) => {
         setItems(items.map(item =>
             item.id === id ? { ...item, checked: !item.checked } : item
@@ -56,10 +55,8 @@ const DraggableList = ({ convention_id }) => {
                 throw new Error('Failed to delete the agenda item');
             }
 
-            // Update the local state to remove the deleted item
             setItems(prevItems => prevItems.filter(item => item.id !== id));
             toastr.success(data.message);
-
         } catch (error) {
             console.error('Error deleting agenda item:', error);
         }
@@ -71,26 +68,19 @@ const DraggableList = ({ convention_id }) => {
 
     const drag = (ev, id) => {
         setDraggedItemId(id);
-        ev.dataTransfer.setData("text", String(id));  // Store ID as string
+        ev.dataTransfer.setData("text", String(id));
     };
 
     const drop = async (ev) => {
         ev.preventDefault();
         const droppedItemId = ev.dataTransfer.getData("text");
-        // console.log('Dropped item ID:', droppedItemId);
-
         const draggedItem = items.find(item => item.id === parseInt(droppedItemId, 10));
-        if (!draggedItem) {
-            console.error('Dragged item not found:', droppedItemId);
-            return;
-        }
+        if (!draggedItem) return;
 
         const dropIndex = Array.from(dropZoneRef.current.children).indexOf(ev.target.closest('.draggable'));
-
         const updatedItems = items.filter(item => item.id !== draggedItem.id);
         updatedItems.splice(dropIndex, 0, draggedItem);
 
-        // Update priorities based on new order
         const updatedPriorities = updatedItems.map((item, index) => ({
             ...item,
             priority: index + 1,
@@ -98,9 +88,7 @@ const DraggableList = ({ convention_id }) => {
 
         setItems(updatedPriorities);
 
-        // Update priorities on the server
         try {
-            // Make the API call to update the priorities on the backend
             await Promise.all(updatedPriorities.map(async (item) => {
                 const response = await fetchWithAuth(`/user/convention_agenda/${item.id}`, {
                     method: 'PUT',
@@ -117,17 +105,69 @@ const DraggableList = ({ convention_id }) => {
                 }
             }));
 
-            // Show success toastr once after all updates are done
             toastr.success('Priorities updated successfully');
-
         } catch (error) {
             console.error('Error updating priorities:', error);
             toastr.error('An error occurred while updating priorities.');
         }
 
-        setDraggedItemId(null);  // Reset dragged item ID
+        setDraggedItemId(null);
     };
 
+    // Mobile touch event handlers
+    const handleTouchStart = (e, id) => {
+        const touch = e.touches[0];
+        setDraggedItemId(id);
+        e.currentTarget.style.opacity = 0.5; // Visual feedback for dragging
+        e.dataTransfer.setData("text", String(id));
+    };
+
+    const handleTouchMove = (e) => {
+        // This can be refined to implement more complex touch move behavior
+        e.preventDefault(); // Prevent default behavior during touch move
+    };
+
+    const handleTouchEnd = async (e) => {
+        const droppedItemId = draggedItemId;
+        const draggedItem = items.find(item => item.id === droppedItemId);
+        if (!draggedItem) return;
+
+        const dropIndex = Array.from(dropZoneRef.current.children).indexOf(e.target.closest('.draggable'));
+        const updatedItems = items.filter(item => item.id !== draggedItem.id);
+        updatedItems.splice(dropIndex, 0, draggedItem);
+
+        const updatedPriorities = updatedItems.map((item, index) => ({
+            ...item,
+            priority: index + 1,
+        }));
+
+        setItems(updatedPriorities);
+
+        try {
+            await Promise.all(updatedPriorities.map(async (item) => {
+                const response = await fetchWithAuth(`/user/convention_agenda/${item.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        convention_id: item.convention_id,
+                        priority: item.priority,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to update priority for item ${item.id}`);
+                }
+            }));
+
+            toastr.success('Priorities updated successfully');
+        } catch (error) {
+            console.error('Error updating priorities:', error);
+            toastr.error('An error occurred while updating priorities.');
+        }
+
+        setDraggedItemId(null);
+    };
 
     useEffect(() => {
         const dropZone = dropZoneRef.current;
@@ -141,16 +181,16 @@ const DraggableList = ({ convention_id }) => {
                 dropZone.removeEventListener('dragover', allowDrop);
             }
         };
-    }, [items]);  // Ensure items are included in dependencies for correct drop handling
+    }, [items]);
 
     const handleInputChange = (e) => {
-        setAgendaItem(e.target.value);  // Update agenda item input state
+        setAgendaItem(e.target.value);
     };
+
     const handleSubmit = async (e) => {
-        e.preventDefault();  // Prevent default form submission
+        e.preventDefault();
 
         try {
-            // Make POST request to submit agenda item and convention_id
             const response = await fetchWithAuth(`/user/convention_agenda`, {
                 method: 'POST',
                 headers: {
@@ -158,8 +198,8 @@ const DraggableList = ({ convention_id }) => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
                 body: JSON.stringify({
-                    convention_id,  // Sending convention_id
-                    agenda_description: agendaItem  // Sending agenda_item from input state
+                    convention_id,
+                    agenda_description: agendaItem
                 }),
             });
 
@@ -167,8 +207,7 @@ const DraggableList = ({ convention_id }) => {
                 const data = await response.json();
                 toastr.success(data.message);
                 fetchAgendas(convention_id);
-                setAgendaItem('');  // Reset agenda input after submission
-                // nav(`/next/agenda/${convention_id}`);
+                setAgendaItem('');
             } else {
                 toastr.error('Failed to save the agenda');
             }
@@ -177,6 +216,7 @@ const DraggableList = ({ convention_id }) => {
             toastr.error('An error occurred while saving the agenda');
         }
     };
+
     return (
         <div className="container">
             <div ref={dropZoneRef} className="dropzone">
@@ -186,6 +226,9 @@ const DraggableList = ({ convention_id }) => {
                         id={item.id}
                         draggable="true"
                         onDragStart={(e) => drag(e, item.id)}
+                        onTouchStart={(e) => handleTouchStart(e, item.id)}  // Add touch event for mobile
+                        onTouchMove={handleTouchMove}  // Add touch move event for mobile
+                        onTouchEnd={handleTouchEnd}  // Add touch end event for mobile
                         className={`draggable bg-darkBlue p-3 flex justify-between items-center mt-5 ${item.checked ? 'line-through' : ''} ${draggedItemId === item.id ? 'opacity-50' : ''}`}
                     >
                         <div className="flex gap-x-6 items-center">
@@ -200,7 +243,7 @@ const DraggableList = ({ convention_id }) => {
                         {item.checked ? (
                             <FaTrash
                                 className="text-[#E78530] cursor-pointer"
-                                onClick={() => handleDelete(item.id)} // Trigger delete on click
+                                onClick={() => handleDelete(item.id)}
                             />
                         ) : (
                             <FaGripLines className="text-white" />
@@ -214,23 +257,18 @@ const DraggableList = ({ convention_id }) => {
                     placeholder={"Type here to add a new agenda item"}
                     type={"text"}
                     className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-4 outline-none bg-darkBlue`}
-                    value={agendaItem}  // Bind input value to agendaItem state
-                    onChange={handleInputChange}  // Handle input change
+                    value={agendaItem}
+                    onChange={handleInputChange}
                 />
-                <div className='flex justify-between items-center mt-4'>
-                    <div className='flex items-center gap-x-4'>
-                        {/* <BsPrinterFill className='text-white text-lg cursor-pointer' />
-                            <BiSolidDownload className='text-white text-lg cursor-pointer' /> */}
-                    </div>
-                    <Button
-                        title={"Create Agenda"}
+                <div className='flex justify-end'>
+                <Button
+                        title={"Save Item"}
                         className={`w-[9rem] h-[2.3rem] rounded-md text-white bg-lightOrange`}
                         type="submit"  // Set button type to submit
                     />
                 </div>
             </form>
         </div>
-
     );
 };
 

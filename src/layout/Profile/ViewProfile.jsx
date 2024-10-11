@@ -10,6 +10,7 @@ import { IoIosAlert } from 'react-icons/io'
 import { useParams, useLocation } from 'react-router-dom';
 import Input from '../../components/Input'
 import toastr from 'toastr';
+import { useNavigate } from 'react-router-dom'
 import { fetchWithAuth } from '../../services/apiService';
 
 
@@ -22,7 +23,7 @@ const ViewProfile = () => {
     const [loading, setLoading] = useState(true);
     const { user_id } = useParams();
     const [loadingId, setLoadingId] = useState(null); // Track which user is being processed
-
+    const nav = useNavigate()
     useEffect(() => {
         if (user_id) {
             fetchProfileDetail(user_id);  // Pass the friendId to fetchProfileDetail
@@ -146,7 +147,9 @@ const ViewProfile = () => {
                       />
                     )
                   }
-                    <Button title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
+                    <Button  onClickFunc={() => {
+                            nav(`/messages/${user_id}`);  // Removed the extra curly brace here
+                        }} title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
                     <p className='text-center text-white mt-2'>{ProfileDetail.total_friends} friends</p>
                     <p className='text-center text-white my-2'>Member since {ProfileDetail.member_since}</p>
 

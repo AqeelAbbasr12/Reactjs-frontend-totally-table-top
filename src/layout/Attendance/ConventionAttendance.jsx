@@ -130,7 +130,7 @@ const ConventionAttendance = () => {
             const data = await response.json();
             toastr.success(data.message || 'Attendance updated successfully!');
             console.log('Response from server:', data);
-            nav(-1); 
+            nav(-1);
             // Additional handling on success, like navigation or resetting form
         } catch (error) {
             console.error('Error submitting attendance:', error);
@@ -146,24 +146,22 @@ const ConventionAttendance = () => {
             )}
             <Navbar type={"verified"} />
 
-            
+
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
                 <a href="#" className='text-white'>
-                Account
+                    Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="/user/convention" className='text-white'>
-                Your conventions
+                    Your conventions
                 </a>
-                <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
+                {/* <BsFillCaretDownFill className=' text-lightOrange -rotate-90' /> */}
 
-                <a href="#" className='text-white'>
-                Your conventions Attendance
-                </a>
+
             </div>
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] pt-3 flex justify-center items-center'>
+            <div className='md:px-[2rem] px-[1rem] bg-darkBlue w-[100vw] pt-3 '>
                 <div className='sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar'
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import { BsMicFill } from 'react-icons/bs'
@@ -18,12 +19,13 @@ const Layout = () => {
 
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [announcements, setAnnouncements] = useState([]);
   const nav = useNavigate()
   
 
   useEffect(() => {
     fetchProfile();
-
+    fetchAnnouncements();
   }, []);
 
 
@@ -70,8 +72,43 @@ const Layout = () => {
     }
   };
 
+  const fetchAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWithAuth(`/user/announcement`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setAnnouncements(data);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
+  const renderAnnouncementLogo = (announcement) => {
+    switch (announcement.type) {
+      case 'Expo':
+        return <img src={announcement.promo_logo} alt="Expo Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+      case 'Feature':
+        return <img src={announcement.feature_logo} alt="Feature Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+      case 'Advert':
+        return <img src={announcement.advert_logo} alt="Advert Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+      default:
+        return null;
+    }
+  };
 
 
   return (
@@ -161,34 +198,54 @@ const Layout = () => {
           )}
 
          
+<div className='flex-1 rounded-md px-2 mb-2'>
+          {/* Expo Announcements */}
           <div className='flex items-center gap-x-[1rem] my-[1rem]'>
             <img src={announceImage} alt="" />
-            {/* <div className='w-[2rem] h-[2rem] rounded-full bg-red flex justify-center items-center'>
-              <BsMicFill className='text-white text-lg ml-[-1px]' />
-            </div> */}
-            <p className='text-white'>Annoucements</p>
-
+            <p className='text-white'>Expo Announcements</p>
           </div>
-          <div className="mb-3">
-            <img src={annoucementImage} alt="" className='w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer' />
+          {announcements.filter(a => a.type === 'Expo').map((announcement) => (
+            <div key={announcement.id} className="mb-3">
+              <Link to={`/single/announcement/${announcement.id}`}>
+                {renderAnnouncementLogo(announcement)}
+              </Link>
+            </div>
+          ))}
+
+          {/* Feature Announcements */}
+          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            <img src={announceImage} alt="" />
+            <p className='text-white'>Feature Announcements</p>
           </div>
+          {announcements.filter(a => a.type === 'Feature').map((announcement) => (
+            <div key={announcement.id} className="mb-3">
+              <Link to={`/single/announcement/${announcement.id}`}>
+                {renderAnnouncementLogo(announcement)}
+              </Link>
+            </div>
+          ))}
 
-          <div className="mb-3">
-            <img src={annoucementImage} alt="" className='w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer' />
+          {/* Advert Announcements */}
+          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            <img src={announceImage} alt="" />
+            <p className='text-white'>Advert Announcements</p>
           </div>
+          {announcements.filter(a => a.type === 'Advert').map((announcement) => (
+            <div key={announcement.id} className="mb-3">
+              <Link to={`/single/announcement/${announcement.id}`}>
+                {renderAnnouncementLogo(announcement)}
+              </Link>
+            </div>
+          ))}
 
-          <div className="mb-3">
-            <img src={annoucementImage} alt="" className='w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer' />
-          </div>
-
-          <div className=' bg-lime-50 w-[100%] lg:w-[80%] rounded-md p-5 my-4 flex justify-between items-center'>
-
+          {/* Example of a New Feature notification */}
+          <div className='bg-lime-50 w-[100%] lg:w-[80%] rounded-md p-5 my-4 flex justify-between items-center'>
             <div>
               <p className='text-darkBlue'>New feature added</p>
-              <p className='text-darkBlue my-1'>Your account now support direct messaging</p>
+              <p className='text-darkBlue my-1'>Your account now supports direct messaging</p>
             </div>
-            {/* <img src={connectImage} alt="" /> */}
           </div>
+        </div>
         </div>
 
 

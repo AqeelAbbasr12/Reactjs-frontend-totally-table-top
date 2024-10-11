@@ -25,41 +25,41 @@ const Layout = () => {
       setCurrentUserId(storedUserId);
     }
   }, []);
- // Fetch friends data when currentUserId is available
- useEffect(() => {
-  if (!currentUserId) return;
+  // Fetch friends data when currentUserId is available
+  useEffect(() => {
+    if (!currentUserId) return;
 
-  const fetchFriends = async () => {
-    setLoading(true); // Show loading spinner while fetching
-    try {
-      const response = await fetchWithAuth(`/user/friend`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+    const fetchFriends = async () => {
+      setLoading(true); // Show loading spinner while fetching
+      try {
+        const response = await fetchWithAuth(`/user/friend`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        const filteredFriends = data.filter(friend => {
+          return friend.sender_id === currentUserId || friend.receiver_id === currentUserId;
+        });
+
+        setFriends(filteredFriends);
+      } catch (error) {
+        console.error('Error fetching friends data:', error);
+      } finally {
+        setLoading(false); // Hide loading spinner
       }
+    };
 
-      const data = await response.json();
-
-      const filteredFriends = data.filter(friend => {
-        return friend.sender_id === currentUserId || friend.receiver_id === currentUserId;
-      });
-
-      setFriends(filteredFriends);
-    } catch (error) {
-      console.error('Error fetching friends data:', error);
-    } finally {
-      setLoading(false); // Hide loading spinner
-    }
-  };
-
-  fetchFriends();
-}, [currentUserId]); // Re-run the effect when currentUserId changes
+    fetchFriends();
+  }, [currentUserId]); // Re-run the effect when currentUserId changes
 
   // Apply filtering logic
   const filteredFriends = friends.filter(friend => {
@@ -72,7 +72,7 @@ const Layout = () => {
   });
 
   return (
-    <div className="flex flex-col w-[100vw] overflow-y-auto">
+    <div className="flex flex-col w-full min-h-screen overflow-y-auto bg-darkBlue">
       {/* Loading Spinner */}
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
@@ -80,9 +80,9 @@ const Layout = () => {
         </div>
       )}
       <Navbar type={"verified"} />
-      <div className="pt-[2.3rem] flex justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] md:h-[86rem] w-[100vw] gap-x-6">
+      <div className="flex-1 pt-[2.3rem] flex flex-col md:flex-row md:px-[2rem] gap-x-6">
         <Left />
-        <div className="flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4">
+        <div className="flex-1 rounded-md px-2 mb-2 mt-4">
           <div className="sm:flex justify-between items-center">
             <h1 className="text-white text-2xl font-semibold">Friends ({filteredFriends.length})</h1>
             <div className="flex items-center gap-x-4 sm:mt-0 mt-2">
@@ -104,7 +104,7 @@ const Layout = () => {
                 className={`w-[8rem] h-[2.3rem] rounded-md text-white border ${filter === 'offline' ? 'bg-lightOrange' : 'border-lightOrange'}`}
                 onClickFunc={() => setFilter("offline")} // Set filter to offline
               />
-              <div className="border border-lightOrange flex items-center w-[fit] justify-center h-[2rem]">
+              <div className="border border-lightOrange flex items-center w-fit justify-center h-[2rem]">
                 <IoListSharp
                   onClick={() => setCurrentView("list")}
                   className={`text-white h-full w-[2rem] p-2 cursor-pointer ${currentView === "list" && "bg-lightOrange"}`}
@@ -133,14 +133,14 @@ const Layout = () => {
                     {/* Online/Offline Dot */}
                     <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full ${friend.sender_is_online === "1" && friend.receiver_is_online === "1" ? 'bg-green-500' : 'bg-gray-500'} border-2 border-white`} />
                   </div>
-                  <p className="text-white mt-3 font-bold ">{friend.sender_id === currentUserId ? friend.receiver_first_name : friend.sender_first_name} {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}</p>
+                  <p className="text-white mt-3 font-bold ">
+                    {friend.sender_id === currentUserId ? friend.receiver_first_name : friend.sender_first_name} {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}
+                  </p>
                   <p className="text-white mt-1 font-thin ">@{friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}</p>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
-                    {/* <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="" /> */}
                     <Link to={`/feed/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
                       <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
                     </Link>
-                    {/* Link to messages */}
                     <Link to={`/messages/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
                       <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
                     </Link>
@@ -152,16 +152,15 @@ const Layout = () => {
             <div className="flex-1 md:order-1 order-2 mt-6">
               {filteredFriends.map((friend) => (
                 <div
-                  
                   key={friend.id}
-                  className="rounded-md bg-[#0D2539] cursor-pointer flex justify-between gap-x-5 items-left mb-2 p-3"
+                  className="rounded-md bg-[#0D2539] cursor-pointer flex flex-col md:flex-row justify-between gap-x-5 items-start mb-2 p-3"
                 >
-                  <div className="flex gap-x-12">
+                  <div className="flex gap-x-4 md:gap-x-12 items-center">
                     <div className="relative">
                       <img
                         src={friend.sender_id === currentUserId ? friend.receiver_profile_image : friend.sender_profile_image}
                         alt={friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
-                        className="w-[6rem] h-[6rem] rounded-full"
+                        className="w-[6rem] h-[6rem] md:w-[6rem] md:h-[6rem] rounded-full"
                       />
                       {/* Online/Offline Dot */}
                       <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full ${friend.sender_is_online === "1" && friend.receiver_is_online === "1" ? 'bg-green-500' : 'bg-gray-500'} border-2 border-white`} />
@@ -176,7 +175,7 @@ const Layout = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-x-4 mr-4">
+                  <div className="flex items-center gap-x-2 md:gap-x-4 mr-4 mt-2 md:mt-0">
                     <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="" />
                     <Link to={`/messages/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
                       <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
@@ -185,11 +184,13 @@ const Layout = () => {
                 </div>
               ))}
             </div>
+
           )}
         </div>
       </div>
     </div>
   );
+
 };
 
 export default Layout;

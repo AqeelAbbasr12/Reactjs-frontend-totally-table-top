@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Left from '../../components/Left';
-import FaceImage from '../../assets/face.avif';
+import ConventionImage from '../../assets/convention.jpeg'
 import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { fetchWithAuth } from '../../services/apiService';
@@ -59,106 +59,106 @@ const Layout = () => {
     fetchAgendas(id);
   };
 
-   // Fetch saved attendance data
-   const fetchAttendanceData = async (id) => {
+  // Fetch saved attendance data
+  const fetchAttendanceData = async (id) => {
     try {
-        const response = await fetchWithAuth(`/user/convention_attendance/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            toastr.error(data.message);
-            throw new Error('Network response was not ok');
+      const response = await fetchWithAuth(`/user/convention_attendance/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
+      });
 
+      if (!response.ok) {
         const data = await response.json();
-        // Extract and format the dates from the response
-        // console.log(data);
-        setAttendance(data);
+        toastr.error(data.message);
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      // Extract and format the dates from the response
+      // console.log(data);
+      setAttendance(data);
     } catch (error) {
-        console.error('Error fetching attendance data:', error);
+      console.error('Error fetching attendance data:', error);
     }
-};
-const fetchAgendas = async () => {
-  try {
+  };
+  const fetchAgendas = async () => {
+    try {
       const response = await fetchWithAuth(`/user/convention_agenda`);
       if (!response.ok) throw new Error('Failed to fetch agendas');
 
       const data = await response.json();
       // console.log('Agenda Items', data);
       if (Array.isArray(data)) {
-          setItems(data);  // Only set if the response is an array
+        setItems(data);  // Only set if the response is an array
       } else {
-          console.error('Invalid data structure:', data);
-          setItems([]);
+        console.error('Invalid data structure:', data);
+        setItems([]);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching agendas:', error);
       setItems([]);
-  }
-};
+    }
+  };
 
-const fetchAccommodation = async () => {
-  try {
+  const fetchAccommodation = async () => {
+    try {
       const response = await fetchWithAuth(`/user/convention_accommodation`);
       if (!response.ok) throw new Error('Failed to fetch accommodation');
 
       const data = await response.json();
-      console.log('Agenda Items', data);
+      // console.log('Agenda Items', data);
       if (Array.isArray(data)) {
         setAccommodation(data);  // Only set if the response is an array
       } else {
-          console.error('Invalid data structure:', data);
-          setItems([]);
+        console.error('Invalid data structure:', data);
+        setItems([]);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching agendas:', error);
       setItems([]);
-  }
-};
+    }
+  };
 
-const fetchEvent = async () => {
-  try {
+  const fetchEvent = async () => {
+    try {
       const response = await fetchWithAuth(`/user/convention_event`);
       if (!response.ok) throw new Error('Failed to fetch Event');
 
       const data = await response.json();
-      console.log('Agenda Event', data);
+      // console.log('Agenda Event', data);
       if (Array.isArray(data)) {
         setEvent(data);  // Only set if the response is an array
       } else {
-          console.error('Invalid data structure:', data);
-          setItems([]);
+        console.error('Invalid data structure:', data);
+        setItems([]);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching agendas:', error);
       setItems([]);
-  }
-};
+    }
+  };
 
-const fetchGame = async () => {
-  try {
+  const fetchGame = async () => {
+    try {
       const response = await fetchWithAuth(`/user/convention_game`);
       if (!response.ok) throw new Error('Failed to fetch Game');
 
       const data = await response.json();
-      console.log('Agenda Games', data);
+      // console.log('Agenda Games', data);
       if (Array.isArray(data)) {
         setGame(data);  // Only set if the response is an array
       } else {
-          console.error('Invalid data structure:', data);
-          setGame([]);
+        console.error('Invalid data structure:', data);
+        setGame([]);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching games:', error);
       setGame([]);
-  }
-};
+    }
+  };
   return (
     <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto bg-darkBlue'>
       {loading && (
@@ -180,64 +180,64 @@ const fetchGame = async () => {
             {/* <Button onClickFunc={() => nav("/complete")} title={"Add convention"} className={"min-w-[10rem] min-h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange sm:mt-0 mt-2"} /> */}
           </div>
 
-          <div className='bg-[#0d2539] p-3 w-[100%] h-fit md:h-[100%] rounded-md mt-6 overflow-y-auto overflow-x-auto'>
+          <div className='bg-[#0d2539] p-3 w-full h-fit md:h-auto rounded-md mt-6 overflow-y-auto overflow-x-hidden'>
             {conventions.map((convention) => (
-              <div key={convention.id} className='flex md:flex-nowrap justify-between items-center mb-2'>
+              <div key={convention.id} className='flex flex-col md:flex-row justify-between items-start mb-4 p-2 bg-[#1a2a3a] rounded-md'>
+
                 {/* 1st Column */}
-                <div className='flex items-center gap-x-2 flex-1 min-w-[8rem] md:flex-[1_1_25%]'>
-                  <img src={convention.convention_logo || FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full' />
-                  <p className='text-lightOrange font-semibold text-lg truncate'>{convention.convention_name}</p>
+                <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
+                  <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                  <p className='text-lightOrange font-semibold text-lg break-words'>{convention.convention_name}</p>
                 </div>
 
                 {/* 2nd Column */}
-                <div className='flex-1 min-w-[8rem] md:flex-[1_1_25%]'>
-                  <p className='text-white md:w-[10rem] break-words'>{convention.convention_dates.join(', ')}</p>
+                <div className='flex-1 mb-2 md:mb-0'>
+                  <p className='text-white text-sm break-words'>{convention.convention_dates.join(', ')}</p>
                 </div>
 
                 {/* 3rd Column */}
-                <div className='flex items-center gap-x-3 flex-1 min-w-[8rem] md:flex-[1_1_25%]'>
-                <FaList 
-                    className='cursor-pointer' 
-                    color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
+                  <FaList
+                    className='cursor-pointer'
+                    color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
                   />
-                  <FaBuilding 
-                    className='cursor-pointer' 
-                    color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  <FaBuilding
+                    className='cursor-pointer'
+                    color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
                   />
-                   <FaCalendarAlt 
-                    className='cursor-pointer' 
-                    color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  <FaCalendarAlt
+                    className='cursor-pointer'
+                    color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
                   />
-                  <FaDiceFive 
-                    className='cursor-pointer' 
-                    color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'} 
+                  <FaDiceFive
+                    className='cursor-pointer'
+                    color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
                   />
                 </div>
 
                 {/* 4th Column */}
-                <div className='flex gap-x-3 items-center cursor-pointer relative min-w-[8rem]'>
-                  <p onClick={() => handleShowSub(convention.id)} className='text-white'>Activity</p>
+                <div className='relative flex items-center cursor-pointer'>
+                  <p onClick={() => handleShowSub(convention.id)} className='text-white text-sm mr-1'>Activity</p>
                   <BsFillCaretDownFill className='text-white' onClick={() => handleShowSub(convention.id)} />
-                  {showSub.show && showSub.conventionId === convention.id && (
-                    <div className='absolute top-[2rem] left-[-4rem] bg-black p-4 w-[fit] z-50 rounded-md'>
-                      <Link to={`/convention/attendance/${convention.id}`} className='block mb-1 cursor-pointer text-white text-nowrap'>Your attendance</Link>
 
+                  {showSub.show && showSub.conventionId === convention.id && (
+                    <div className='absolute top-[2rem] left-0 md:left-[-4rem] bg-black p-4 w-48 z-50 rounded-md shadow-lg'>
+                      <Link to={`/convention/attendance/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Your attendance</Link>
                       {attendance && attendance.length > 0 && (
                         <>
-                          <Link to={`/next/agenda/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Agenda</Link>
-                          <Link to={`/accomodation/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Accommodations</Link>
-                          <Link to={`/event/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Events</Link>
-                          <Link to={`/game/sale/${convention.id}`} className='block mb-1 cursor-pointer text-white'>Games for sale</Link>
+                          <Link to={`/next/agenda/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Agenda</Link>
+                          <Link to={`/accomodation/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Accommodations</Link>
+                          <Link to={`/event/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Events</Link>
+                          <Link to={`/game/sale/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Games for sale</Link>
                         </>
                       )}
                     </div>
                   )}
-
-                
                 </div>
               </div>
             ))}
           </div>
+
 
         </div>
 

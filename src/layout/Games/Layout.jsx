@@ -53,11 +53,11 @@ const Layout = () => {
     const handleDelete = async (id) => {
         // Show confirmation dialog
         const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
-        
+
         if (!confirmed) {
             return; // Exit the function if the user cancels
         }
-    
+
         try {
             const response = await fetch(`${API_BASE_URL}/user/convention_game/${id}`, {
                 method: 'DELETE',
@@ -66,7 +66,7 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
-    
+
             if (response.ok) {
                 // Show success message
                 toastr.success('Game deleted successfully!');
@@ -81,15 +81,15 @@ const Layout = () => {
         }
     };
 
-    
+
     const handleMarkAsSold = async (id) => {
         // Show confirmation dialog
         const confirmed = window.confirm("Are you sure you want to Mark this Game as Sold? This action cannot be undone.");
-        
+
         if (!confirmed) {
             return; // Exit the function if the user cancels
         }
-    
+
         try {
             const response = await fetch(`${API_BASE_URL}/user/mark_game_as_sold/${id}`, {
                 method: 'POST',
@@ -101,7 +101,7 @@ const Layout = () => {
                     status: 'sold' // Set the status to 'sold'
                 })
             });
-    
+
             if (response.ok) {
                 // Show success message
                 toastr.success('Game marked as sold successfully!');
@@ -115,7 +115,7 @@ const Layout = () => {
             // Optionally show an error message
         }
     };
-    
+
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
@@ -138,7 +138,7 @@ const Layout = () => {
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="#" className='text-white'>
-                    Your conventions Attendance
+                    Your games
                 </a>
             </div>
 
@@ -152,7 +152,7 @@ const Layout = () => {
                     </div>
 
                     <div class="flex items-center gap-x-4 sm:mt-0 mt-2">
-                        <div className='flex justify-between px-2 items-center h-[2.3rem] rounded-md border border-gray-300 cursor-pointer'>
+                        <div className='flex justify-between px-2 items-center md:lg:h-[2.3rem] rounded-md border border-gray-300 cursor-pointer'>
                             <p className='text-white'>Filter games by…</p>
                             <BsFillCaretDownFill className='text-white ' />
                         </div>
@@ -164,38 +164,62 @@ const Layout = () => {
                 <div className='mt-6'>
                     {
                         games.map((game) => (
-                            <div key={game.id} className='w-[100%] sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4'>
-                                <div className=''>
-                                    <h1 className='text-lg font-semibold text-white'>{game.game_name}</h1>
-                                    <div className='flex gap-x-2 items-center mt-4'>
-                                        <p className='text-white'>{game.game_currency_symbol}{game.game_price}</p>
-                                        <div className='w-[1px] h-[1rem] bg-white'></div>
-                                        <p className='text-white'>{game.game_condition}</p>
+                            <div
+                                key={game.id}
+                                className="w-full sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                            >
+                                <div className="w-full sm:w-auto">
+                                    <h1 className="text-lg font-semibold text-white break-all sm:w-auto">
+                                        {game.game_name}
+                                    </h1>
+                                    <div className="flex gap-x-2 items-center mt-4">
+                                        <p className="text-white">
+                                            {game.game_currency_symbol}
+                                            {game.game_price}
+                                        </p>
+                                        <div className="w-[1px] h-[1rem] bg-white"></div>
+                                        <p className="text-white">{game.game_condition}</p>
                                     </div>
 
-                                    <div className='sm:absolute bottom-6 flex items-center gap-x-3 mt-4 '>
-                                    <Button
-                                        onClickFunc={game.game_status === "publish" ? () => handleMarkAsSold(game.id) : null}
-                                        title={game.game_status === "publish" ? "Mark as sold" : "Sold"}
-                                        className={`w-[8rem] h-[2.3rem] rounded-md text-white ${
-                                            game.game_status === "publish" ? "bg-lightOrange cursor-pointer" : "bg-red cursor-not-allowed"
-                                        }`}
-                                        />
-                                        <Button onClickFunc={() => {
-                                                nav(`/edit/game/${game.id}/convention/${convention_id}`);
-                                            }} title={"Edit"} className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white`} />
+                                    {/* Buttons Section */}
+                                    <div className="sm:absolute bottom-6 flex flex-wrap items-center gap-3 mt-4 sm:gap-3 w-full sm:w-auto">
                                         <Button
-                                        onClickFunc={() => handleDelete(game.id)}
-                                        title={"Delete"}
-                                        className={`w-[8rem] h-[2.3rem] rounded-md border border-red text-white`}
-                                    />
+                                            onClickFunc={
+                                                game.game_status === "publish"
+                                                    ? () => handleMarkAsSold(game.id)
+                                                    : null
+                                            }
+                                            title={game.game_status === "publish" ? "Mark as sold" : "Sold"}
+                                            className={`w-full sm:w-[8rem] h-[2.3rem] rounded-md text-white ${game.game_status === "publish"
+                                                    ? "bg-lightOrange cursor-pointer"
+                                                    : "bg-red cursor-not-allowed"
+                                                }`}
+                                        />
+                                        <Button
+                                            onClickFunc={() => {
+                                                nav(`/edit/game/${game.id}/convention/${convention_id}`);
+                                            }}
+                                            title={"Edit"}
+                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
+                                        />
+                                        <Button
+                                            onClickFunc={() => handleDelete(game.id)}
+                                            title={"Delete"}
+                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
+                                        />
                                     </div>
                                 </div>
 
-                                <div className='sm:mt-0 mt-4'>
-                                    <img src={game.game_image} alt="" className='h-[10rem] sm:absolute top-0 right-0' />
+                                {/* Image Section */}
+                                <div className="sm:mt-0 mt-4 sm:w-auto w-full">
+                                    <img
+                                        src={game.game_image}
+                                        alt=""
+                                        className="h-[10rem] w-full sm:w-auto sm:absolute top-0 right-0 object-cover"
+                                    />
                                 </div>
                             </div>
+
                         ))
                     }
 

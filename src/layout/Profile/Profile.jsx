@@ -14,7 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -53,7 +53,7 @@ const Profile = () => {
         }
 
         const data = await response.json();
-        
+
         setUserData(data);
         setFormData({
           first_name: data.first_name || '',
@@ -72,7 +72,7 @@ const Profile = () => {
 
     fetchUserData();
   }, []);
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -215,7 +215,7 @@ const Profile = () => {
       <Navbar type={"verified"} />
       <div className='pt-[2.3rem] flex justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] md:h-[86rem] w-[100vw] gap-x-6'>
         {/* LEFT */}
-        <Left/>
+        <Left />
 
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4'>
@@ -233,7 +233,7 @@ const Profile = () => {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue text-white ${errors.first_name ? 'border-red' : ''}`}
+                    className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                     placeholder={"Marry"}
                   />
                   {errors.first_name && <p className='text-red'>{errors.first_name.join(', ')}</p>}
@@ -242,7 +242,7 @@ const Profile = () => {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className={`w-[11rem] h-[2.3rem] rounded-md px-3 bg-darkBlue text-white ${errors.last_name ? 'border-red' : ''}`}
+                    className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                     placeholder={"Harward"}
                   />
                   {errors.last_name && <p className='text-red'>{errors.last_name.join(', ')}</p>}
@@ -252,7 +252,7 @@ const Profile = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 text-white ${errors.email ? 'border-red' : ''}`}
+                  className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                   placeholder={"Marry@email.com"}
                 />
                 {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
@@ -261,12 +261,12 @@ const Profile = () => {
                 <p className='mt-2 text-[#F2F0EF] pb-2'>Username cannot be changed</p>
 
                 <div className="pb-4">
-                  <div className="relative w-[23.3rem] h-[2.3rem] mt-3">
+                  <div className="relative  mt-3">
                     <Input
                       name="location"
                       value={formData.location}
                       onChange={handleInputChange}
-                      className={`w-full h-full rounded-md px-3 bg-darkBlue pr-10 text-white ${errors.location ? 'border-red' : ''}`}
+                      className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                       placeholder={"Bristol"}
                     />
                     {errors.location && <p className='text-red'>{errors.location.join(', ')}</p>}
@@ -322,7 +322,7 @@ const Profile = () => {
                 type="password"
                 value={passwordFormData.cpassword}
                 onChange={e => setPasswordFormData({ ...passwordFormData, cpassword: e.target.value })}
-                className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white ${passwordErrors.cpassword ? 'border-red' : ''}`}
+                className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"Current Password"}
               />
               {passwordErrors.cpassword && <p className='text-red'>{passwordErrors.cpassword.join(', ')}</p>}
@@ -332,7 +332,7 @@ const Profile = () => {
                 type="password"
                 value={passwordFormData.npassword}
                 onChange={e => setPasswordFormData({ ...passwordFormData, npassword: e.target.value })}
-                className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white ${passwordErrors.npassword ? 'border-red' : ''}`}
+                className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"New Password"}
               />
               {passwordErrors.npassword && <p className='text-red'>{passwordErrors.npassword.join(', ')}</p>}
@@ -342,7 +342,7 @@ const Profile = () => {
                 type="password"
                 value={passwordFormData.cnfpsw}
                 onChange={e => setPasswordFormData({ ...passwordFormData, cnfpsw: e.target.value })}
-                className={`w-[23.3rem] h-[2.3rem] rounded-md px-3 bg-darkBlue mt-3 block text-white ${passwordErrors.cnfpsw ? 'border-red' : ''}`}
+                className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"Confirm New Password"}
               />
               {passwordErrors.cnfpsw && <p className='text-red'>{passwordErrors.cnfpsw.join(', ')}</p>}

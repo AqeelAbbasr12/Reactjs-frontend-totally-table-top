@@ -94,11 +94,11 @@ const Layout = () => {
     const handleDelete = async (id) => {
         // Show confirmation dialog
         const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
-        
+
         if (!confirmed) {
             return; // Exit the function if the user cancels
         }
-    
+
         try {
             const response = await fetch(`${API_BASE_URL}/user/convention_event/${id}`, {
                 method: 'DELETE',
@@ -107,7 +107,7 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
-    
+
             if (response.ok) {
                 // Show success message
                 toastr.success('Event deleted successfully!');
@@ -121,7 +121,7 @@ const Layout = () => {
             // Optionally show an error message
         }
     };
-    
+
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
             {loading && (
@@ -143,7 +143,7 @@ const Layout = () => {
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="#" className='text-white'>
-                    Your conventions Attendance
+                    Your Events
                 </a>
             </div>
 
@@ -161,49 +161,63 @@ const Layout = () => {
 
                 <div className='mt-6'>
                     {events.map((event) => (
-                        <div key={event.id} className='w-[100%] sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4'>
-                            <div>
-                                <h1 className='text-lg font-semibold text-white'>{event.event_name} on {formatDate(event.event_date).split(',')[0]}</h1>
+                        <div
+                            key={event.id}
+                            className="w-full sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                        >
+                            <div className="w-full sm:w-auto">
+                                <h1 className="text-lg font-semibold text-white break-all">
+                                    {event.event_name} on {formatDate(event.event_date).split(',')[0]}
+                                </h1>
 
-                                <div className='flex items-center gap-x-4'>
-                                    <div className='flex items-center gap-x-3 mt-4'>
-                                        <FaCalendarAlt className='text-lightOrange' />
-                                        <p className='text-white'>{formatDate(event.event_date)}</p>
+                                <div className="flex flex-wrap items-center gap-4 mt-4">
+                                    <div className="flex items-center gap-x-2">
+                                        <FaCalendarAlt className="text-lightOrange" />
+                                        <p className="text-white">{event.event_time}  {formatDate(event.event_date)}</p>
                                     </div>
-                                    <div className='flex items-center gap-x-3 mt-4'>
-                                        <FaLocationDot className='text-lightOrange' />
-                                        <p className='text-white'>{event.event_location}</p>
+                                    <div className="flex items-center gap-x-2">
+                                        <FaLocationDot className="text-lightOrange" />
+                                        <p className="text-white">{event.event_location}</p>
                                     </div>
                                 </div>
 
                                 {/* Mapping through invitations */}
-                                <div className='flex items-center mt-4'>
+                                <div className="flex items-center mt-4">
                                     {event.invitations.map((invitation) => (
                                         <img
+                                            key={invitation.invite_receiver_image} // Add key for each image
                                             src={invitation.invite_receiver_image}
-                                            className='w-[2rem] h-[2rem] rounded-full mr-2'
+                                            className="w-[2rem] h-[2rem] rounded-full mr-2"
+                                            alt="Invitation"
                                         />
                                     ))}
                                 </div>
 
-                                <div className='sm:absolute bottom-6 flex items-center gap-x-3 mt-4'>
+                                {/* Buttons Section */}
+                                <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
                                     <Button
                                         onClickFunc={() => nav(`/edit/event/${event.id}/convention/${convention_id}`)}
                                         title={"Edit"}
-                                        className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white`}
+                                        className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
                                     />
                                     <Button
                                         onClickFunc={() => handleDelete(event.id)}
                                         title={"Delete"}
-                                        className={`w-[8rem] h-[2.3rem] rounded-md border border-red text-white`}
+                                        className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
                                     />
                                 </div>
                             </div>
 
-                            <div className='sm:mt-0 mt-4'>
-                                <img src={event.event_image || ConventionImage} alt="" className='h-[10rem] sm:absolute top-0 right-0' />
+                            {/* Image Section */}
+                            <div className="sm:mt-0 mt-4 w-full sm:w-auto">
+                                <img
+                                    src={event.event_image || ConventionImage}
+                                    alt=""
+                                    className="h-[10rem] w-full sm:w-auto object-cover"
+                                />
                             </div>
                         </div>
+
                     ))}
                 </div>
 

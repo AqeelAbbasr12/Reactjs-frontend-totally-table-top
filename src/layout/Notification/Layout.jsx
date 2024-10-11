@@ -162,7 +162,7 @@ const Layout = () => {
     };
 
     return (
-        <div className="flex flex-col w-[100vw] overflow-y-auto bg-[#0d2539]">
+        <div className="flex flex-col w-full min-h-screen overflow-y-auto bg-[#0d2539]">
             <Navbar type={"verified"} />
             <div className="pt-[2.3rem] flex justify-between items-start md:flex-row flex-col bg-darkBlue md:px-[2rem] flex-1 h-[fit] md:h-[86rem] w-[100vw] gap-x-6">
                 <div className="flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4">
