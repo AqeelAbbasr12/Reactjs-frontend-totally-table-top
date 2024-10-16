@@ -80,7 +80,7 @@ const ResetLayout = () => {
                             onChange={handleChange}
                         />
                        
-                        {errors.form && <p className="text-red-500 mt-2">{errors.form}</p>}
+                        {errors.form && <p className="text-red mt-2">{errors.form}</p>}
                         <Button type='submit' title={"Set new password & login"} className={"mt-3 bg-lightOrange text-white rounded-md h-[2.3rem] w-full"} />
                     </form>
                     
