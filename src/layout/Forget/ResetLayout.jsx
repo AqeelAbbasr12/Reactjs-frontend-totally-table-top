@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from '../../components/Navbar'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -8,7 +8,7 @@ import toastr from 'toastr';
 const ResetLayout = () => {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const [email, setEmail] = useState('');
-    const [formData, setFormData] = useState({ password: ''});
+    const [formData, setFormData] = useState({ password: '' });
     const [errors, setErrors] = useState({});
     const nav = useNavigate();
 
@@ -48,9 +48,8 @@ const ResetLayout = () => {
                 localStorage.removeItem('resetEmail'); // Clear email after success
                 nav("/");
             } else {
-                if (result.error) {
-                    toastr.error(result.error);
-                    setErrors(result.error);
+                if (result.errors) {
+                    setErrors(result.errors);
                 } else {
                     setErrors({ form: result.error || "Error Occurred" });
                 }
@@ -79,11 +78,13 @@ const ResetLayout = () => {
                             value={formData.password}
                             onChange={handleChange}
                         />
-                       
-                        {errors.form && <p className="text-red mt-2">{errors.form}</p>}
+
+                        {errors.password && <p className='text-red'>{errors.password}</p>}
+
+                        {errors.form && <p className='text-red'>{errors.form}</p>}
                         <Button type='submit' title={"Set new password & login"} className={"mt-3 bg-lightOrange text-white rounded-md h-[2.3rem] w-full"} />
                     </form>
-                    
+
                 </div>
             </div>
 
