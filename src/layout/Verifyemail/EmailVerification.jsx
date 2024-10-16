@@ -27,7 +27,9 @@ const EmailVerification = () => {
         }
       } catch (error) {
         toastr.error('An error occurred while verifying your email.');
-        
+        setTimeout(() => {
+          navigate('/'); // Redirect to homepage after a successful verification
+        }, 2000); // 2 seconds delay
       } finally {
         setLoading(false); // Stop loading spinner after request is done
       }
