@@ -38,7 +38,7 @@ const Layout = () => {
             const data = await response.json();
             setConvention(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -76,7 +76,7 @@ const Layout = () => {
                 toastr.error('Failed to save the agenda');
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
+            // console.error('Error submitting form:', error);
             toastr.error('An error occurred while saving the agenda');
         }
     };

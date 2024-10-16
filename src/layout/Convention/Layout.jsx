@@ -44,7 +44,7 @@ const Layout = () => {
       const data = await response.json();
       setConvention(data);
     } catch (error) {
-      console.error('Error fetching conventions data:', error);
+      // console.error('Error fetching conventions data:', error);
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ const Layout = () => {
       // console.log(data);
       setAttendance(data);
     } catch (error) {
-      console.error('Error fetching attendance data:', error);
+      // console.error('Error fetching attendance data:', error);
     }
   };
   const fetchAgendas = async () => {
@@ -94,11 +94,11 @@ const Layout = () => {
       if (Array.isArray(data)) {
         setItems(data);  // Only set if the response is an array
       } else {
-        console.error('Invalid data structure:', data);
+        // console.error('Invalid data structure:', data);
         setItems([]);
       }
     } catch (error) {
-      console.error('Error fetching agendas:', error);
+      // console.error('Error fetching agendas:', error);
       setItems([]);
     }
   };
@@ -113,11 +113,11 @@ const Layout = () => {
       if (Array.isArray(data)) {
         setAccommodation(data);  // Only set if the response is an array
       } else {
-        console.error('Invalid data structure:', data);
+        // console.error('Invalid data structure:', data);
         setItems([]);
       }
     } catch (error) {
-      console.error('Error fetching agendas:', error);
+      // console.error('Error fetching agendas:', error);
       setItems([]);
     }
   };
@@ -132,11 +132,11 @@ const Layout = () => {
       if (Array.isArray(data)) {
         setEvent(data);  // Only set if the response is an array
       } else {
-        console.error('Invalid data structure:', data);
+        // console.error('Invalid data structure:', data);
         setItems([]);
       }
     } catch (error) {
-      console.error('Error fetching agendas:', error);
+      // console.error('Error fetching agendas:', error);
       setItems([]);
     }
   };
@@ -151,11 +151,11 @@ const Layout = () => {
       if (Array.isArray(data)) {
         setGame(data);  // Only set if the response is an array
       } else {
-        console.error('Invalid data structure:', data);
+        // console.error('Invalid data structure:', data);
         setGame([]);
       }
     } catch (error) {
-      console.error('Error fetching games:', error);
+      // console.error('Error fetching games:', error);
       setGame([]);
     }
   };

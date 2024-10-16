@@ -57,7 +57,7 @@ const Layout = () => {
             setConvention(data);
             console.log(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -83,7 +83,7 @@ const Layout = () => {
             // console.log(data);
             setAccommodation(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -109,11 +109,11 @@ const Layout = () => {
 
                 // Change to the desired route
             } else {
-                console.error('Failed to delete accommodation', response.statusText);
+                // console.error('Failed to delete accommodation', response.statusText);
                 // Optionally show an error message
             }
         } catch (error) {
-            console.error('Error deleting accommodation:', error);
+            // console.error('Error deleting accommodation:', error);
             // Optionally show an error message
         }
 

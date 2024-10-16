@@ -31,14 +31,32 @@ function Convention({ onSearch, Convention, search, path }) {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-  
+
     if (option === 'Sort by A to Z') {
       setConvention([...conventions].sort((a, b) => a.name.localeCompare(b.name)));
-    } else if (option === 'Sort by Z to A') {
+    }
+    else if (option === 'Sort by Z to A') {
       setConvention([...conventions].sort((a, b) => b.name.localeCompare(a.name)));
     }
-    // Add more sorting logic as needed
+    else if (option === 'Sort by Oldest') {
+      setConvention(
+        [...conventions].sort((a, b) => extractFirstDate(a.date) - extractFirstDate(b.date))
+      );
+    }
+    else if (option === 'Sort by Latest') {
+      setConvention(
+        [...conventions].sort((a, b) => extractFirstDate(b.date) - extractFirstDate(a.date))
+      );
+    }
   };
+
+  // Helper function to extract the first date from the string
+  const extractFirstDate = (dateString) => {
+    const [firstDate] = dateString.split(','); // Extract the first date
+    return new Date(firstDate.trim()); // Convert to Date object
+  };
+
+
   // Function to handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -83,7 +101,7 @@ function Convention({ onSearch, Convention, search, path }) {
       setConvention(data);
       console.log(data);
     } catch (error) {
-      console.error('Error fetching conventions data:', error);
+      // console.error('Error fetching conventions data:', error);
     } finally {
       setLoading(false);
     }
@@ -116,7 +134,7 @@ function Convention({ onSearch, Convention, search, path }) {
         // Optionally, trigger a UI update here if needed
 
       } catch (error) {
-        console.error('Error updating convention status:', error);
+        // console.error('Error updating convention status:', error);
         toastr.error('Error updating convention status:');
       }
     };
@@ -138,7 +156,7 @@ function Convention({ onSearch, Convention, search, path }) {
         fetchConventions();
       } else {
         toastr.error("Failed to delete convention");
-        console.error("Failed to delete convention");
+        // console.error("Failed to delete convention");
       }
     }
 
@@ -150,7 +168,7 @@ function Convention({ onSearch, Convention, search, path }) {
   const filteredConventions = conventions.filter((convention) =>
     convention.name.toLowerCase().includes(searchInput.toLowerCase()) // Modify field name (e.g., `name`) based on your convention data structure
   );
-  
+
   return (
     <div className="bg-[#102F47] w-full opacity-100 min-h-screen">
       {loading && (
@@ -159,34 +177,34 @@ function Convention({ onSearch, Convention, search, path }) {
         </div>
       )}
       <Navbar />
-      <div className='w-11/12 max-w-screen-2xl mx-auto pt-[10rem] md:pt-40 text-white py-8'>
+      <div className='w-11/12 max-w-screen-2xl mx-auto pt-[6rem] md:pt-[10rem] text-white py-8'>
         <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-6 items-center">
           {/* Title */}
-          <p className='text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-palanquin-dark leading-normal md:leading-snug lg:leading-snug'>
+          <p className='text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-palanquin-dark leading-snug'>
             Conventions
           </p>
 
-          {/* Sort by + Search + Create New Button */}
+          {/* Search + Sort + Create New Button */}
           <div className='flex flex-col md:flex-row md:items-center gap-y-4 gap-x-6 justify-start 2xl:justify-end mt-6 md:mt-0'>
-            {/* Search */}
+
+            {/* Search Input */}
             <div className='w-full md:w-auto'>
-              <form action="" className='flex items-center'>
+              <form className='flex items-center'>
                 <input
                   value={searchInput}
                   onChange={handleSearchChange}
                   type="search"
-                  id="search"
                   placeholder='Search Convention'
-                  className='bg-[#102F47] border-b-2 border-[#707070] w-full lg:w-96 xl:w-96 rounded-none focus:outline-none text-lg md:text-xl lg:text-2xl py-2 md:py-3 tracking-custom'
+                  className='bg-[#102F47] border-b-2 border-[#707070] w-full lg:w-96 rounded-none focus:outline-none text-lg md:text-xl lg:text-2xl py-2 md:py-3 tracking-custom'
                 />
               </form>
             </div>
 
-            {/* Sort by Dropdown */}
-            <div className='relative'>
+            {/* Sort Dropdown */}
+            <div className='relative w-full md:w-auto'>
               <button
                 type='button'
-                className='w-full lg:w-72 border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
+                className='w-full lg:w-72 border-2 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 px-5 flex items-center justify-between'
                 onClick={toggleDropdown}
               >
                 {selectedOption}
@@ -194,7 +212,7 @@ function Convention({ onSearch, Convention, search, path }) {
               </button>
 
               {isDropdownOpen && (
-                <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
+                <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg'>
                   <ul>
                     <li
                       className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
@@ -204,19 +222,33 @@ function Convention({ onSearch, Convention, search, path }) {
                     </li>
                     <li
                       className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('Sort by...')}
+                      onClick={() => handleOptionClick('Sort by Z to A')}
                     >
-                      Sort by...
+                      Sort by Z to A
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Oldest')}
+                    >
+                      Sort by Oldest
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Latest')}
+                    >
+                      Sort by Latest
                     </li>
                   </ul>
                 </div>
               )}
             </div>
 
+
             {/* Create New Button */}
             <div className='w-full md:w-auto'>
               <button
-                type='button' onClick={() => { navigate(`/admin/create/convention`) }}
+                type='button'
+                onClick={() => navigate(`/admin/create/convention`)}
                 className='w-full lg:w-52 border-2 border-[#F77F02] text-lg md:text-xl lg:text-2xl py-2 md:py-3 px-4'
               >
                 Create new
@@ -225,6 +257,7 @@ function Convention({ onSearch, Convention, search, path }) {
           </div>
         </div>
       </div>
+
 
 
       {/* table */}

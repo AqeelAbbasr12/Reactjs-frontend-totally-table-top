@@ -108,7 +108,7 @@ function Edit() {
                 dates: data.dates || [], // Safely update formData
             }));
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             ``
             setLoading(false);
@@ -239,7 +239,7 @@ function Edit() {
             navigate(`/admin/conventions`);
 
         } catch (error) {
-            console.error('Error creating convention:', error);
+            // console.error('Error creating convention:', error);
             toastr.error('Failed to create convention.');
         }
     };

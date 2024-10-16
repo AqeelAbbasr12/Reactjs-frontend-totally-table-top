@@ -40,10 +40,10 @@ const NextAgenda = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setConvention(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -65,10 +65,10 @@ const NextAgenda = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setAgenda(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }

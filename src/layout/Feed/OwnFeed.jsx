@@ -113,7 +113,7 @@ const OwnFeed = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setOwnFeed(data);
             }
 
@@ -190,13 +190,13 @@ const OwnFeed = () => {
 
             <div className='flex justify-between items-center md:px-[2rem] px-[1rem] mt-4'>
                 <h1 className='text-xl text-white font-semibold'>{user.username}'s feed</h1>
-                <div className='flex items-center gap-x-4'>
+                {/* <div className='flex items-center gap-x-4'>
 
                     <div className='border border-[#707070] w-[13rem] h-[2.3rem] rounded-md bg-transparent flex justify-center items-center gap-x-4 cursor-pointer'>
                         <p className='text-white'>Showing all updates</p>
                         <FaCaretDown className='text-white' />
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>

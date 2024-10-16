@@ -52,7 +52,7 @@ const Layout = () => {
 
         setFriends(filteredFriends);
       } catch (error) {
-        console.error('Error fetching friends data:', error);
+        // console.error('Error fetching friends data:', error);
       } finally {
         setLoading(false); // Hide loading spinner
       }
@@ -118,36 +118,46 @@ const Layout = () => {
           </div>
 
           {currentView === "grid" ? (
-            <div className="flex justify-between items-center gap-[2rem] flex-wrap mt-6">
-              {filteredFriends.map((friend) => (
-                <div
-                  key={friend.id}
-                  className="bg-[#0d2539] w-[15rem] h-[15rem] rounded-md p-3 flex justify-center items-center flex-col"
-                >
-                  <div className="relative flex justify-center items-center">
-                    <img
-                      src={friend.sender_id === currentUserId ? friend.receiver_profile_image : friend.sender_profile_image}
-                      alt={friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
-                      className="w-[6rem] h-[6rem] rounded-full"
-                    />
-                    {/* Online/Offline Dot */}
-                    <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full ${friend.sender_is_online === "1" && friend.receiver_is_online === "1" ? 'bg-green-500' : 'bg-gray-500'} border-2 border-white`} />
-                  </div>
-                  <p className="text-white mt-3 font-bold ">
-                    {friend.sender_id === currentUserId ? friend.receiver_first_name : friend.sender_first_name} {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}
-                  </p>
-                  <p className="text-white mt-1 font-thin ">@{friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}</p>
-                  <div className="flex justify-center items-center gap-x-4 mt-4">
-                    <Link to={`/feed/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
-                      <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
-                    </Link>
-                    <Link to={`/messages/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
-                      <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
-                    </Link>
-                  </div>
+            <div className="flex justify-center sm:justify-between items-center gap-[2rem] flex-wrap mt-6">
+            {filteredFriends.map((friend) => (
+              <div
+                key={friend.id}
+                className="bg-[#0d2539] w-[15rem] h-[15rem] rounded-md p-3 flex justify-center items-center flex-col"
+              >
+                <div className="relative flex justify-center items-center">
+                  <img
+                    src={friend.sender_id === currentUserId ? friend.receiver_profile_image : friend.sender_profile_image}
+                    alt={friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
+                    className="w-[6rem] h-[6rem] rounded-full"
+                  />
+                  {/* Online/Offline Dot */}
+                  <div
+                    className={`absolute bottom-0 right-0 w-4 h-4 rounded-full ${
+                      friend.sender_is_online === "1" && friend.receiver_is_online === "1"
+                        ? 'bg-green-500'
+                        : 'bg-gray-500'
+                    } border-2 border-white`}
+                  />
                 </div>
-              ))}
-            </div>
+                <p className="text-white mt-3 font-bold">
+                  {friend.sender_id === currentUserId ? friend.receiver_first_name : friend.sender_first_name}{" "}
+                  {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}
+                </p>
+                <p className="text-white mt-1 font-thin">
+                  @{friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
+                </p>
+                <div className="flex justify-center items-center gap-x-4 mt-4">
+                  <Link to={`/feed/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
+                    <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
+                  </Link>
+                  <Link to={`/messages/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
+                    <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          
           ) : (
             <div className="flex-1 md:order-1 order-2 mt-6">
               {filteredFriends.map((friend) => (
@@ -176,7 +186,9 @@ const Layout = () => {
                   </div>
 
                   <div className="flex items-center gap-x-2 md:gap-x-4 mr-4 mt-2 md:mt-0">
-                    <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="" />
+                  <Link to={`/feed/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
+                      <img className="w-[20px] h-[20px]" src={IconUsrCircle} alt="Profile" />
+                    </Link>
                     <Link to={`/messages/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
                       <img className="w-[20px] h-[20px]" src={IconMessage} alt="Send Message" />
                     </Link>

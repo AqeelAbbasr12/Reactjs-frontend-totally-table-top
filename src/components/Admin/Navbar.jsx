@@ -64,7 +64,7 @@ function Navbar() {
         // Navigate to the home page
         navigate('/admin-login');
     } catch (error) {
-        console.error('Error during logout:', error);
+        // console.error('Error during logout:', error);
         toastr.error('Error logging out');
     }
 };

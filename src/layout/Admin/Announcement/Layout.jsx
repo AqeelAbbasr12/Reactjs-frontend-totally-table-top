@@ -18,6 +18,7 @@ function Convention({ onSearch }) {
   const [searchInput, setSearchInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncement] = useState([]);
+  const [originalAnnouncements, setOriginalAnnouncements] = useState([]);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toggleDropdown = () => {
@@ -34,12 +35,27 @@ function Convention({ onSearch }) {
     setIsDropdownOpen(false);
   
     if (option === 'Sort by A to Z') {
-      setAnnouncement([...announcements].sort((a, b) => a.name.localeCompare(b.name)));
+      setAnnouncement([...originalAnnouncements].sort((a, b) => a.name.localeCompare(b.name))); // Sort original announcements
     } else if (option === 'Sort by Z to A') {
-      setAnnouncement([...announcements].sort((a, b) => b.name.localeCompare(a.name)));
+      setAnnouncement([...originalAnnouncements].sort((a, b) => b.name.localeCompare(a.name))); // Sort original announcements
+    } else {
+      // Reset to original announcements before filtering
+      let filteredAnnouncements = [...originalAnnouncements]; // Start with original announcements
+  
+      if (option === 'Sort by Expo') {
+        filteredAnnouncements = filteredAnnouncements.filter(a => a.type === 'Expo'); // Filter by Expo
+      } else if (option === 'Sort by Feature') {
+        filteredAnnouncements = filteredAnnouncements.filter(a => a.type === 'Feature'); // Filter by Feature
+      } else if (option === 'Sort by Advert') {
+        filteredAnnouncements = filteredAnnouncements.filter(a => a.type === 'Advert'); // Filter by Advert
+      } else if (option === 'Show All') {
+        filteredAnnouncements = [...originalAnnouncements]; // Show all announcements
+      }
+  
+      setAnnouncement(filteredAnnouncements); // Update the displayed announcements
     }
-    // Add more sorting logic as needed
   };
+  
   // Function to handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -85,8 +101,9 @@ function Convention({ onSearch }) {
       const data = await response.json();
       setAnnouncement(data);
       console.log(data);
+      setOriginalAnnouncements(data);
     } catch (error) {
-      console.error('Error fetching conventions data:', error);
+      // console.error('Error fetching conventions data:', error);
     } finally {
       setLoading(false);
     }
@@ -119,7 +136,7 @@ function Convention({ onSearch }) {
         // Optionally, trigger a UI update here if needed
 
       } catch (error) {
-        console.error('Error updating convention status:', error);
+        // console.error('Error updating convention status:', error);
         toastr.error('Error updating convention status:');
       }
     };
@@ -141,7 +158,7 @@ function Convention({ onSearch }) {
         fetchAnnoucements();
       } else {
         toastr.error("Failed to delete convention");
-        console.error("Failed to delete convention");
+        // console.error("Failed to delete convention");
       }
     }
 
@@ -185,34 +202,59 @@ function Convention({ onSearch }) {
 
             {/* Sort by Dropdown */}
             <div className='relative'>
-              <button
-                type='button'
-                className='w-full lg:w-72 border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
-                onClick={toggleDropdown}
-              >
-                {selectedOption}
-                <img src={drop} alt="" />
-              </button>
+  <button
+    type='button'
+    className='w-full lg:w-72 border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
+    onClick={toggleDropdown}
+  >
+    {selectedOption}
+    <img src={drop} alt="" />
+  </button>
 
-              {isDropdownOpen && (
-                <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
-                  <ul>
-                    <li
-                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('Sort by A to Z')}
-                    >
-                      Sort by A to Z
-                    </li>
-                    <li
-                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('Sort by...')}
-                    >
-                      Sort by...
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
+  {isDropdownOpen && (
+    <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
+      <ul>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Sort by A to Z')}
+        >
+          Sort by A to Z
+        </li>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Sort by Z to A')}
+        >
+          Sort by Z to A
+        </li>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Sort by Expo')}
+        >
+          Sort by Expo
+        </li>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Sort by Feature')}
+        >
+          Sort by Feature
+        </li>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Sort by Advert')}
+        >
+          Sort by Advert
+        </li>
+        <li
+          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+          onClick={() => handleOptionClick('Show All')}
+        >
+          Show All
+        </li>
+      </ul>
+    </div>
+  )}
+</div>
+
 
             {/* Create New Button */}
             <div className='w-full md:w-auto'>

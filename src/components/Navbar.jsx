@@ -50,7 +50,7 @@ const Navbar = ({ type }) => {
                 const decodedToken = jwtDecode(token);
                 currentUserId = decodedToken.sub || decodedToken.sub;
             } catch (error) {
-                console.error('Error decoding JWT:', error);
+                // console.error('Error decoding JWT:', error);
             }
         }
         // Function to handle new message
@@ -84,7 +84,7 @@ const Navbar = ({ type }) => {
 
                 setUser(data);
             } catch (error) {
-                console.error('Error fetching user data:', error);
+                // console.error('Error fetching user data:', error);
             }
         };
 
@@ -115,7 +115,7 @@ const Navbar = ({ type }) => {
             // Navigate to the home page
             navigate('/');
         } catch (error) {
-            console.error('Error during logout:', error);
+            // console.error('Error during logout:', error);
             toastr.error('Error logging out');
         }
     };
@@ -164,7 +164,7 @@ const Navbar = ({ type }) => {
                 conventions: data.conventions || []
             });
         } catch (error) {
-            console.error('Error fetching suggestions:', error);
+            // console.error('Error fetching suggestions:', error);
         } finally {
             setLoading(false);
         }

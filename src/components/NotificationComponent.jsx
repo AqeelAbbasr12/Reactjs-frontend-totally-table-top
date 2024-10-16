@@ -13,7 +13,7 @@ const NotificationComponent = ({ onNotificationCountChange }) => {
         const decodedToken = jwtDecode(token);
         currentUserId = decodedToken.sub || decodedToken.sub;
       } catch (error) {
-        console.error('Error decoding JWT:', error);
+        // console.error('Error decoding JWT:', error);
       }
     }
 
@@ -30,6 +30,7 @@ const NotificationComponent = ({ onNotificationCountChange }) => {
       const currentUserIdNum = parseInt(currentUserId);
       // console.log(data.notification.user_id);
       localStorage.setItem('notification', data.notification.user_id);
+      console.log(data);
 
       if (userIdFromNotification === currentUserIdNum) {
         switch (data.notification.type) {
@@ -38,6 +39,9 @@ const NotificationComponent = ({ onNotificationCountChange }) => {
             break;
           case 'accept_friend_request':
             toastr.success('Your friend request has been accepted!');
+            break;
+            case 'post':
+            toastr.success('Someone Created a New Post!');
             break;
           default:
             toastr.success(data.notification.content);

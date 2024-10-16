@@ -62,7 +62,7 @@ const EditAccommodation = () => {
 
             setImagePreview(data.location_image);
         } catch (error) {
-            console.error('Error fetching accommodation data:', error);
+            // console.error('Error fetching accommodation data:', error);
         } finally {
             setLoading(false);
         }
@@ -181,7 +181,7 @@ const EditAccommodation = () => {
             nav(`/accomodation/${convention_id}`);
     
         } catch (error) {
-            console.error('Error updating accommodation:', error);
+            // console.error('Error updating accommodation:', error);
             toastr.error('Failed to update accommodation.');
         }
     };
@@ -204,14 +204,14 @@ const EditAccommodation = () => {
                 <span className='text-white'>Your conventions</span>
             </div>
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
-                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
+                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[48rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>
                             <FaList className='text-white' />
                         </div>
                     </div>
-                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Edit accommodation</h1>
+                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Update accommodation</h1>
 
                     <Input
                         name="location_name"
@@ -291,7 +291,7 @@ const EditAccommodation = () => {
                     </div>
 
                     <div className='flex justify-center items-center mt-4'>
-                        <Button type="submit" title={"Save Accommodation"} className={`w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange`} />
+                        <Button type="submit" title={"Update Accommodation"} className={`w-[14rem] h-[2.3rem] rounded-md text-white bg-lightOrange`} />
                     </div>
                 </form>
             </div>

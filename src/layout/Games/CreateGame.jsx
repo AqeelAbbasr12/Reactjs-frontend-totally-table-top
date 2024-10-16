@@ -108,7 +108,7 @@ const CreateGame = () => {
       formDataToSend.append('game_image', formData.game_image);
     }
 
-    console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
+    // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
 
     try {
       const response = await fetch(`${API_BASE_URL}/user/convention_game`, {
@@ -119,11 +119,11 @@ const CreateGame = () => {
         body: formDataToSend,
       });
 
-      console.log('Form data submitted:', formData);
+      // console.log('Form data submitted:', formData);
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Success response:", result); // Log the success response
+        // console.log("Success response:", result); // Log the success response
         toastr.success('Game added successfully!');
 
         // Clear form fields, image preview, and form errors
@@ -143,7 +143,7 @@ const CreateGame = () => {
 
       if (!response.ok) {
         const result = await response.json();
-        console.log("Error response:", result); // Log the error response
+        // console.log("Error response:", result); // Log the error response
         if (result.errors) {
           setFormErrors(result.errors);
         } else {
@@ -156,7 +156,7 @@ const CreateGame = () => {
 
 
     } catch (error) {
-      console.error('Error creating accommodation:', error);
+      // console.error('Error creating accommodation:', error);
       toastr.error('Failed to create accommodation.');
     }
   };
@@ -180,7 +180,7 @@ const CreateGame = () => {
 
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">
         <form
-          className="sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
+          className="sm:w-[50%] w-[100%] h-[50rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
           onSubmit={handleSubmit}
         >
           <div className="flex justify-center items-center">

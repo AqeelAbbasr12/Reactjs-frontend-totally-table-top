@@ -56,7 +56,7 @@ const Layout = () => {
         setCurrentStep(3); // Move to step 2 if all properties exist
       }
       // Friends
-      if (data.total_friends > 0) {
+      if (data.total_friends_for_step > 0) {
         setCurrentStep(4); // Move to step 4 if all properties exist
       }
 

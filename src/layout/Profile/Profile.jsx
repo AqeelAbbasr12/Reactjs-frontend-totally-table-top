@@ -287,31 +287,39 @@ const Profile = () => {
                   {errors.bio && <p className='text-red'>{errors.bio.join(', ')}</p>}
                 </div>
 
-                <div className='pb-2'>
-                  <Button title={"Save changes"} type="submit" className={`w-[8rem] h-[2.3rem] text-white bg-[#F77F00] rounded-md`} />
+                <div className="pb-2 flex justify-center sm:justify-start">
+                  <Button
+                    title={"Save changes"}
+                    type="submit"
+                    className="w-[8rem] h-[2.3rem] text-white bg-[#F77F00] rounded-md"
+                  />
                 </div>
+
               </div>
 
-              <div className='sm:mt-0 mt-3'>
+              <div className="flex flex-col items-center sm:items-start sm:mt-0 mt-3">
                 <img
-                  src={profilePictureURL || formData.profilePicture || FaceImage} // Use the URL if available, otherwise fallback to dynamic or default image
+                  src={profilePictureURL || formData.profilePicture || FaceImage}
                   alt="Profile"
-                  className='w-[10rem] h-[10rem] rounded-full'
+                  className="w-[10rem] h-[10rem] rounded-full"
                 />
+
                 <input
                   type="file"
                   id="profilePictureInput"
-                  className="hidden" // Hide the default file input
+                  className="hidden"
                   onChange={handleProfilePictureChange}
                   accept="image/png, image/jpeg"
                 />
+
                 <label
-                  htmlFor="profilePictureInput" // Associate the label with the input
-                  className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                  htmlFor="profilePictureInput"
+                  className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
                 >
                   Upload Picture
                 </label>
               </div>
+
             </div>
           </form>
           <form className='w-[100%] h-[fit] mt-4 bg-[#0d2539] rounded-md p-3' onSubmit={handlePasswordSubmit}>
@@ -348,7 +356,7 @@ const Profile = () => {
               {passwordErrors.cnfpsw && <p className='text-red'>{passwordErrors.cnfpsw.join(', ')}</p>}
             </div>
 
-            <div className='pb-4'>
+            <div className='pb-2 flex justify-center sm:justify-start'>
               <Button title={"Update password"} type="submit" className={`w-[10rem] h-[2.3rem] text-white bg-[#F77F00] rounded-md mt-2`} />
             </div>
           </form>

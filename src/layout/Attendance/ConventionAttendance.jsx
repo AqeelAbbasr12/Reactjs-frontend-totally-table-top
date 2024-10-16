@@ -40,9 +40,9 @@ const ConventionAttendance = () => {
 
             const data = await response.json();
             setConvention(data);
-            console.log(data);
+            // console.log(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -74,7 +74,7 @@ const ConventionAttendance = () => {
 
             setSelectedDates(selectedDatesOptions);
         } catch (error) {
-            console.error('Error fetching attendance data:', error);
+            // console.error('Error fetching attendance data:', error);
         }
     };
 
@@ -129,11 +129,11 @@ const ConventionAttendance = () => {
             // Handle successful response
             const data = await response.json();
             toastr.success(data.message || 'Attendance updated successfully!');
-            console.log('Response from server:', data);
+            // console.log('Response from server:', data);
             nav(-1);
             // Additional handling on success, like navigation or resetting form
         } catch (error) {
-            console.error('Error submitting attendance:', error);
+            // console.error('Error submitting attendance:', error);
         }
     };
 
@@ -161,7 +161,7 @@ const ConventionAttendance = () => {
 
             </div>
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue w-[100vw] pt-3 '>
+            <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
                 <div className='sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>

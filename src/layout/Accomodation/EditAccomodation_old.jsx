@@ -40,7 +40,7 @@ const EditAccommodation = () => {
               console.log(data);
               setAccommodation(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -155,7 +155,7 @@ const EditAccommodation = () => {
             nav(`/accomodation/${convention_id}`);
     
         } catch (error) {
-            console.error('Error creating accommodation:', error);
+            // console.error('Error creating accommodation:', error);
             toastr.error('Failed to create accommodation.');
         }
     };

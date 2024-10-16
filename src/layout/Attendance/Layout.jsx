@@ -54,7 +54,7 @@ const Layout = () => {
             setConvention(data);
             //   console.log(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -81,7 +81,7 @@ const Layout = () => {
             // console.log(data);
             setAttendance(data); // Expecting data to be an array of attendance records
         } catch (error) {
-            console.error('Error fetching attendance data:', error);
+            // console.error('Error fetching attendance data:', error);
         }
     };
 
@@ -121,10 +121,10 @@ const Layout = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            console.log(data);
+            // console.log(data);
             setEvents(data);
         } catch (error) {
-            console.error('Error fetching Events data:', error);
+            // console.error('Error fetching Events data:', error);
         } finally {
             setLoading(false); // Hide loading spinner
         }
@@ -150,7 +150,7 @@ const Layout = () => {
             // console.log(data);
             setAccommodation(data);
         } catch (error) {
-            console.error('Error fetching conventions data:', error);
+            // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
@@ -173,10 +173,10 @@ const Layout = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            console.log(data);
+            // console.log(data);
             setGames(data);
         } catch (error) {
-            console.error('Error fetching Events data:', error);
+            // console.error('Error fetching Events data:', error);
         } finally {
             setLoading(false); // Hide loading spinner
         }
@@ -207,7 +207,7 @@ const Layout = () => {
             </div>
 
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3'>
+            <div className='md:px-[2rem] h-[50rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3'>
 
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>

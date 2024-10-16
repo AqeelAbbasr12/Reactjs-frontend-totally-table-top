@@ -41,10 +41,10 @@ const Layout = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            console.log(data);
+            // console.log(data);
             setGames(data);
         } catch (error) {
-            console.error('Error fetching Events data:', error);
+            // console.error('Error fetching Events data:', error);
         } finally {
             setLoading(false); // Hide loading spinner
         }
@@ -72,11 +72,11 @@ const Layout = () => {
                 toastr.success('Game deleted successfully!');
                 fetchGames(convention_id); // Refresh the events list
             } else {
-                console.error('Failed to delete game', response.statusText);
+                // console.error('Failed to delete game', response.statusText);
                 // Optionally show an error message
             }
         } catch (error) {
-            console.error('Error deleting game:', error);
+            // console.error('Error deleting game:', error);
             // Optionally show an error message
         }
     };
@@ -107,11 +107,11 @@ const Layout = () => {
                 toastr.success('Game marked as sold successfully!');
                 fetchGames(convention_id); // Refresh the game list
             } else {
-                console.error('Failed to update game', response.statusText);
+                // console.error('Failed to update game', response.statusText);
                 // Optionally show an error message
             }
         } catch (error) {
-            console.error('Error updating game:', error);
+            // console.error('Error updating game:', error);
             // Optionally show an error message
         }
     };
@@ -152,10 +152,10 @@ const Layout = () => {
                     </div>
 
                     <div class="flex items-center gap-x-4 sm:mt-0 mt-2">
-                        <div className='flex justify-between px-2 items-center md:lg:h-[2.3rem] rounded-md border border-gray-300 cursor-pointer'>
+                        {/* <div className='flex justify-between px-2 items-center md:lg:h-[2.3rem] rounded-md border border-gray-300 cursor-pointer'>
                             <p className='text-white'>Filter games by…</p>
                             <BsFillCaretDownFill className='text-white ' />
-                        </div>
+                        </div> */}
                         <Button onClickFunc={() => { nav(`/new/game/${convention_id}`) }} title={"Add New"} className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-3`} />
                     </div>
                 </div>

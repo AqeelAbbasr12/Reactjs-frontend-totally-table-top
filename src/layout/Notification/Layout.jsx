@@ -32,7 +32,7 @@ const Layout = () => {
             }
 
             const data = await response.json();
-            console.log('Notifications', data);
+            // console.log('Notifications', data);
             setNotificationData(data);
         } catch (error) {
             console.error('Error fetching notifications:', error);

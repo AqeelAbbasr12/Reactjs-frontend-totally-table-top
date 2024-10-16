@@ -111,10 +111,10 @@ const ViewProfile = () => {
                         )
                     }
 
-                    <div className='border border-[#707070] w-[13rem] h-[2.3rem] rounded-md bg-transparent flex justify-center items-center gap-x-4 cursor-pointer'>
+                    {/* <div className='border border-[#707070] w-[13rem] h-[2.3rem] rounded-md bg-transparent flex justify-center items-center gap-x-4 cursor-pointer'>
                         <p className='text-white'>Showing all updates</p>
                         <FaCaretDown className='text-white' />
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -123,7 +123,7 @@ const ViewProfile = () => {
                     <img src={ProfileDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[40%] md:left-[34%] w-[6rem] h-[6rem] rounded-full' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{ProfileDetail.first_name} {ProfileDetail.last_name}</p>
                     <p className='text-center text-white mt-2'>@{ProfileDetail.username}</p>
-{/* 
+                    {/* 
                     <Button
                         title={
                             loadingId === user_id ? 'Sending...' : 'Add As Friend'
@@ -133,23 +133,23 @@ const ViewProfile = () => {
                         loading={loadingId === user_id} // Show loading indicator for the specific button
                     /> */}
                     {
-                    ProfileDetail.friend_status === 'pending' ? (
-                      <Button
-                        title={'Request Sent'}
-                        className={`w-full h-[2.3rem] text-white rounded-md border border-lightOrange my-2`}
-                      />
-                    ) : (
-                      <Button
-                        title={loadingId === user_id ? 'Sending...' : 'Add As Friend'}
-                        className={`w-full h-[2.3rem] text-white rounded-md bg-lightOrange my-2`}
-                        onClickFunc={() => sendFriendRequest(user_id)} // Attach click handler
-                        loading={loadingId === user_id} // Show loading indicator for the specific button
-                      />
-                    )
-                  }
-                    <Button  onClickFunc={() => {
-                            nav(`/messages/${user_id}`);  // Removed the extra curly brace here
-                        }} title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
+                        ProfileDetail.friend_status === 'pending' ? (
+                            <Button
+                                title={'Request Sent'}
+                                className={`w-full h-[2.3rem] text-white rounded-md border border-lightOrange my-2`}
+                            />
+                        ) : (
+                            <Button
+                                title={loadingId === user_id ? 'Sending...' : 'Add As Friend'}
+                                className={`w-full h-[2.3rem] text-white rounded-md bg-lightOrange my-2`}
+                                onClickFunc={() => sendFriendRequest(user_id)} // Attach click handler
+                                loading={loadingId === user_id} // Show loading indicator for the specific button
+                            />
+                        )
+                    }
+                    <Button onClickFunc={() => {
+                        nav(`/messages/${user_id}`);  // Removed the extra curly brace here
+                    }} title={currentLocation.includes("ownFeed") ? "Edit Profile" : "Message"} className={`w-full h-[2.3rem] border border-white text-white rounded-md my-2`} />
                     <p className='text-center text-white mt-2'>{ProfileDetail.total_friends} friends</p>
                     <p className='text-center text-white my-2'>Member since {ProfileDetail.member_since}</p>
 

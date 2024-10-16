@@ -33,7 +33,7 @@ const Layout = () => {
       const data = await response.json();
       setAnnouncements(data);
     } catch (error) {
-      console.error('Error fetching announcements:', error);
+      // console.error('Error fetching announcements:', error);
     } finally {
       setLoading(false);
     }

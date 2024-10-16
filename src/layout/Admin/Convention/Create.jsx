@@ -178,7 +178,7 @@ function Create() {
             navigate(`/admin/conventions`);
 
         } catch (error) {
-            console.error('Error creating convention:', error);
+            // console.error('Error creating convention:', error);
             toastr.error('Failed to create convention.');
         }
     };
@@ -282,7 +282,7 @@ function Create() {
                                         placeholder='Convention description…'
                                         rows="5"
                                         onChange={handleChange}
-                                        style={{ minHeight: '150px', overflow: 'hidden' }}
+                                        style={{ minHeight: '150px' }}
                                     />
                                 </div>
                                 {formErrors.description && (

@@ -26,11 +26,11 @@ const DraggableList = ({ convention_id }) => {
             if (Array.isArray(data)) {
                 setItems(data);
             } else {
-                console.error('Invalid data structure:', data);
+                // console.error('Invalid data structure:', data);
                 setItems([]);
             }
         } catch (error) {
-            console.error('Error fetching agendas:', error);
+            // console.error('Error fetching agendas:', error);
             setItems([]);
         }
     };
@@ -58,7 +58,8 @@ const DraggableList = ({ convention_id }) => {
             setItems(prevItems => prevItems.filter(item => item.id !== id));
             toastr.success(data.message);
         } catch (error) {
-            console.error('Error deleting agenda item:', error);
+            // console.error('Error deleting agenda item:', error);
+            toastr.success(error);
         }
     };
 
@@ -107,7 +108,7 @@ const DraggableList = ({ convention_id }) => {
 
             toastr.success('Priorities updated successfully');
         } catch (error) {
-            console.error('Error updating priorities:', error);
+            // console.error('Error updating priorities:', error);
             toastr.error('An error occurred while updating priorities.');
         }
 
@@ -162,7 +163,7 @@ const DraggableList = ({ convention_id }) => {
 
             toastr.success('Priorities updated successfully');
         } catch (error) {
-            console.error('Error updating priorities:', error);
+            // console.error('Error updating priorities:', error);
             toastr.error('An error occurred while updating priorities.');
         }
 
@@ -212,7 +213,7 @@ const DraggableList = ({ convention_id }) => {
                 toastr.error('Failed to save the agenda');
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
+            // console.error('Error submitting form:', error);
             toastr.error('An error occurred while saving the agenda');
         }
     };
@@ -260,7 +261,7 @@ const DraggableList = ({ convention_id }) => {
                     value={agendaItem}
                     onChange={handleInputChange}
                 />
-                <div className='flex justify-end'>
+                <div className='mt-4 flex justify-end'>
                 <Button
                         title={"Save Item"}
                         className={`w-[9rem] h-[2.3rem] rounded-md text-white bg-lightOrange`}

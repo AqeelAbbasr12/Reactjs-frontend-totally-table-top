@@ -211,7 +211,7 @@ function Create() {
             navigate(`/admin/announcement`);
 
         } catch (error) {
-            console.error('Error creating convention:', error);
+            // console.error('Error creating convention:', error);
             toastr.error('Failed to create convention.');
         }
     };

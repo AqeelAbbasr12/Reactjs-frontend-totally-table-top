@@ -203,7 +203,7 @@ const Layout = () => {
 
                                 {/* Your Updates Dropdown */}
                                 <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap'>
-                                    <h1 className='text-white text-md font-semibold'>Your updates</h1>
+                                    <h1 className='text-white text-md font-semibold'>Your Post update</h1>
                                     <div className='w-full sm:w-[12rem] mt-2 sm:mt-0'>
                                         <select
                                             id="your_updates"

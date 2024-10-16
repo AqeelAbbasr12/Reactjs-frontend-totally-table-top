@@ -47,7 +47,7 @@ const FriendFeed = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setFriendDetail(data);
         } catch (error) {
             console.error('Error fetching friends data:', error);
@@ -73,7 +73,7 @@ const FriendFeed = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setFriendFeed(data);
             }
 
@@ -148,7 +148,7 @@ const FriendFeed = () => {
                 )
             }
 
-            <div className='flex justify-between items-center md:px-[2rem] px-[1rem] mt-4'>
+            {/* <div className='flex justify-between items-center md:px-[2rem] px-[1rem] mt-4'>
                 <h1 className='text-xl text-white font-semibold'>{friendDetail.username}’s feed</h1>
                 <div className='flex items-center gap-x-4'>
                     {
@@ -162,7 +162,7 @@ const FriendFeed = () => {
                         <FaCaretDown className='text-white' />
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
@@ -202,12 +202,15 @@ const FriendFeed = () => {
                     }
                     {
                         friendFeeds.map((feedItem) => (
-                            <div key={feedItem.id} className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
+                            <div key={feedItem.id} className=''>
                                 {(() => {
                                     switch (feedItem.type) {
                                         case 'convention_attendance':
                                             return (
                                                 <>
+                                                 {feedItem.convention_attendance.attendance_privacy === 'friends_only' && (
+                                                          <>
+                                                          <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-center'>
@@ -240,13 +243,19 @@ const FriendFeed = () => {
                                                         </div>
                                                         <FaRegStar className='text-white' />
                                                     </div>
+                                                    </div>
                                                 </>
+                                                 )}
+                                                      </>
                                             );
 
 
                                         case 'post_creation':
                                             return (
                                                 <>
+                                                 {feedItem.post.post_privacy === 'friends_only' && (
+                                                          <>
+                                                <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
@@ -268,13 +277,19 @@ const FriendFeed = () => {
                                                         </div>
                                                         <FaRegStar className='text-white text-sm md:text-base' />
                                                     </div>
+                                                    </div>
                                                 </>
+                                                )}
+                                                      </>
                                             );
 
 
                                         case 'convention_accommodation':
                                             return (
                                                 <>
+                                                {feedItem.convention_accommodation.accommodation_privacy === 'friends_only' && (
+                                                          <>
+                                                <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-start md:items-center gap-x-2'>
@@ -306,13 +321,19 @@ const FriendFeed = () => {
                                                         </div>
                                                         <FaRegStar className='text-white text-sm md:text-base' />
                                                     </div>
+                                                    </div>
                                                 </>
+                                                )}
+                                                      </>
                                             );
 
 
                                         case 'profile_update':
                                             return (
                                                 <>
+                                                {feedItem.user.profile_privacy === 'friends_only' && (
+                                                          <>
+                                                <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
@@ -334,13 +355,17 @@ const FriendFeed = () => {
                                                         </div>
                                                         <FaRegStar className='text-white text-sm md:text-base' />
                                                     </div>
+                                                    </div>
                                                 </>
+                                                )}
+                                                      </>
                                             );
 
 
                                         case 'convention_game':
                                             return (
                                                 <>
+                                                <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
@@ -371,6 +396,7 @@ const FriendFeed = () => {
                                                             <p className='text-white text-sm md:text-base'>0</p>
                                                         </div>
                                                         <FaRegStar className='text-white text-sm md:text-base' />
+                                                    </div>
                                                     </div>
                                                 </>
                                             );

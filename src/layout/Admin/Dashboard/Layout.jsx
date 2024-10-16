@@ -33,7 +33,7 @@ function Layout() {
       // setConvention(data);
       console.log(data);
     } catch (error) {
-      console.error('Error fetching conventions data:', error);
+      // console.error('Error fetching conventions data:', error);
     } finally {
       setLoading(false);
     }

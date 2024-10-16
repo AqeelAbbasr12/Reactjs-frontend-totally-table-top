@@ -42,7 +42,7 @@ const Layout = () => {
       const data = await response.json();
       setUserData(data);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      // console.error('Error fetching user data:', error);
     } finally {
       setLoading(false); // Hide loading spinner
     }
@@ -72,7 +72,7 @@ const Layout = () => {
       // Fetch updated user data
       fetchUserData();
     } catch (error) {
-      console.error('Error sending friend request:', error);
+      // console.error('Error sending friend request:', error);
       toastr.error('An error occurred while sending the friend request.');
     } finally {
       setLoadingId(null); // Reset loading state
@@ -113,7 +113,7 @@ const Layout = () => {
           </div>
 
           {currentView === "grid" ? (
-            <div className="flex justify-between items-center gap-[2rem] flex-wrap mt-6">
+            <div className="flex justify-center sm:justify-between items-center gap-[2rem] flex-wrap mt-6">
               {userData.map((user) => (
                 <div
                   key={user.id}
@@ -163,7 +163,7 @@ const Layout = () => {
               {userData.map((user) => (
                 <div
                   onClick={() => {
-                    console.log(user.id); // Example action on click
+                    // console.log(user.id); // Example action on click
                   }}
                   key={user.id}
                   className="rounded-md bg-[#0D2539] cursor-pointer flex flex-col md:flex-row justify-between gap-4 mb-2 p-3"

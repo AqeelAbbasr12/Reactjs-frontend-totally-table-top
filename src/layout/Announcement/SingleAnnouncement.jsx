@@ -44,7 +44,7 @@ const SingleAnnouncement = () => {
             // console.log(data);
             setAnnouncements(data);
         } catch (error) {
-            console.error('Error fetching Events data:', error);
+            // console.error('Error fetching Events data:', error);
         } finally {
             setLoading(false); // Hide loading spinner
         }
