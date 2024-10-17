@@ -112,7 +112,7 @@ const Layout = () => {
 
 
   return (
-    <div className='flex flex-col w-[100vw]'>
+    <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-darkBlue'>
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
           <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
