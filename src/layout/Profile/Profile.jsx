@@ -297,7 +297,7 @@ const Profile = () => {
 
               </div>
 
-              <div className="flex flex-col items-center sm:items-start sm:mt-0 mt-3">
+              <div className="flex flex-col items-center sm:mt-0 mt-3">
                 <img
                   src={profilePictureURL || formData.profilePicture || FaceImage}
                   alt="Profile"
