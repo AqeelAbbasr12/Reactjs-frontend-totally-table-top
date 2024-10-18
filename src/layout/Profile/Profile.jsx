@@ -143,57 +143,51 @@ const Profile = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-
-    // Create a FormData object for password fields
-    const passwordFormDataToSend = new FormData();
-    passwordFormDataToSend.append('current_password', passwordFormData.cpassword);
-    passwordFormDataToSend.append('new_password', passwordFormData.npassword);
-    passwordFormDataToSend.append('new_password_confirmation', passwordFormData.cnfpsw); // Adjust if necessary
-
-    // Log the form data to inspect its contents
-    for (let pair of passwordFormDataToSend.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
+  
+    // Create a plain JavaScript object with the necessary fields
+    const dataToSend = {
+      current_password: passwordFormData.cpassword,
+      new_password: passwordFormData.npassword,
+      new_password_confirmation: passwordFormData.cnfpsw, // Laravel expects this for confirmation
+    };
+  
+    console.log("Data being sent:", dataToSend); // Debugging log
+  
     try {
       const response = await fetchWithAuth(`/user/update-password`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          // No Content-Type header needed for FormData
+          'Content-Type': 'application/json', // Use JSON format
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
-        body: passwordFormDataToSend,
+        body: JSON.stringify(dataToSend), // Send as JSON
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok) {
-        toastr.success('Password updated successfully');
+        toastr.success('Password successfully updated');
         setPasswordFormData({
           cpassword: '',
           npassword: '',
-          cnfpsw: ''
+          cnfpsw: '',
         });
         setPasswordErrors({});
       } else {
-        // Check if the error is a direct message
         if (result.errors) {
           if (typeof result.errors === 'string') {
             toastr.error(result.errors);
           } else {
-            // Handle validation errors if `errors` is an object
             const mappedErrors = {
               cpassword: result.errors.current_password || [],
               npassword: result.errors.new_password || [],
-              cnfpsw: result.errors.confirm_password || [] // Adjust if necessary
+              cnfpsw: result.errors.new_password_confirmation || [],
             };
             setPasswordErrors(mappedErrors);
           }
         } else if (result.message) {
-          // Handle other types of errors if `message` is present
           toastr.error(result.message);
         } else {
-          // Handle a generic failure message
           toastr.error('Password update failed');
         }
       }
@@ -203,6 +197,8 @@ const Profile = () => {
       setPasswordErrors({ form: 'An error occurred. Please try again.' });
     }
   };
+  
+  
 
 
   return (
@@ -329,7 +325,7 @@ const Profile = () => {
                 name="cpassword"
                 type="password"
                 value={passwordFormData.cpassword}
-                onChange={e => setPasswordFormData({ ...passwordFormData, cpassword: e.target.value })}
+                onChange={handlePasswordInputChange}
                 className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"Current Password"}
               />
@@ -339,7 +335,7 @@ const Profile = () => {
                 name="npassword"
                 type="password"
                 value={passwordFormData.npassword}
-                onChange={e => setPasswordFormData({ ...passwordFormData, npassword: e.target.value })}
+                onChange={handlePasswordInputChange}
                 className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"New Password"}
               />
@@ -349,7 +345,7 @@ const Profile = () => {
                 name="cnfpsw"
                 type="password"
                 value={passwordFormData.cnfpsw}
-                onChange={e => setPasswordFormData({ ...passwordFormData, cnfpsw: e.target.value })}
+                onChange={handlePasswordInputChange}
                 className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                 placeholder={"Confirm New Password"}
               />

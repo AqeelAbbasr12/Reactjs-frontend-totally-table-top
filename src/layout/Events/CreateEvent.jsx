@@ -224,6 +224,7 @@ const CreateEvent = () => {
                 event_description: '',
                 event_location_phone: '',
                 event_space: '',
+                event_image: null,
             });
             setImagePreview(null);
             setFormErrors({});

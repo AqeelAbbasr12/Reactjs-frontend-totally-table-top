@@ -610,7 +610,9 @@ function Edit() {
 
                                         <div>
                                             {formData.feature === "1" && ( // Use formData.feature to conditionally render "FEATURED"
-                                                <span className='font-mulish text-sm leading-7 md:text-lg md:leading-28 text-black bg-[#F3C15F] me-2 w-[104px]'>FEATURED</span>
+                                                <button className="font-mulish text-sm leading-7 md:text-lg md:leading-28 text-black bg-[#F3C15F] me-2 w-[104px]">
+                                                    Featured
+                                                </button>
                                             )}
                                             <div
                                                 className={`relative inline-flex items-center h-[36px] rounded-full w-[54px] transition-colors duration-300 ease-in-out ${formData.feature === "1" ? 'bg-yellow-500' : 'bg-gray-300'}`}

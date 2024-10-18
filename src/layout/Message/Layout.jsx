@@ -378,7 +378,7 @@ const Layout = () => {
                                                         />
                                                         <div>
                                                             {/* Message bubble */}
-                                                            <div className="bg-darkBlue p-2 text-white rounded-md max-w-[70%] md:max-w-[100%]">
+                                                            <div className="bg-darkBlue p-2 text-white rounded-md max-w-[100%] md:max-w-[100%]">
                                                                 <p className="break-words">{message.content}</p>
                                                             </div>
                                                             {/* Conditionally render timestamp only if created_at exists */}
@@ -393,7 +393,7 @@ const Layout = () => {
                                                     <>
                                                         <div>
                                                             {/* Message bubble */}
-                                                            <div className="bg-darkBlue p-2 text-white rounded-md max-w-[70%] md:max-w-[100%] text-right">
+                                                            <div className="bg-darkBlue p-2 text-white rounded-md max-w-[100%] md:max-w-[100%] text-right">
                                                                 <p className="break-words">{message.content}</p>
                                                             </div>
                                                             {/* Conditionally render timestamp only if created_at exists */}
@@ -442,7 +442,7 @@ const Layout = () => {
                                 </div>
                             )}
                         </div>
-                        );
+                    
                     </div>
                 </div>
             </div>

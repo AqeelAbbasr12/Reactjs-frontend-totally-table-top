@@ -224,7 +224,7 @@ const CreateGame = () => {
                 id="price"
                 value={formData.price}
                 onChange={handleChange}
-                className="block w-full py-1.5 pl-7 pr-20 h-[3rem] w-[100%] cursor-pointer rounded-md text-white px-4 outline-none bg-darkBlue"
+                className="block w-full py-1.5 pl-7 pr-20 h-[3rem] rounded-md text-white px-4 outline-none bg-darkBlue"
                 placeholder="price..."
               />
               <div className="absolute inset-y-0 right-0 flex items-center text-white">

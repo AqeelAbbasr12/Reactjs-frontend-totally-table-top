@@ -361,7 +361,7 @@ const EditEvent = () => {
                             className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                         >
                             <option value="" disabled>Select number of spaces</option>
-                            {[1, 2, 3, 4].map((space) => (
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9,10].map((space) => (
                                 <option key={space} value={space}>
                                     {space}
                                 </option>
