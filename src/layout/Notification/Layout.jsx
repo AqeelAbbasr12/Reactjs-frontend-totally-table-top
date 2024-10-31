@@ -101,7 +101,7 @@ const Layout = () => {
     };
 
     const acceptInvitation = async (invitationId, notificationId) => {
-        console.log(invitationId);
+        // console.log(invitationId);
         setLoadingId(invitationId); // Set loading for the specific button
         try {
             const response = await fetchWithAuth(`/user/invitations/${invitationId}`, {
@@ -131,7 +131,7 @@ const Layout = () => {
         }
     };
     const ignoreInvitation = async (invitationId, notificationId) => {
-        console.log(invitationId);
+        // console.log(invitationId);
         setLoadingId(invitationId); // Set loading for the specific button
         try {
             const response = await fetchWithAuth(`/user/invitations/${invitationId}`, {
@@ -173,7 +173,7 @@ const Layout = () => {
                             <div key={index} className="bg-[#0d2539] w-[100%] rounded-md p-3 flex justify-between sm:flex-row flex-col mb-3">
                                 <div className="flex items-center gap-x-4">
                                     <div className="w-[1.5rem] h-[1.5rem] rounded-full bg-red"></div>
-                                    <img src={notification.user_image || FaceImage} alt="" className="w-[3rem] h-[3rem] rounded-full" />
+                                    <img src={notification.user_image || FaceImage} alt="" className="w-[3rem] h-[3rem] rounded-full object-cover" />
                                     <p className="text-white"><span className="text-lightOrange">{notification.sender_name}</span> {notification.content}</p>
                                 </div>
                                 {/* condition applied */}
@@ -198,6 +198,26 @@ const Layout = () => {
                                     </div>
                                  )} 
                                  {notification.type === 'invitation' && (
+                                    <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
+                                        <Button
+                                            title={
+                                                loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'
+                                            }
+                                            className="text-white cursor-pointer"
+                                            onClickFunc={() => ignoreInvitation(notification.invitation_id, notification.id)}
+                                            loading={loadingId === notification.invitation_id}
+                                        />
+                                        <Button
+                                            title={
+                                                loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'
+                                            }
+                                            className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
+                                            onClickFunc={() => acceptInvitation(notification.invitation_id, notification.id)}
+                                            loading={loadingId === notification.invitation_id}
+                                        />
+                                    </div>
+                                 )} 
+                                 {notification.type === 'table_request' && (
                                     <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
                                         <Button
                                             title={

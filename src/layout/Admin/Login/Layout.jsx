@@ -18,9 +18,9 @@ const Layout = () => {
   const [errors, setErrors] = useState({});
   
   const data = [
-    "Sell and buy board games in advance of a convention",
-    "Create an agenda for each stand you wish to visit",
-    "Instantly invite friends to play games and events"
+    "Sell your games before arriving at conventions",
+    "Create, find and schedule games to play",
+    "Simple to use agenda to list the stands you wish to visit"
   ];
 
   const handleChange = (e) => {
@@ -96,7 +96,6 @@ const Layout = () => {
               </div>
             ))
           }
-          <p className='text-white mt-[1rem] md:flex hidden'>Find out more</p>
         </div>
 
         <div className='md:w-[40%] w-[100%] md:block flex justify-center items-center flex-col'>

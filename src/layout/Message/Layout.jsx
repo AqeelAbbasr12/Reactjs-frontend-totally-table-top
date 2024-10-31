@@ -185,6 +185,7 @@ const Layout = () => {
         setLoading(true);
         if (!replyContent.trim()) {
             toastr.warning('Please write a message before replying.');
+            setLoading(false);
             return;
         }
 
@@ -284,7 +285,7 @@ const Layout = () => {
            // Construct the pre-written message using 'data' directly
         if (data && data.name && data.convention_name) {
             const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
-            console.log(preWrittenMessage);
+            // console.log(preWrittenMessage);
             setReplyContent(preWrittenMessage)
             
         } else {
@@ -331,7 +332,7 @@ const Layout = () => {
                                             <img
                                                 src={friend.profile_image || FaceImage}
                                                 alt="Friend"
-                                                className='w-[2rem] h-[2rem] rounded-full'
+                                                className='w-[2rem] h-[2rem] rounded-full object-cover'
                                             />
                                             <div className='flex items-center gap-x-2'>
                                                 <p className='text-white'>{friend.user_name}</p>
@@ -374,7 +375,7 @@ const Layout = () => {
                                                         <img
                                                             src={message.sender_image || FaceImage}
                                                             alt="Sender"
-                                                            className="w-[2rem] h-[2rem] rounded-full"
+                                                            className="w-[2rem] h-[2rem] rounded-full object-cover"
                                                         />
                                                         <div>
                                                             {/* Message bubble */}
@@ -406,7 +407,7 @@ const Layout = () => {
                                                         <img
                                                             src={message.sender_image || FaceImage}
                                                             alt="Receiver"
-                                                            className="w-[2rem] h-[2rem] rounded-full"
+                                                            className="w-[2rem] h-[2rem] rounded-full object-cover"
                                                         />
                                                     </>
                                                 )}
@@ -421,7 +422,7 @@ const Layout = () => {
                                         <img
                                             src={currentUser.profile_picture || FaceImage}
                                             alt="Current User"
-                                            className='w-[2rem] h-[2rem] rounded-full'
+                                            className='w-[2rem] h-[2rem] rounded-full object-cover'
                                         />
                                         <textarea
                                             type="text"
@@ -433,7 +434,7 @@ const Layout = () => {
                                     </div>
 
                                     <div className='flex justify-between items-center m-3'>
-                                        <Button title={"Reply"} className={`w-[8rem] h-[2.3rem] rounded-md text-white bg-[#E78530]`} onClickFunc={handleReply} />
+                                        <Button title={"Send"} className={`w-[8rem] h-[2.3rem] rounded-md text-white bg-[#E78530]`} onClickFunc={handleReply} />
                                     </div>
                                 </>
                             ) : (

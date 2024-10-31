@@ -150,7 +150,7 @@ const Layout = () => {
                                                         <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                             <div className='flex items-center gap-x-3'>
                                                                 <div className='flex items-center'>
-                                                                    <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                    <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                     <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
                                                                 </div>
                                                                 <div>
@@ -192,7 +192,7 @@ const Layout = () => {
                                                     <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                         <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                             <div className='flex items-center gap-x-3'>
-                                                                <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                 <div>
                                                                     <p className='text-white'>
                                                                         <span className='text-lightOrange'>{feedItem.post.user_name}</span> posted on update:
@@ -232,7 +232,7 @@ const Layout = () => {
                                                                   <img 
                                                                     src={feedItem.convention_accommodation.profile_picture || FaceImage} 
                                                                     alt="" 
-                                                                    className='w-[3rem] h-[3rem] rounded-full' 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
                                                                   />
                                                                   {/* UKGE Placeholder */}
                                                                   <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
@@ -307,10 +307,10 @@ const Layout = () => {
                                                             <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                                 <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                                     <div className='flex items-start md:items-center gap-x-3'>
-                                                                        <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                        <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                         <div className='mt-2 md:mt-0'>
                                                                             <p className='text-white'>
-                                                                                <span className='text-lightOrange'>{feedItem.user.user_name} </span> updated thier <span className='text-lightOrange'>Profile</span>
+                                                                                <span className='text-lightOrange'>{feedItem.user.user_name} </span> updated their <span className='text-lightOrange'>Profile</span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -336,7 +336,7 @@ const Layout = () => {
                                                                 <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                                         <div className='flex items-start md:items-center gap-x-3'>
-                                                                            <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                            <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                             <div className='mt-2 md:mt-0'>
                                                                                 <p className='text-white'>
                                                                                     <span className='text-lightOrange'>{feedItem.convention_game.user_name} </span> is selling

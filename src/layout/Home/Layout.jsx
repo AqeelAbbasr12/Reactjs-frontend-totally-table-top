@@ -21,7 +21,7 @@ const Layout = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [announcements, setAnnouncements] = useState([]);
   const nav = useNavigate()
-  
+
 
   useEffect(() => {
     fetchProfile();
@@ -151,7 +151,7 @@ const Layout = () => {
                 </div>
               </div>
               <div className='flex items-center gap-x-4'>
-                <Button onClickFunc={() => nav("/user/convention")} title={"All conventions"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                <Button onClickFunc={() => nav("/upcoming-convention")} title={"All conventions"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
               </div>
             </div>
           )}
@@ -188,7 +188,7 @@ const Layout = () => {
 
               <div className='ml-5 mt-3'>
                 <p className='text-white'>Setup complete</p>
-                <p className='text-white my-2'>You,ve completed the setup, enjoy your account!</p>
+                <p className='text-white my-2'>You’ve completed the setup, enjoy your account!</p>
               </div>
 
               <div className='flex items-center gap-x-4'>
@@ -197,55 +197,48 @@ const Layout = () => {
             </div>
           )}
 
-         
-<div className='flex-1 rounded-md px-2 mb-2'>
-          {/* Expo Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
-            <img src={announceImage} alt="" />
-            <p className='text-white'>Expo Announcements</p>
-          </div>
-          {announcements.filter(a => a.type === 'Expo').map((announcement) => (
-            <div key={announcement.id} className="mb-3">
-              <Link to={`/single/announcement/${announcement.id}`}>
-                {renderAnnouncementLogo(announcement)}
-              </Link>
-            </div>
-          ))}
 
-          {/* Feature Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
-            <img src={announceImage} alt="" />
-            <p className='text-white'>Feature Announcements</p>
-          </div>
-          {announcements.filter(a => a.type === 'Feature').map((announcement) => (
-            <div key={announcement.id} className="mb-3">
-              <Link to={`/single/announcement/${announcement.id}`}>
-                {renderAnnouncementLogo(announcement)}
-              </Link>
+          <div className='flex-1 rounded-md px-2 mb-2'>
+            {/* Expo Announcements */}
+            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+              <img src={announceImage} alt="" />
+              <p className='text-white'>Expo Announcements</p>
             </div>
-          ))}
+            {announcements.filter(a => a.type === 'Expo').map((announcement) => (
+              <div key={announcement.id} className="mb-3">
+                <Link to={`/single/announcement/${announcement.id}`}>
+                  {renderAnnouncementLogo(announcement)}
+                </Link>
+              </div>
+            ))}
 
-          {/* Advert Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
-            <img src={announceImage} alt="" />
-            <p className='text-white'>Advert Announcements</p>
-          </div>
-          {announcements.filter(a => a.type === 'Advert').map((announcement) => (
-            <div key={announcement.id} className="mb-3">
-              <Link to={`/single/announcement/${announcement.id}`}>
-                {renderAnnouncementLogo(announcement)}
-              </Link>
+            {/* Feature Announcements */}
+            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+              <img src={announceImage} alt="" />
+              <p className='text-white'>Feature Announcements</p>
             </div>
-          ))}
+            {announcements.filter(a => a.type === 'Feature').map((announcement) => (
+              <div key={announcement.id} className="mb-3">
+                <Link to={`/single/announcement/${announcement.id}`}>
+                  {renderAnnouncementLogo(announcement)}
+                </Link>
+              </div>
+            ))}
 
-          {/* Example of a New Feature notification */}
-          <div className='bg-lime-50 w-[100%] lg:w-[80%] rounded-md p-5 my-4 flex justify-between items-center'>
-            <div>
-              <p className='text-darkBlue'>New feature added</p>
-              <p className='text-darkBlue my-1'>Your account now supports direct messaging</p>
+            {/* Advert Announcements */}
+            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+              <img src={announceImage} alt="" />
+              <p className='text-white'>Advert Announcements</p>
             </div>
+            {announcements.filter(a => a.type === 'Advert').map((announcement) => (
+              <div key={announcement.id} className="mb-3">
+                <Link to={`/single/announcement/${announcement.id}`}>
+                  {renderAnnouncementLogo(announcement)}
+                </Link>
+              </div>
+            ))}
+
           </div>
-        </div>
         </div>
 
 

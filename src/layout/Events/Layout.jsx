@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import { FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BsFillCaretDownFill } from 'react-icons/bs'
@@ -42,7 +41,7 @@ const Layout = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            console.log(data);
+            // console.log(data);
             setEvents(data);
         } catch (error) {
             console.error('Error fetching Events data:', error);
@@ -68,7 +67,7 @@ const Layout = () => {
 
             const data = await response.json();
             setConvention(data);
-            console.log(data);
+            // console.log(data);
         } catch (error) {
             console.error('Error fetching conventions data:', error);
         } finally {
@@ -143,7 +142,7 @@ const Layout = () => {
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="#" className='text-white'>
-                    Your Events
+                    Your Tables
                 </a>
             </div>
 
@@ -153,7 +152,7 @@ const Layout = () => {
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>
                         <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'>UKGE</div>
-                        <h1 className='text-3xl font-bold text-white'>{convention.convention_name} Events</h1>
+                        <h1 className='text-3xl font-bold text-white'>{convention.convention_name} Tables</h1>
                     </div>
                     <Button onClickFunc={() => { nav(`/new/event/${convention_id}`) }} title={"Add New"} className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-3`} />
                 </div>
@@ -187,7 +186,7 @@ const Layout = () => {
                                         <img
                                             key={invitation.invite_receiver_image} // Add key for each image
                                             src={invitation.invite_receiver_image}
-                                            className="w-[2rem] h-[2rem] rounded-full mr-2"
+                                            className="w-[2rem] h-[2rem] rounded-full object-cover"
                                             alt="Invitation"
                                         />
                                     ))}

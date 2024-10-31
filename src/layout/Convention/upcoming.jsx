@@ -3,21 +3,28 @@ import Navbar from '../../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Left from '../../components/Left';
+import drop from '../../assets/icon-caret-down.svg';
 import ConventionImage from '../../assets/convention.jpeg'
 import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { fetchWithAuth } from '../../services/apiService';
 import ImageCross from '../../assets/red-cross.png'
 
-const Layout = () => {
+const upcoming = () => {
+  const nav = useNavigate()
   const [loading, setLoading] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [conventions, setConvention] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('Sort by State...');
+  const [filteredConventions, setFilteredConventions] = useState([]);
   const [attendance, setAttendance] = useState();
   const [AgendaItems, setItems] = useState([]);
   const [AccommodationItem, setAccommodation] = useState([]);
   const [EventItem, setEvent] = useState([]);
   const [GameItem, setGame] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
+
+
 
   useEffect((id) => {
     fetchConventions();
@@ -27,10 +34,31 @@ const Layout = () => {
     fetchGame();
   }, []);
 
+
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    setIsDropdownOpen(false);
+
+    let filteredData;
+    if (option === 'USA') {
+      filteredData = conventions.filter(convention => convention.convention_state === 'USA');
+    } else if (option === 'UK') {
+      filteredData = conventions.filter(convention => convention.convention_state === 'UK');
+    } else {
+      filteredData = conventions; // Show all conventions
+    }
+
+    setFilteredConventions(filteredData);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(prev => !prev);
+  };
   const fetchConventions = async () => {
     setLoading(true);
     try {
-      const response = await fetchWithAuth(`/user/convention`, {
+      const response = await fetchWithAuth(`/user/upcoming_convention`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -44,6 +72,8 @@ const Layout = () => {
 
       const data = await response.json();
       setConvention(data);
+      setFilteredConventions(data); // Initially show all conventions
+      // console.log(data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {
@@ -176,68 +206,128 @@ const Layout = () => {
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 md:mt-0 mt-4 w-[100%]'>
 
-          <div className='flex justify-between items-center flex-wrap'>
-            <h1 className='text-white text-2xl font-semibold'>Your conventions</h1>
-            {/* <Button onClickFunc={() => nav("/complete")} title={"Add convention"} className={"min-w-[10rem] min-h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange sm:mt-0 mt-2"} /> */}
-          </div>
-          {conventions.length > 0 ? (
-            <div className='bg-[#0d2539] p-3 w-full h-fit md:h-auto rounded-md mt-6 overflow-y-auto overflow-x-hidden'>
-              {conventions.map((convention) => (
-                <div key={convention.id} className='flex flex-col md:flex-row justify-between items-start mb-4 p-2 bg-[#1a2a3a] rounded-md'>
+          <div className='flex justify-between items-center flex-col md:flex-row gap-y-2'>
 
+            <h1 className='text-white text-2xl font-semibold'>Upcoming Conventions</h1>
+
+            {/* Sort by Dropdown moved to the right */}
+            <div className='relative'>
+              <button
+                type='button'
+                className='w-full lg:w-72 text-white border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
+                onClick={toggleDropdown}
+              >
+                {selectedOption}
+                <img src={drop} alt="" />
+              </button>
+
+              {isDropdownOpen && (
+                <div className='absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50'>
+                  <ul>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('USA')}
+                    >
+                      USA
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('UK')}
+                    >
+                      UK
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('All')}
+                    >
+                      All
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+
+          </div>
+
+          {/* Conditionally Render Convention List or Empty State */}
+          {filteredConventions.length > 0 ? (
+            <div className='bg-[#0d2539] p-3 w-full h-fit md:h-auto rounded-md mt-6 overflow-y-auto overflow-x-hidden'>
+              {filteredConventions.map((convention) => (
+                <div
+                  key={convention.id}
+                  className='flex flex-col md:flex-row justify-between items-start mb-4 p-2 bg-[#1a2a3a] rounded-md'
+                >
                   {/* 1st Column */}
-                  <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
-                    <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                    <p className='text-lightOrange font-semibold text-lg break-words'>{convention.convention_name}</p>
+                  <div onClick={() => nav(`/single-upcoming-convention/${convention.id}`)} className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0 cursor-pointer'>
+                    <img
+                      src={convention.convention_logo || ConventionImage}
+                      alt=""
+                      className='w-[3rem] h-[3rem] rounded-full object-cover'
+                    />
+                    <p className='text-lightOrange font-semibold text-lg break-words'>
+                      {convention.convention_name}
+                    </p>
                   </div>
 
                   {/* 2nd Column */}
                   <div className='flex-1 mb-2 md:mb-0'>
-                    <p className='text-[#F3C15F] text-sm break-words'>{convention.convention_dates.join(', ')}</p>
+                    <p className='text-white text-sm break-words'>
+                      {convention.convention_dates.join(', ')}
+                    </p>
                   </div>
 
                   {/* 3rd Column */}
                   <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
-                  <Link to={`/next/agenda/${convention.id}`}>
-                    <FaList
-                      className='cursor-pointer'
-                      color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
-                    </Link>
-                    <Link to={`/accomodation/${convention.id}`}>
-                    <FaBuilding
-                      className='cursor-pointer'
-                      color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
-                    </Link>
-                    <Link to={`/event/${convention.id}`} >
-                    <FaCalendarAlt
-                      className='cursor-pointer'
-                      color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
-                    </Link>
-                    <Link to={`/game/sale/${convention.id}`} >
-                    <FaDiceFive
-                      className='cursor-pointer'
-                      color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
-                    </Link>
+                  <p className='text-lightOrange font-semibold text-lg break-words'>
+                      {convention.convention_state}
+                    </p>
                   </div>
 
                   {/* 4th Column */}
                   <div className='relative flex items-center cursor-pointer'>
-                    <p onClick={() => handleShowSub(convention.id)} className='text-[#F3C15F] text-sm mr-1'>Activity</p>
-                    <BsFillCaretDownFill className='text-[#F3C15F]' onClick={() => handleShowSub(convention.id)} />
+                    <p onClick={() => handleShowSub(convention.id)} className='text-white text-sm mr-1'>
+                      Activity
+                    </p>
+                    <BsFillCaretDownFill
+                      className='text-white'
+                      onClick={() => handleShowSub(convention.id)}
+                    />
 
                     {showSub.show && showSub.conventionId === convention.id && (
                       <div className='absolute top-[2rem] left-0 md:left-[-4rem] bg-black p-4 w-48 z-50 rounded-md shadow-lg'>
-                        <Link to={`/convention/attendance/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Your attendance</Link>
+                        <Link
+                          to={`/convention/attendance/${convention.id}`}
+                          className='block mb-1 cursor-pointer text-white text-sm'
+                        >
+                          Your attendance
+                        </Link>
                         {attendance && attendance.length > 0 && (
                           <>
-                            <Link to={`/next/agenda/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Agenda</Link>
-                            <Link to={`/accomodation/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Accommodations</Link>
-                            <Link to={`/event/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Tables</Link>
-                            <Link to={`/game/sale/${convention.id}`} className='block mb-1 cursor-pointer text-white text-sm'>Games for sale</Link>
+                            <Link
+                              to={`/next/agenda/${convention.id}`}
+                              className='block mb-1 cursor-pointer text-white text-sm'
+                            >
+                              Agenda
+                            </Link>
+                            <Link
+                              to={`/accomodation/${convention.id}`}
+                              className='block mb-1 cursor-pointer text-white text-sm'
+                            >
+                              Accommodations
+                            </Link>
+                            <Link
+                              to={`/event/${convention.id}`}
+                              className='block mb-1 cursor-pointer text-white text-sm'
+                            >
+                              Events
+                            </Link>
+                            <Link
+                              to={`/game/sale/${convention.id}`}
+                              className='block mb-1 cursor-pointer text-white text-sm'
+                            >
+                              Games for sale
+                            </Link>
                           </>
                         )}
                       </div>
@@ -251,16 +341,16 @@ const Layout = () => {
             <div className='w-[100%] h-[52.5vh] mt-4 bg-[#0d2539] rounded-md flex justify-center items-center flex-col'>
               <img className='justify-center' src={ImageCross} alt="" />
               <h1 className='text-lg text-center font-semibold mt-3 mb-5 text-white'>
-                No convention attendance marked by you.
+                No Upcoming Convention
               </h1>
             </div>
           )}
 
         </div>
-
       </div>
     </div>
+
   );
 }
 
-export default Layout;
+export default upcoming;

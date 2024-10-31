@@ -8,6 +8,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import toastr from 'toastr';
 import Navbar from '../../../components/Admin/Navbar';
 import { fetchWithAuth } from '../../../services/apiService';
+import imageCompression from 'browser-image-compression';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,13 +45,51 @@ function Create() {
     };
 
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData((prevData) => ({
-            ...prevData,
-            promo_logo: file,
-        }));
-        setImagePreview(URL.createObjectURL(file));
+        const { name } = e.target; // Get the input's name
+    
+        if (file) {
+            // Check file size (20 MB limit)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            // Compression options
+            const options = {
+                maxSizeMB: 1, // 1 MB limit for compression
+                maxWidthOrHeight: 800, // Resize to fit within 800x800px
+                useWebWorker: true,
+                fileType: file.type, // Preserve original file type
+            };
+    
+            try {
+                // Compress image if size is greater than 1 MB
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                // Create a new File object with the original name and file type
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                // Update formData with the promo_logo
+                setFormData((prevData) => ({
+                    ...prevData,
+                    promo_logo: newFile, // Set promo_logo in formData
+                }));
+    
+                // Set image preview for the promo_logo being uploaded
+                setImagePreview(URL.createObjectURL(newFile));
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -85,7 +124,7 @@ function Create() {
 
             const data = await response.json();
 
-            console.log(data);
+            // console.log(data);
 
             setFormData({
                 name: data.name,          // Convention name
@@ -147,7 +186,7 @@ function Create() {
             formDataToSend.append('promo_logo', formData.promo_logo);
         }
 
-        console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
+        // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
 
 
         try {
@@ -171,7 +210,7 @@ function Create() {
             }
 
             const result = await response.json();
-            console.log("Success response:", result); // Log the success response
+            // console.log("Success response:", result); // Log the success response
             toastr.success('sponser created successfully!');
 
             // Clear form fields, image preview, and form errors
@@ -308,7 +347,7 @@ function Create() {
                                         <img
                                             src={imagePreview || ConventionImage}
                                             alt="Preview"
-                                            className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                            className='w-[10rem] h-[10rem] rounded-full object-cover'
                                         />
                                         <input
                                             type="file"

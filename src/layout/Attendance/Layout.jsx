@@ -306,14 +306,14 @@ const Layout = () => {
                         <div className='flex-1 bg-[#0d2539] p-3 rounded-md'>
                             <div className='flex items-center gap-x-4'>
                                 <FaCalendarAlt className='text-white' />
-                                <p className='text-white'>Events</p>
+                                <p className='text-white'>Tables</p>
                                 
                             </div>
                             <div className='flex justify-between items-center mt-3'>
                                 
                                 <p className='text-white'>
                                     {events.length > 0
-                                        ? `Started, you have created ${events.length} Event(s)`
+                                        ? `Started, you have created ${events.length} Table(s)`
                                         : 'Not Started'}
                                 </p>
                                 <Button 

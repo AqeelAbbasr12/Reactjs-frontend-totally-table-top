@@ -201,7 +201,7 @@ const OwnFeed = () => {
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
-                    <img src={user.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full' />
+                    <img src={user.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full object-cover' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{user.first_name} {user.last_name}</p>
                     <p className='text-center text-white mt-2'>@{user.username}</p>
                     {/* {
@@ -220,7 +220,7 @@ const OwnFeed = () => {
                             <div className='w-[100%] bg-[#0d2539] py-5 px-5 mt-0 rounded-md mb-2'>
                                 <form onSubmit={handlePost}> {/* Use form element */}
                                     <div className='flex items-start gap-x-4'>
-                                        <img src={user.profile_picture || FaceImage} alt="Profile" className='w-[2.5rem] h-[2.5rem] rounded-full' />
+                                        <img src={user.profile_picture || FaceImage} alt="Profile" className='w-[2.5rem] h-[2.5rem] rounded-full object-cover' />
                                         <textarea
                                             type={"text"}
                                             name={"content"}
@@ -253,7 +253,7 @@ const OwnFeed = () => {
                                                 <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                     <div className='flex items-center gap-x-3'>
                                                         <div className='flex items-center'>
-                                                            <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                            <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                             <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
                                                         </div>
                                                         <div>
@@ -288,7 +288,7 @@ const OwnFeed = () => {
                                                 <>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-center gap-x-3'>
-                                                            <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                            <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                             <div>
                                                                 <p className='text-white'>
                                                                     <span className='text-lightOrange'>You </span> posted an update:
@@ -315,7 +315,7 @@ const OwnFeed = () => {
                                                         <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                             <div className='flex items-center gap-x-3'>
                                                                 <div className='flex items-center'>
-                                                                    <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                    <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                     <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
                                                                 </div>
                                                                 <div>
@@ -352,7 +352,7 @@ const OwnFeed = () => {
                                                         <>
                                                             <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                                 <div className='flex items-center gap-x-3'>
-                                                                    <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                    <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                     <div>
                                                                         <p className='text-white'>
                                                                             <span className='text-lightOrange'>You </span> updated your 
@@ -378,7 +378,7 @@ const OwnFeed = () => {
                                                             <>
                                                                 <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                                     <div className='flex items-center gap-x-3'>
-                                                                        <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                        <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                         <div>
                                                                             <p className='text-white'>
                                                                                 <span className='text-lightOrange'>You </span> are selling

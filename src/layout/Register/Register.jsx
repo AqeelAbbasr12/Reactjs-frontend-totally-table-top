@@ -21,9 +21,9 @@ const Register = () => {
     });
 
     const data = [
-        "Sell and buy board games in advance of a convention", 
-        "Create an agenda for each stand you wish to visit", 
-        "Instantly invite friends to play games and events"
+        "Sell your games before arriving at conventions", 
+        "Create, find and schedule games to play", 
+        "Simple to use agenda to list the stands you wish to visit"
     ];
     const nav = useNavigate();
 

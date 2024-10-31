@@ -31,7 +31,7 @@ function Layout() {
 
       const data = await response.json();
       // setConvention(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {

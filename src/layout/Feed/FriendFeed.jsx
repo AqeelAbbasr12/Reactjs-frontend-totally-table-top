@@ -166,7 +166,7 @@ const FriendFeed = () => {
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
-                    <img src={friendDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full' />
+                    <img src={friendDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full object-cover' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{friendDetail.first_name} {friendDetail.last_name}</p>
                     <p className='text-center text-white mt-2'>@{friendDetail.username}</p>
                     {/* {
@@ -190,7 +190,7 @@ const FriendFeed = () => {
                         currentLocation.includes("ownFeed") && (
                             <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                 <div className='flex items-start gap-x-4'>
-                                    <img src={FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] rounded-full' />
+                                    <img src={FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] rounded-full object-cover' />
                                     <Input type={"text"} name={"name"} placeholder={"Tell your friend whats happening...."} className={"flex-1 bg-[#102F47] text-white h-[10rem] px-3 placeholder:text-start"} />
                                 </div>
                                 <div className='flex justify-between items-center mt-2'>
@@ -214,7 +214,7 @@ const FriendFeed = () => {
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-center'>
-                                                                <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                                                                <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                                                                 <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
                                                             </div>
                                                             <div className='mt-2 md:mt-0'>
@@ -258,7 +258,7 @@ const FriendFeed = () => {
                                                 <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
-                                                            <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
+                                                            <img src={feedItem.post.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full object-cover' />
                                                             <div className='mt-2 md:mt-0'>
                                                                 <p className='text-white text-sm md:text-base'>
                                                                     <span className='text-lightOrange'>{feedItem.post.user_name}</span> posted an update:
@@ -293,7 +293,7 @@ const FriendFeed = () => {
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-start md:items-center gap-x-2'>
-                                                                <img src={feedItem.convention_accommodation.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
+                                                                <img src={feedItem.convention_accommodation.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full object-cover' />
                                                                 <div className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
                                                             </div>
                                                             <div className='mt-2 md:mt-0'>
@@ -336,7 +336,7 @@ const FriendFeed = () => {
                                                 <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
-                                                            <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
+                                                            <img src={feedItem.user.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full object-cover' />
                                                             <div className='mt-2 md:mt-0'>
                                                                 <p className='text-white text-sm md:text-base'>
                                                                     <span className='text-lightOrange'>{feedItem.user.user_name}</span> updated their
@@ -368,7 +368,7 @@ const FriendFeed = () => {
                                                 <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
                                                     <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                         <div className='flex items-start md:items-center gap-x-3'>
-                                                            <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full' />
+                                                            <img src={feedItem.convention_game.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full object-cover' />
                                                             <div className='mt-2 md:mt-0'>
                                                                 <p className='text-white text-sm md:text-base'>
                                                                     <span className='text-lightOrange'>{feedItem.convention_game.user_name}</span> is selling

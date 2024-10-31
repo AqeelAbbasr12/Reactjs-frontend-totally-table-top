@@ -9,6 +9,10 @@ import IconCaretSvg from "../../assets/icon-caret-down.svg";
 import ConventionImage from '../../assets/convention.jpeg'
 import { fetchWithAuth } from '../../services/apiService';
 import toastr from 'toastr';
+import { FaTrash, FaPlus } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
+
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const EditGame = () => {
@@ -22,6 +26,7 @@ const EditGame = () => {
     "Fair",
     "Below Average",
   ];
+  const [imagePreviews, setImagePreviews] = useState([ConventionImage]); // Array for multiple image previews
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -29,53 +34,53 @@ const EditGame = () => {
     currency_tag: '',
     condition: '',
     desc: '',
-    game_image: null,
+    game_images: [], // Store images as an array
+    game_image_id: [], // Store images as an array
   });
-  const [imagePreview, setImagePreview] = useState(null);
   const [formErrors, setFormErrors] = useState({}); // State for form errors
 
   useEffect(() => {
     fetchGame(game_id);
-}, [game_id]);
+  }, [game_id]);
 
   const fetchGame = async (game_id) => {
     setLoading(true); // Show loading spinner while fetching
     try {
-        const response = await fetchWithAuth(`/user/get_convention_game/${game_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+      const response = await fetchWithAuth(`/user/get_convention_game/${game_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
-
-        const data = await response.json();
-        // Transform data into the format required by react-select
-        // console.log(data);
-        // setGames(data);
-
-        setFormData({
-          name: data.name || '',
-          price: data.price || '',
-          currency: data.currency || '',
-          currency_tag: data.currency_tag || '',
-          condition: data.condition || '',
-          desc: data.desc || '',
-          game_image: data.game_image || null,
-
       });
 
-      setImagePreview(data.game_image);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      // Transform data into the format required by react-select
+      // console.log(data);
+      // setGames(data);
+      setFormData({
+        name: data.name || '',
+        price: data.price || '',
+        currency: data.currency || '',
+        currency_tag: data.currency_tag || '',
+        condition: data.condition || '',
+        desc: data.desc || '',
+        game_images: [], // Keep empty initially for file input
+        game_image_id: data.gameImages.map((img) => img.game_image_id) || [], // Set image IDs
+      });
+
+      // Set image previews from server
+      setImagePreviews(data.gameImages.map((img) => img.game_image) || []); // Set preview images
     } catch (error) {
-        // console.error('Error fetching Events data:', error);
+      // console.error('Error fetching Events data:', error);
     } finally {
-        setLoading(false); // Hide loading spinner
+      setLoading(false); // Hide loading spinner
     }
-};
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,14 +95,122 @@ const EditGame = () => {
   };
 
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e, index) => {
     const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      game_image: file,
-    }));
-    setImagePreview(URL.createObjectURL(file));
+  
+    if (file) {
+      // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
+      if (file.size > 20 * 1024 * 1024) {
+        toastr.warning("Your image is greater than 20 MB.");
+        return; // Exit if the file is too large
+      }
+  
+      try {
+        // Compress the image
+        const options = {
+          maxSizeMB: 2, // Set maximum size for compression
+          maxWidthOrHeight: 1920, // Set maximum width or height
+          useWebWorker: true, // Use a web worker for better performance
+        };
+        const compressedFile = await imageCompression(file, options);
+        const newPreview = URL.createObjectURL(compressedFile); // Use compressed file for preview
+  
+        // Update previews and form data
+        setImagePreviews((prevPreviews) => {
+          const updatedPreviews = [...prevPreviews];
+          updatedPreviews[index] = newPreview; // Update specific index
+          return updatedPreviews;
+        });
+  
+        setFormData((prevData) => {
+          const updatedImages = [...prevData.game_images];
+          const updatedImageIds = [...prevData.game_image_id]; // Clone existing image IDs
+  
+          // Update the file at the specific index
+          updatedImages[index] = compressedFile; // Use compressed file
+  
+          // Keep the image ID if it exists, to track the changed image
+          const imageId = updatedImageIds[index] !== null ? updatedImageIds[index] : null;
+  
+          // Add file and image ID only for this index where the file is changed
+          return {
+            ...prevData,
+            game_images: updatedImages,
+            game_image_id: updatedImageIds.map((id, i) => i === index ? imageId : id), // Retain original ID if not changed
+          };
+        });
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        toastr.error("Failed to compress the image.");
+      }
+    }
   };
+
+
+
+
+
+  const handleAddImage = () => {
+    if (imagePreviews.length < 4) { // Limit to 4 images
+      setImagePreviews((prev) => [...prev, null]); // Add a placeholder for new image
+      setFormData((prevData) => ({
+        ...prevData,
+        game_images: [...prevData.game_images, null], // Add a null entry for new image
+      }));
+    }
+  };
+
+  const handleDeleteImage = async (game_image_id, index) => {
+    try {
+      // Call API to delete the game image
+      const response = await fetch(`${API_BASE_URL}/user/delete_game_image/${game_image_id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+      });
+
+      // Check if the response is ok
+      if (!response.ok) {
+        const result = await response.json();
+        toastr.error(result.message);
+        throw new Error('Failed to delete the image');
+      }
+
+      const result = await response.json();
+      // Display success message
+      toastr.success(result.message);
+      // console.log('Image deleted successfully');
+
+      // Update state to remove the image
+      setFormData(prev => {
+        const updatedImages = [...prev.game_images];
+        const updatedImageIds = [...prev.game_image_id];
+
+        // Remove the image and ID from the respective arrays
+        updatedImages.splice(index, 1);  // Remove image from array
+        updatedImageIds.splice(index, 1); // Remove ID from array
+
+        return {
+          ...prev,
+          game_images: updatedImages,
+          game_image_id: updatedImageIds,
+        };
+      });
+
+      // Update the image previews to remove the deleted image
+      setImagePreviews(prevPreviews => {
+        const updatedPreviews = [...prevPreviews];
+        updatedPreviews.splice(index, 1); // Remove the specific preview
+        return updatedPreviews; // Return updated previews without the deleted one
+      });
+
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+  };
+
 
   // Dynamic currency symbol mapping
   const getCurrencySymbol = (currency) => {
@@ -149,9 +262,18 @@ const EditGame = () => {
     formDataToSend.append('condition', formData.condition);
     formDataToSend.append('desc', formData.desc);
 
-    if (formData.game_image) {
-      formDataToSend.append('game_image', formData.game_image);
-    }
+    // Append only changed images and their respective IDs
+    formData.game_images.forEach((file, index) => {
+      if (file) {
+        // Append file if changed
+        formDataToSend.append(`game_images[${index}]`, file);
+
+        // Append image_id only if it exists (it means the image was changed)
+        if (formData.game_image_id[index] !== null) {
+          formDataToSend.append(`game_image_id[${index}]`, formData.game_image_id[index]);
+        }
+      }
+    });
 
     // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
 
@@ -179,9 +301,10 @@ const EditGame = () => {
           currency_tag: '',
           condition: '',
           desc: '',
-          game_image: null,
+          game_images: [], // Store images as an array
+          game_image_id: [],
         });
-        setImagePreview(null);
+        setImagePreviews(null);
         setFormErrors({});
         nav(`/game/sale/${convention_id}`);
       }
@@ -192,7 +315,7 @@ const EditGame = () => {
         if (result.errors) {
           setFormErrors(result.errors);
         } else {
-          toastr.error('Failed to create accommodation.'); // A more generic error message
+          toastr.error('Failed to update game.'); // A more generic error message
         }
       }
 
@@ -335,27 +458,48 @@ const EditGame = () => {
             />
             {formErrors.desc && <p className="text-red">{formErrors.desc}</p>}
           </div>
+          <div className="flex flex-col items-center">
+            <div className="flex flex-wrap justify-center">
+              {imagePreviews.map((imagePreview, index) => (
+                <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
+                  <img
+                    src={imagePreview || ConventionImage} // Always use the current preview
+                    alt={`Preview ${index + 1}`}
+                    className="w-[10rem] h-[10rem] rounded-full object-cover"
+                  />
+                  <input
+                    type="file"
+                    id={`locationPictureInput${index}`}
+                    className="hidden"
+                    onChange={(event) => handleFileChange(event, index)} // Ensure the index is passed
+                    accept="image/png, image/jpeg"
+                  />
+                  <label
+                    htmlFor={`locationPictureInput${index}`}
+                    className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                  >
+                    Upload Image
+                  </label>
+                  <FaTrash
+                    onClick={() => handleDeleteImage(formData.game_image_id[index], index)} // Pass the image ID and index
+                    className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                    size={20}
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="sm:mt-5 mt-2 flex flex-col items-center">
-            <img
-              src={imagePreview || ConventionImage}
-              alt="Preview"
-              className="w-[10rem] h-[10rem] rounded-full mb-2"
-            />
-            <input
-              type="file"
-              id="locationPictureInput"
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/png, image/jpeg"
-            />
-            <label
-              htmlFor="locationPictureInput"
-              className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
-            >
-              Upload Image
-            </label>
+            {/* Add new image button */}
+            {imagePreviews.length < 4 && ( // Limit to 4 images
+              <FaPlus
+                onClick={handleAddImage} // Implement this function if necessary
+                className="text-white cursor-pointer hover:text-green-500 mt-4"
+                size={30}
+              />
+            )}
           </div>
+
+
 
           <div className="flex justify-center items-center mt-4">
             <Button

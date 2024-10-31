@@ -117,58 +117,60 @@ const DraggableList = ({ convention_id }) => {
 
     // Mobile touch event handlers
     const handleTouchStart = (e, id) => {
-        const touch = e.touches[0];
-        setDraggedItemId(id);
-        e.currentTarget.style.opacity = 0.5; // Visual feedback for dragging
-        e.dataTransfer.setData("text", String(id));
-    };
+    setDraggedItemId(id);
+    e.currentTarget.style.opacity = 0.5; // Visual feedback for dragging
+};
 
-    const handleTouchMove = (e) => {
-        // This can be refined to implement more complex touch move behavior
-        e.preventDefault(); // Prevent default behavior during touch move
-    };
+const handleTouchMove = (e) => {
+    e.preventDefault(); // Prevent scrolling during touch drag
+};
 
-    const handleTouchEnd = async (e) => {
-        const droppedItemId = draggedItemId;
-        const draggedItem = items.find(item => item.id === droppedItemId);
-        if (!draggedItem) return;
+const handleTouchEnd = async (e) => {
+    const touch = e.changedTouches[0];
+    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+    const dropTarget = targetElement?.closest('.draggable');
 
-        const dropIndex = Array.from(dropZoneRef.current.children).indexOf(e.target.closest('.draggable'));
-        const updatedItems = items.filter(item => item.id !== draggedItem.id);
-        updatedItems.splice(dropIndex, 0, draggedItem);
+    if (!dropTarget || !draggedItemId) return;
 
-        const updatedPriorities = updatedItems.map((item, index) => ({
-            ...item,
-            priority: index + 1,
+    const draggedItem = items.find(item => item.id === draggedItemId);
+    if (!draggedItem) return;
+
+    const dropIndex = Array.from(dropZoneRef.current.children).indexOf(dropTarget);
+    const updatedItems = items.filter(item => item.id !== draggedItem.id);
+    updatedItems.splice(dropIndex, 0, draggedItem);
+
+    const updatedPriorities = updatedItems.map((item, index) => ({
+        ...item,
+        priority: index + 1,
+    }));
+
+    setItems(updatedPriorities);
+
+    try {
+        await Promise.all(updatedPriorities.map(async (item) => {
+            const response = await fetchWithAuth(`/user/convention_agenda/${item.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    convention_id: item.convention_id,
+                    priority: item.priority,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to update priority for item ${item.id}`);
+            }
         }));
 
-        setItems(updatedPriorities);
+        toastr.success('Priorities updated successfully');
+    } catch (error) {
+        toastr.error('An error occurred while updating priorities.');
+    }
 
-        try {
-            await Promise.all(updatedPriorities.map(async (item) => {
-                const response = await fetchWithAuth(`/user/convention_agenda/${item.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        convention_id: item.convention_id,
-                        priority: item.priority,
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Failed to update priority for item ${item.id}`);
-                }
-            }));
-
-            toastr.success('Priorities updated successfully');
-        } catch (error) {
-            // console.error('Error updating priorities:', error);
-            toastr.error('An error occurred while updating priorities.');
-        }
-
-        setDraggedItemId(null);
-    };
+    setDraggedItemId(null);
+    e.currentTarget.style.opacity = 1; // Reset visual feedback
+};
 
     useEffect(() => {
         const dropZone = dropZoneRef.current;

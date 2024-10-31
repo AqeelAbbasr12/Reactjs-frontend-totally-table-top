@@ -14,7 +14,7 @@ const EmailVerification = () => {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/email/verify/${id}/${token}`);
         const data = await response.json();
-        console.log('API Response:', data);
+        // console.log('API Response:', data);
 
         if (response.ok) {
           toastr.success(data.message || 'Your email has been verified!');

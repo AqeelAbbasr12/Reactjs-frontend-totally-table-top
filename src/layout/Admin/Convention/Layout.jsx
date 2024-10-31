@@ -31,24 +31,32 @@ function Convention({ onSearch, Convention, search, path }) {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-
+  
     if (option === 'Sort by A to Z') {
       setConvention([...conventions].sort((a, b) => a.name.localeCompare(b.name)));
-    }
-    else if (option === 'Sort by Z to A') {
+    } else if (option === 'Sort by Z to A') {
       setConvention([...conventions].sort((a, b) => b.name.localeCompare(a.name)));
-    }
-    else if (option === 'Sort by Oldest') {
+    } else if (option === 'Sort by Oldest') {
       setConvention(
         [...conventions].sort((a, b) => extractFirstDate(a.date) - extractFirstDate(b.date))
       );
-    }
-    else if (option === 'Sort by Latest') {
+    } else if (option === 'Sort by Latest') {
       setConvention(
         [...conventions].sort((a, b) => extractFirstDate(b.date) - extractFirstDate(a.date))
       );
+    } else if (option === 'Publish') {
+      // Sort conventions with active status 1 first
+      setConvention(
+        [...conventions].sort((a, b) => b.active - a.active)
+      );
+    } else if (option === 'Unpublish') {
+      // Sort conventions with active status 0 first
+      setConvention(
+        [...conventions].sort((a, b) => a.active - b.active)
+      );
     }
   };
+  
 
   // Helper function to extract the first date from the string
   const extractFirstDate = (dateString) => {
@@ -99,7 +107,7 @@ function Convention({ onSearch, Convention, search, path }) {
 
       const data = await response.json();
       setConvention(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {
@@ -238,6 +246,18 @@ function Convention({ onSearch, Convention, search, path }) {
                     >
                       Sort by Latest
                     </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Publish')}
+                    >
+                      Publish
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Unpublish')}
+                    >
+                      Unpublish
+                    </li>
                   </ul>
                 </div>
               )}
@@ -276,7 +296,7 @@ function Convention({ onSearch, Convention, search, path }) {
                         {/* Image */}
                         <img
                           src={convention.logo || ConventionImage}
-                          className="w-10 h-10 md:w-66 md:h-66 rounded-full"
+                          className="w-10 h-10 md:w-66 md:h-66 rounded-full object-cover"
                           alt="Convention Logo"
                         />
                         {/* Name */}

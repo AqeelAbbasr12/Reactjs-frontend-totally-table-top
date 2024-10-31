@@ -20,7 +20,7 @@ const Layout = () => {
     const [games, setGames] = useState([]);
     const [conventions, setConventions] = useState([]);
     const [filteredGames, setFilteredGames] = useState([]);
-    const [currentView, setCurrentView] = useState("grid");
+    const [currentView, setCurrentView] = useState("list");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedConvention, setSelectedConvention] = useState(null);
     const [selectedConditions, setSelectedConditions] = useState([]);
@@ -130,7 +130,7 @@ const Layout = () => {
                                     {
                                         filteredGames.map((game) => (
                                             <div onClick={() => nav(`/game/single/${game.id}`)} key={game.id} className='min-w-full sm:min-w-[15rem] max-w-full sm:max-w-[15rem] h-[18rem] cursor-pointer rounded-md bg-[#0D2539] mx-2 my-2'>
-                                                <img src={game.game_image || ConventionImage} alt="" className='w-full sm:w-[15rem] h-[11rem]' />
+                                                <img src={game.game_image || ConventionImage} alt="" className='w-full sm:w-[15rem] h-[11rem] object-cover' />
                                                 <p className='py-2 mx-2 text-white text-sm'>{game.game_name}</p>
                                                 <div className='flex gap-x-2 items-center mx-2'>
                                                     <p className='text-white'>{game.game_currency_symbol}{game.game_price}</p>
@@ -146,9 +146,9 @@ const Layout = () => {
                                     {
                                         filteredGames.map((game) => (
                                             <div onClick={() => nav(`/game/single/${game.id}`)} key={game.id} className='rounded-md bg-[#0D2539] cursor-pointer flex gap-x-5 items-left mb-2 p-3'>
-                                                <img src={game.game_image || ConventionImage} alt="" className='w-[3rem] h-[3rem]' />
+                                                <img src={game.game_image || ConventionImage} alt="" className='w-[3rem] h-[3rem] object-cover' />
                                                 <div>
-                                                    <p className='py-2 mx-2 text-white text-sm'>{game.game_name}</p>
+                                                    <p className='py-2 mx-2 text-white text-sm'>{game.game_name} <span className="py-2 mx-2 text-white font-bold">Sold By: {game.user_name} </span></p>
                                                     <div className='flex gap-x-2 items-center mx-2'>
                                                         <p className='text-white'>{game.game_currency_symbol}{game.game_price}</p>
                                                         <div className='w-[1px] h-[1rem] bg-white'></div>

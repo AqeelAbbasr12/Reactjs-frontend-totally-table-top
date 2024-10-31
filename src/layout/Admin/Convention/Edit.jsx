@@ -8,6 +8,8 @@ import { IoMdEyeOff } from "react-icons/io";
 import toastr from 'toastr';
 import Navbar from '../../../components/Admin/Navbar';
 import { fetchWithAuth } from '../../../services/apiService';
+import { FaTrash } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
 import Select from 'react-select'; // Import react-select
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -27,6 +29,7 @@ function Edit() {
         description: '',
         location: '',
         website: '',
+        state: '',
         logo: null,
         dates: [],
         feature: 0
@@ -51,7 +54,21 @@ function Edit() {
             dates: newDates, // Store dates as an array
         }));
 
-        console.log("Updated Form Data:", newDates); // Debugging
+        // console.log("Updated Form Data:", newDates); // Debugging
+    };
+
+    const handleDeleteDate = (index) => {
+        if (dates.length > 1) {
+            const newDates = [...dates];
+            newDates.splice(index, 1); // Remove the date at the specified index
+            setDates(newDates);
+
+            // Update formData with the new dates array
+            setFormData((prevData) => ({
+                ...prevData,
+                dates: newDates,
+            }));
+        }
     };
 
     const addDateField = () => {
@@ -88,13 +105,17 @@ function Edit() {
 
             const data = await response.json();
 
-            console.log(data);
+            // console.log(data);
 
             setFormData({
                 name: data.name || '',
                 description: data.description || '',
                 location: data.location || '',
                 website: data.website || '',
+                state: data.state || '',
+                fb_url: data.fb_url || '',
+                ig_url: data.ig_url || '',
+                state: data.state || '',
                 active: data.active || '',
                 feature: data.feature || '',
             });
@@ -118,13 +139,48 @@ function Edit() {
 
     const today = new Date().toISOString().split('T')[0];
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData((prevData) => ({
-            ...prevData,
-            logo: file,
-        }));
-        setImagePreview(URL.createObjectURL(file));
+    
+        if (file) {
+            // Check file size (20 MB limit)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            // Compression options
+            const options = {
+                maxSizeMB: 1, // 1 MB limit
+                maxWidthOrHeight: 800, // Resize to fit within 800x800px
+                useWebWorker: true,
+                fileType: file.type, // Preserve original file type
+            };
+    
+            try {
+                // Compress image if size is greater than 1 MB
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                // Create a new File object with the original name and file type
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                // Update the formData and image preview with the new compressed file
+                setFormData((prevData) => ({
+                    ...prevData,
+                    logo: newFile, // Set the compressed file as the logo
+                }));
+                setImagePreview(URL.createObjectURL(newFile)); // Set the preview with the compressed file URL
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -158,11 +214,36 @@ function Edit() {
             errors.website = 'Convention Website is required';
         }
 
+        if (!formData.state) {
+            toastr.error('Convention State is required');
+            errors.state = 'Convention State is required';
+        }
+
+        if (!formData.fb_url) {
+            toastr.error('FB URL is required');
+            errors.fb_url = 'FB URL is required';
+        }
+
+        if (!formData.ig_url) {
+            toastr.error('IG URL is required');
+            errors.ig_url = 'IG URL is required';
+        }
+
         // Validate URL for website
         const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/; // Basic URL pattern
         if (formData.website && !urlPattern.test(formData.website)) {
             toastr.error('Please enter a valid URL');
             errors.website = 'Please enter a valid URL';
+        }
+
+        if (formData.fb_url && !urlPattern.test(formData.fb_url)) {
+            toastr.error('Please enter a valid URL');
+            errors.fb_url = 'Please enter a valid URL';
+        }
+
+        if (formData.ig_url && !urlPattern.test(formData.ig_url)) {
+            toastr.error('Please enter a valid URL');
+            errors.ig_url = 'Please enter a valid URL';
         }
 
         if (!formData.dates || formData.dates.length === 0 || !formData.dates.some(date => date)) {
@@ -187,6 +268,9 @@ function Edit() {
         formDataToSend.append('description', formData.description); // Changed from location_address to description
         formDataToSend.append('location', formData.location); // Changed from location_address to location
         formDataToSend.append('website', formData.website); // Changed from location_website to website
+        formDataToSend.append('state', formData.state); // Changed from location_website to website
+        formDataToSend.append('fb_url', formData.fb_url); // Changed from location_website to website
+        formDataToSend.append('ig_url', formData.ig_url); // Changed from location_website to website
 
         // Since the original fields didn't have 'from_date' and 'to_date', you may want to send the dates as a single array
         formDataToSend.append('date', formData.dates); // Send date array as a JSON string
@@ -196,7 +280,7 @@ function Edit() {
             formDataToSend.append('logo', formData.logo);
         }
 
-        console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
+        // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
 
         try {
             const response = await fetch(`${API_BASE_URL}/admin/update_convention`, {
@@ -219,7 +303,7 @@ function Edit() {
             }
 
             const result = await response.json();
-            console.log("Success response:", result); // Log the success response
+            // console.log("Success response:", result); // Log the success response
             toastr.success(result.message);
 
             // Clear form fields, image preview, and form errors
@@ -229,6 +313,9 @@ function Edit() {
                 description: '', // Changed from location_address to description
                 location: '', // Changed from location_address to location
                 website: '', // Changed from location_website to website
+                state: '', // Changed from location_website to website
+                fb_url: '', // Changed from location_website to website
+                ig_url: '', // Changed from location_website to website
                 logo: null, // Changed from location_image to logo
                 dates: [], // Initialize as an empty array
                 feature: 0, // Initialize feature if needed, adjust according to your logic
@@ -378,14 +465,52 @@ function Edit() {
                                     </p>
                                 )}
 
+                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                    <Input holder='FB URL e.g. https://www.facebook.com' name="fb_url" value={formData.fb_url} onChange={handleChange} />
+                                </div>
+                                {formErrors.fb_url && (
+                                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                        {formErrors.fb_url}
+                                    </p>
+                                )}
+
+                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                    <Input holder='FB URL e.g. https://www.instagaram.com' name="ig_url" value={formData.ig_url} onChange={handleChange} />
+                                </div>
+                                {formErrors.ig_url && (
+                                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                        {formErrors.ig_url}
+                                    </p>
+                                )}
+
+
+                                {/* State Dropdown */}
+                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                    <select
+                                        name="state"
+                                        className='w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none'
+                                        onChange={handleChange}
+                                        value={formData.state} // Set the value based on the formData
+                                    >
+                                        <option value="" disabled>Select a state</option>
+                                        <option value="USA">USA</option>
+                                        <option value="UK">UK</option>
+                                    </select>
+                                </div>
+                                {formErrors.state && (
+                                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                        {formErrors.state}
+                                    </p>
+                                )}
 
                                 {/* Image Upload */}
                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
+                                    
                                         <img
                                             src={imagePreview || ConventionImage}
                                             alt="Preview"
-                                            className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                            className='w-[10rem] h-[10rem] rounded-full object-cover'
                                         />
                                         <input
                                             type="file"
@@ -398,6 +523,7 @@ function Edit() {
                                         <label htmlFor="locationPictureInput" className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
                                             Upload Logo
                                         </label>
+                                        
                                     </div>
                                     {formErrors.logo && (
                                         <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
@@ -433,41 +559,56 @@ function Edit() {
                                 </div>
 
                                 <div className='bg-[#0D2539] w-full'>
-                                    <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
-                                        <div>
-                                            <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
-                                                Convention dates
-                                            </span>
-                                        </div>
-                                        {formErrors.date && (
-                                            <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                                                {formErrors.date}
-                                            </p>
-                                        )}
-                                        <div>
-                                            {dates.map((date, index) => (
-                                                <Input
-                                                    key={index}
-                                                    name={`date-${index}`} // Unique name for each date input
-                                                    type="date"
-                                                    min={today}
-                                                    value={date} // Bind the date value
-                                                    readOnly
-                                                    onChange={(event) => handleDateChange(index, event)} // Handle date change
-                                                />
-                                            ))}
-                                            {/* <div className='mt-5 flex justify-start'>
-                                                <button
-                                                    type="button"
-                                                    className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
-                                                    onClick={addDateField}
-                                                >
-                                                    Add another date
-                                                </button>
-                                            </div> */}
-                                        </div>
-                                    </div>
-                                </div>
+            <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
+                <div>
+                    <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
+                        Convention dates
+                    </span>
+                </div>
+                {formErrors.date && (
+                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                        {formErrors.date}
+                    </p>
+                )}
+                <div>
+                    {dates.map((date, index) => (
+                        <div key={index} className='flex items-center mt-3'>
+                            {/* Date Input (read-only for edit screen) */}
+                            <Input
+                                name={`date-${index}`} // Unique name for each date input
+                                type="date"
+                                min={today}
+                                value={date} // Bind the date value
+                                readOnly // Dates are read-only in the edit screen
+                                onChange={(event) => handleDateChange(index, event)} // Handle date change if allowed
+                                className="w-[90%] px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
+                            />
+                            {/* Delete Button */}
+                            {dates.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleDeleteDate(index)}
+                                    className="ml-3 text-red-600"
+                                    title="Delete this date"
+                                >
+                                    <FaTrash className='text-red' size={20} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {/* Uncomment if you want to add more dates dynamically */}
+                    {/* <div className='mt-5 flex justify-start'>
+                        <button
+                            type="button"
+                            className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
+                            onClick={addDateField}
+                        >
+                            Add another date
+                        </button>
+                    </div> */}
+                </div>
+            </div>
+        </div>
                             </div>
 
                         </div>

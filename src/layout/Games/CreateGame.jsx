@@ -8,6 +8,9 @@ import Input from "../../components/Input";
 import IconCaretSvg from "../../assets/icon-caret-down.svg";
 import ConventionImage from '../../assets/convention.jpeg'
 import toastr from 'toastr';
+import { FaTrash, FaPlus } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CreateGame = () => {
@@ -28,9 +31,9 @@ const CreateGame = () => {
     currency_tag: '',
     condition: '',
     desc: '',
-    game_image: null,
+    game_images: [],
   });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([ConventionImage]);
   const [formErrors, setFormErrors] = useState({}); // State for form errors
 
   const handleChange = (e) => {
@@ -41,18 +44,78 @@ const CreateGame = () => {
       ...prevState,
       [name]: value,
       // Ensure currency_tag is updated whenever currency changes
-      currency_tag: name === "currency" ? getCurrencySymbol(value) : prevState.currency_tag
+      // currency_tag: name === "currency" ? getCurrencySymbol(value) : prevState.currency_tag
     }));
   };
 
+  // Handle file change for individual image uploads
+  const handleFileChange = async (index, event) => {
+    const file = event.target.files[0];
+  
+    if (file) {
+      // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
+      if (file.size > 20 * 1024 * 1024) {
+        toastr.warning("Your image is greater than 20 MB.");
+        return; // Exit if the file is too large
+      }
+  
+      try {
+        // Compress the image
+        const options = {
+          maxSizeMB: 2, // Set maximum size for compression
+          maxWidthOrHeight: 1920, // Set maximum width or height
+          useWebWorker: true, // Use a web worker for better performance
+        };
+        const compressedBlob = await imageCompression(file, options);
+  
+        // Create a new File object from the compressed blob, preserving the original file name and type
+        const compressedFile = new File([compressedBlob], file.name, {
+          type: file.type, // Preserve the original file type (mime type)
+          lastModified: Date.now(), // Optional: Set the last modified time to now
+        });
+  
+        // Update the image preview at the specified index
+        const newImagePreviews = [...imagePreviews];
+        newImagePreviews[index] = URL.createObjectURL(compressedFile);
+        setImagePreviews(newImagePreviews);
+  
+        // Update formData with the new compressed image file
+        setFormData((prevData) => {
+          const updatedImages = [...prevData.game_images];
+          updatedImages[index] = compressedFile; // Save as File object, not Blob
+          return { ...prevData, game_images: updatedImages };
+        });
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        toastr.error("Failed to compress the image.");
+      }
+    }
+  };
+  
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      game_image: file,
-    }));
-    setImagePreview(URL.createObjectURL(file));
+  // Handle adding a new image section
+  const handleAddImage = () => {
+    if (imagePreviews.length < 4) { // Limit to 4 images
+      setImagePreviews([...imagePreviews, null]);
+      setFormData((prevData) => ({
+        ...prevData,
+        game_images: [...prevData.game_images, null],
+      }));
+    }
+  };
+
+  // Handle deleting an image preview
+  const handleDeleteImage = (index) => {
+    const newImagePreviews = [...imagePreviews];
+    newImagePreviews.splice(index, 1); // Remove the selected image preview
+    setImagePreviews(newImagePreviews);
+
+    // Remove the corresponding file from formData
+    setFormData((prevData) => {
+      const updatedImages = [...prevData.game_images];
+      updatedImages.splice(index, 1);
+      return { ...prevData, game_images: updatedImages };
+    });
   };
 
   // Dynamic currency symbol mapping
@@ -104,8 +167,11 @@ const CreateGame = () => {
     formDataToSend.append('condition', formData.condition);
     formDataToSend.append('desc', formData.desc);
 
-    if (formData.game_image) {
-      formDataToSend.append('game_image', formData.game_image);
+    // Append each game image file individually
+    if (formData.game_images && formData.game_images.length > 0) {
+      formData.game_images.forEach((file, index) => {
+        formDataToSend.append(`game_images[${index}]`, file);
+      });
     }
 
     // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
@@ -134,9 +200,9 @@ const CreateGame = () => {
           currency_tag: '',
           condition: '',
           desc: '',
-          game_image: null,
+          game_images: [],
         });
-        setImagePreview(null);
+        setImagePreviews([]);
         setFormErrors({});
         nav(`/game/sale/${convention_id}`);
       }
@@ -147,7 +213,7 @@ const CreateGame = () => {
         if (result.errors) {
           setFormErrors(result.errors);
         } else {
-          toastr.error('Failed to create accommodation.'); // A more generic error message
+          toastr.error('Failed to create Game.'); // A more generic error message
         }
       }
 
@@ -157,7 +223,7 @@ const CreateGame = () => {
 
     } catch (error) {
       // console.error('Error creating accommodation:', error);
-      toastr.error('Failed to create accommodation.');
+      toastr.error('Failed to create Game.');
     }
   };
 
@@ -289,25 +355,41 @@ const CreateGame = () => {
             {formErrors.desc && <p className="text-red">{formErrors.desc}</p>}
           </div>
 
-          <div className="sm:mt-5 mt-2 flex flex-col items-center">
-            <img
-              src={imagePreview || ConventionImage}
-              alt="Preview"
-              className="w-[10rem] h-[10rem] rounded-full mb-2"
+          <div className="flex flex-col items-center">
+            <div className="flex flex-wrap justify-center">
+              {imagePreviews.map((imagePreview, index) => (
+                <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
+                  <img
+                    src={imagePreview || ConventionImage} // Use a default if no preview available
+                    alt={`Preview ${index + 1}`}
+                    className="w-[10rem] h-[10rem] rounded-full object-cover"
+                  />
+                  <input
+                    type="file"
+                    id={`locationPictureInput${index}`}
+                    className="hidden"
+                    onChange={(event) => handleFileChange(index, event)}
+                    accept="image/png, image/jpeg"
+                  />
+                  <label
+                    htmlFor={`locationPictureInput${index}`}
+                    className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                  >
+                    Upload Image
+                  </label>
+                  <FaTrash
+                    onClick={() => handleDeleteImage(index)}
+                    className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                    size={20}
+                  />
+                </div>
+              ))}
+            </div>
+            <FaPlus
+              onClick={handleAddImage}
+              className="text-white cursor-pointer hover:text-green-500 mt-4"
+              size={30}
             />
-            <input
-              type="file"
-              id="locationPictureInput"
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/png, image/jpeg"
-            />
-            <label
-              htmlFor="locationPictureInput"
-              className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
-            >
-              Upload Image
-            </label>
           </div>
 
           <div className="flex justify-center items-center mt-4">

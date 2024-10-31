@@ -8,6 +8,7 @@ import Input from '../../components/Input';
 import { fetchWithAuth } from '../../services/apiService';
 import ConventionImage from '../../assets/convention.jpeg'
 import toastr from 'toastr';
+import imageCompression from 'browser-image-compression';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CreateAccommodation = () => {
@@ -39,14 +40,50 @@ const CreateAccommodation = () => {
         }));
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData((prevData) => ({
-            ...prevData,
-            location_image: file,
-        }));
-        setImagePreview(URL.createObjectURL(file));
+    
+        if (file) {
+            // Check file size (10 MB limit)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            // Compression options
+            const options = {
+                maxSizeMB: 1, // 1 MB limit
+                maxWidthOrHeight: 800, // Resize to fit within 800x800px
+                useWebWorker: true,
+                fileType: file.type, // Preserve original file type
+            };
+    
+            try {
+                // Compress image if size is greater than 1 MB
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                // Create a new File object with the original name and file type
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                // Set the new File object to formData and update image preview
+                setFormData((prevData) => ({
+                    ...prevData,
+                    location_image: newFile, // Use the new compressed file
+                }));
+                setImagePreview(URL.createObjectURL(newFile)); // Set the preview with the compressed file URL
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
     };
+    
 
     const validateForm = () => {
         const errors = {};
@@ -91,7 +128,7 @@ const CreateAccommodation = () => {
             formDataToSend.append('location_image', formData.location_image);
         }
     
-        console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
+        // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries())); // Log form data
     
         try {
             const response = await fetch(`${API_BASE_URL}/user/convention_accommodation`, {
@@ -102,11 +139,11 @@ const CreateAccommodation = () => {
                 body: formDataToSend,
             });
     
-            console.log('Form data submitted:', formData);
+            // console.log('Form data submitted:', formData);
             
             if (!response.ok) {
                 const result = await response.json();
-                console.log("Error response:", result); // Log the error response
+                // console.log("Error response:", result); // Log the error response
                 if (result.errors) {
                     setFormErrors(result.errors);
                 }
@@ -114,7 +151,7 @@ const CreateAccommodation = () => {
             }
     
             const result = await response.json();
-            console.log("Success response:", result); // Log the success response
+            // console.log("Success response:", result); // Log the success response
             toastr.success('Accommodation created successfully!');
     
             // Clear form fields, image preview, and form errors
@@ -224,7 +261,7 @@ const CreateAccommodation = () => {
                             <img
                                 src={imagePreview || ConventionImage}
                                 alt="Preview"
-                                className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                className='w-[10rem] h-[10rem] rounded-full object-cover'
                             />
                         
                         <input

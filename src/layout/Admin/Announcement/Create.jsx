@@ -10,6 +10,7 @@ import expo from '../../../assets/Group expo.svg';
 import feature from '../../../assets/Group features.svg';
 import advert from '../../../assets/Advert.svg';
 import Navbar from '../../../components/Admin/Navbar';
+import imageCompression from 'browser-image-compression';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -86,19 +87,53 @@ function Create() {
     };
 
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         const { name } = e.target; // Get the input's name
-
-        // Update the specific logo in formData based on the input name
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: file, // Dynamically set the corresponding logo
-        }));
-
-        // Set image preview for the specific logo being uploaded
-        setImagePreview(URL.createObjectURL(file));
+    
+        if (file) {
+            // Check file size (20 MB limit)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            // Compression options
+            const options = {
+                maxSizeMB: 1, // 1 MB limit
+                maxWidthOrHeight: 800, // Resize to fit within 800x800px
+                useWebWorker: true,
+                fileType: file.type, // Preserve original file type
+            };
+    
+            try {
+                // Compress image if size is greater than 1 MB
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                // Create a new File object with the original name and file type
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                // Update the specific logo in formData based on the input name
+                setFormData((prevData) => ({
+                    ...prevData,
+                    [name]: newFile, // Dynamically set the corresponding logo field
+                }));
+    
+                // Set image preview for the specific logo being uploaded
+                setImagePreview(URL.createObjectURL(newFile));
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
     };
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
@@ -163,7 +198,7 @@ function Create() {
             formDataToSend.append('advert_logo', formData.advert_logo);
         }
         // Log form data for debugging
-        console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries()));
+        // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries()));
 
 
         try {
@@ -187,7 +222,7 @@ function Create() {
             }
 
             const result = await response.json();
-            console.log("Success response:", result); // Log the success response
+            // console.log("Success response:", result); // Log the success response
             toastr.success('Announcement created successfully!');
 
             // Clear form fields, image preview, and form errors
@@ -365,7 +400,7 @@ function Create() {
                                                                             <img
                                                                                 src={formData.expo_logo ? URL.createObjectURL(formData.expo_logo) : ConventionImage}
                                                                                 alt="Preview"
-                                                                                className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                                                                className='w-[10rem] h-[10rem] rounded-full object-cover'
                                                                             />
                                                                             <input
                                                                                 type="file"
@@ -393,7 +428,7 @@ function Create() {
                                                                             <img
                                                                                 src={formData.promo_logo ? URL.createObjectURL(formData.promo_logo) : ConventionImage}
                                                                                 alt="Preview"
-                                                                                className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                                                                className='w-[10rem] h-[10rem] rounded-full object-cover'
                                                                             />
                                                                             <input
                                                                                 type="file"

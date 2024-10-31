@@ -9,6 +9,7 @@ import Input from '../../components/Input';
 import { BiSolidDownload } from 'react-icons/bi';
 import { fetchWithAuth } from "../../services/apiService";
 import Select from 'react-select'; // Import react-select
+import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -21,6 +22,7 @@ const CreateEvent = () => {
     const [selectedFriends, setSelectedFriends] = useState([]); // State for selected friends
     const [imagePreview, setImagePreview] = useState(null);
     const [spaces, setSpaces] = useState('');
+    const [spacesType, setSpacesType] = useState('');
     const [formErrors, setFormErrors] = useState({}); 
     const [formData, setFormData] = useState({
         event_name: '',
@@ -31,6 +33,7 @@ const CreateEvent = () => {
         event_location_phone: '',
         event_image: '',
         event_space: '',
+        event_space_type: '',
         invite_receiver_ids: ''
 
     });
@@ -60,8 +63,8 @@ const CreateEvent = () => {
                 value: friend.id, // Assuming each friend object has an id
                 label: (
                     <div className="flex items-center">
-                        <img src={friend.profile_picture} alt={friend.username} className="w-8 h-8 rounded-full mr-2" /> {/* Profile picture */}
-                        <span>{friend.username}</span> {/* Friend username */}
+                        <img src={friend.profile_picture} alt={friend.username} className="w-8 h-8 rounded-full object-cover" /> {/* Profile picture */}
+                        <span>{friend.username}</span> 
                     </div>
                 ),
                 username: friend.username, // Store username for later use if needed
@@ -75,14 +78,50 @@ const CreateEvent = () => {
         }
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData((prevData) => ({
-            ...prevData,
-            event_image: file,
-        }));
-        setImagePreview(URL.createObjectURL(file));
+    
+        if (file) {
+            // Check file size (20 MB limit)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            // Compression options
+            const options = {
+                maxSizeMB: 1, // 1 MB limit
+                maxWidthOrHeight: 800, // Resize to fit within 800x800px
+                useWebWorker: true,
+                fileType: file.type, // Preserve original file type
+            };
+    
+            try {
+                // Compress image if size is greater than 1 MB
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                // Create a new File object with the original name and file type
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                // Set the new File object to formData and update image preview
+                setFormData((prevData) => ({
+                    ...prevData,
+                    event_image: newFile, // Use the new compressed file
+                }));
+                setImagePreview(URL.createObjectURL(newFile)); // Set the preview with the compressed file URL
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
     };
+    
 
     const handleSelectChange = (selectedOptions) => {
         if (selectedOptions.length > spaces) {
@@ -111,6 +150,14 @@ const CreateEvent = () => {
         event_space: e.target.value,
     }));
 };
+
+const handleSpacesTypeChange = (e) => {
+    setSpacesType(e.target.value);
+    setFormData((prevData) => ({
+        ...prevData,
+        event_space_type: e.target.value,
+    }));
+};
     // Handle form inputs change
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -127,36 +174,44 @@ const CreateEvent = () => {
         const errors = {};
     
         if (!formData.event_name) {
-            errors.event_name = 'Event name is required.';
+            errors.event_name = 'Table name is required.';
         } else if (formData.event_name.length > 255) {
-            errors.event_name = 'Event name cannot exceed 255 characters.';
+            errors.event_name = 'Table name cannot exceed 255 characters.';
         }
     
         if (!formData.event_date) {
-            errors.event_date = 'Event date is required.';
+            errors.event_date = 'Table date is required.';
         } else if (isNaN(new Date(formData.event_date))) {
-            errors.event_date = 'Event date must be a valid date.';
+            errors.event_date = 'Table date must be a valid date.';
         }
     
         if (!formData.event_time) {
-            errors.event_time = 'Event time is required.';
+            errors.event_time = 'Table time is required.';
+        }
+
+        if (!formData.event_space_type) {
+            errors.event_space_type = 'Table space type is required.';
         }
     
         if (formData.event_location && formData.event_location.length > 255) {
-            errors.event_location = 'Event location cannot exceed 255 characters.';
+            errors.event_location = 'Table location cannot exceed 255 characters.';
         }
     
         if (formData.event_location_phone && formData.event_location_phone.length > 20) {
-            errors.event_location_phone = 'Event location phone number cannot exceed 20 characters.';
+            errors.event_location_phone = 'Table location phone number cannot exceed 20 characters.';
         }
     
         if (formData.event_image && !['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'].includes(formData.event_image.type)) {
-            errors.event_image = 'Event image must be an image file (jpeg, png, jpg, gif, svg).';
+            errors.event_image = 'Table image must be an image file (jpeg, png, jpg, gif, svg).';
         }
     
-        if (formData.invite_receiver_ids.length === 0) {
-            errors.invite_receiver_ids = 'At least one friend is required.';
-        } else if (formData.invite_receiver_ids.length > formData.event_space) {
+        // if (formData.invite_receiver_ids.length === 0) {
+        //     errors.invite_receiver_ids = 'At least one friend is required.';
+        // } else if (formData.invite_receiver_ids.length > formData.event_space) {
+        //     errors.invite_receiver_ids = `You can't select more than ${formData.event_space} friends.`;
+        // }
+
+        if (formData.invite_receiver_ids.length > formData.event_space) {
             errors.invite_receiver_ids = `You can't select more than ${formData.event_space} friends.`;
         }
     
@@ -185,17 +240,20 @@ const CreateEvent = () => {
         submissionData.append('event_description', formData.event_description);
         submissionData.append('event_location_phone', formData.event_location_phone);
         submissionData.append('event_space', formData.event_space);
+        submissionData.append('event_space_type', formData.event_space_type);
     
         const inviteIds = formData.invite_receiver_ids; // Assuming it's an array
+        if (formData.inviteIds) {
         inviteIds.forEach(id => {
             submissionData.append('invite_receiver_ids[]', id); // Append each ID as an array item
         });
+    }
     
         if (formData.event_image) {
             submissionData.append('event_image', formData.event_image); // image as file
         }
     
-        console.log('Form data submitted:', formData); // Log the form data for debugging
+        // console.log('Form data submitted:', formData); // Log the form data for debugging
     
         try {
             const response = await fetch(`${API_BASE_URL}/user/convention_event`, {
@@ -208,7 +266,7 @@ const CreateEvent = () => {
     
             if (!response.ok) {
                 const result = await response.json();
-                console.log("Error response:", result); // Log the error response
+                // console.log("Error response:", result); // Log the error response
                toastr.error('Error submitting form. Please try again.');
             }
     
@@ -224,6 +282,7 @@ const CreateEvent = () => {
                 event_description: '',
                 event_location_phone: '',
                 event_space: '',
+                event_space_type: '',
                 event_image: null,
             });
             setImagePreview(null);
@@ -251,15 +310,15 @@ const CreateEvent = () => {
                 <span className='text-white'>Your conventions</span>
             </div>
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto'>
-                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[50rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
+                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[55rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
-                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new event</h1>
+                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new table</h1>
     
                     {/* Event Name */}
-                    <Input name={"event_name"} placeholder={"Event Name"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
+                    <Input name={"event_name"} placeholder={"Table Name"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     {formErrors.event_name && <p className="text-red">{formErrors.event_name}</p>}
                     {/* Event Date and Time */}
                     <div className='flex justify-center items-center md:flex-row flex-col mt-2 gap-x-4'>
@@ -269,7 +328,7 @@ const CreateEvent = () => {
                         {formErrors.event_date && <p className="text-red">{formErrors.event_date}</p>}
     
                     {/* Event Location */}
-                    <Input name={"event_location"} placeholder={"Event Location"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
+                    <Input name={"event_location"} placeholder={"Table Location"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     {formErrors.event_location && <p className="text-red">{formErrors.event_location}</p>}
                     {/* Description and Direction */}
                     <Input name={"event_description"} placeholder={"Description And Direction"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
@@ -282,7 +341,7 @@ const CreateEvent = () => {
                         <img
                             src={ imagePreview || ConventionImage}
                             alt="Preview"
-                            className='w-[10rem] h-[10rem] rounded-full mb-2'
+                            className='w-[10rem] h-[10rem] rounded-full object-cover'
                         />
                         <input
                             type="file"
@@ -328,9 +387,27 @@ const CreateEvent = () => {
                         />
                     </div>
                     {formErrors.invite_receiver_ids && <p className="text-red">{formErrors.invite_receiver_ids}</p>}
+
+                    {/* Dropdown to select number of spaces */}
+                    <div className='flex flex-col mt-2'>
+                        <select
+                            name="event_space_type"
+                            value={spacesType}
+                            onChange={handleSpacesTypeChange}
+                            className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
+                        >
+                            <option value="" disabled>Select space type</option>
+                            {['Space','No Space'].map((space) => (
+                                <option key={space} value={space}>
+                                    {space}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    {formErrors.event_space_type && <p className="text-red">{formErrors.event_space_type}</p>}
                     {/* Submit Button */}
                     <div className='flex justify-center items-center mt-4'>
-                        <Button type="submit" title={"Save Event"} className={`w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange`} />
+                        <Button type="submit" title={"Save Table"} className={`w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange`} />
                     </div>
                 </form>
             </div>

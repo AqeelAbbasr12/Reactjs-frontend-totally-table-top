@@ -213,7 +213,7 @@ const Navbar = ({ type }) => {
                                                                             <img
                                                                                 src={user.profile_picture || FaceImage}
                                                                                 alt={`${user.first_name} ${user.last_name}`}
-                                                                                className="w-[6rem] h-[6rem] rounded-full"
+                                                                                className="w-[6rem] h-[6rem] rounded-full object-cover"
                                                                             />
                                                                         </div>
                                                                         <p className="text-white mt-3 font-bold">
@@ -244,7 +244,7 @@ const Navbar = ({ type }) => {
                                                                             <img
                                                                                 src={FaceImage}
                                                                                 alt=""
-                                                                                className='w-[3rem] h-[3rem] rounded-full'
+                                                                                className='w-[3rem] h-[3rem] rounded-full object-cover'
                                                                             />
                                                                         </div>
                                                                         <div>
@@ -309,7 +309,7 @@ const Navbar = ({ type }) => {
                                     <p className='text-white'>{user ? user.username : 'Loading...'}</p>
                                     <BsFillCaretDownFill className='text-white' />
                                 </div>
-                                <img onClick={() => setshowMenu(!showMenu)} src={user ? user.profile_picture : FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full' />
+                                <img onClick={() => setshowMenu(!showMenu)} src={user ? user.profile_picture : FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full object-cover' />
                                 {
                                     showMenu && (
                                         <div className=' absolute left-0 top-[3.4rem] w-full h-[fit] p-2 rounded-md bg-[#0d2539] z-50'>
@@ -325,16 +325,17 @@ const Navbar = ({ type }) => {
 
                     <div className='w-[100%] h-[10vh] md:h-[14vh] bg-[#0d2539] px-[1rem] md:px-[2rem] flex justify-between items-center border-b-4 border-lightYellow'>
 
-                        <div className='flex gap-x-[1rem] items-center'>
+                        <div onClick={() => navigate("/home")} className='flex gap-x-[1rem] items-center cursor-pointer'>
                             <div className='md:w-[3rem] w-[2.4rem] md:h-[3rem] h-[2.4rem]flex justify-center items-center'>
                                 <img src={logoImage} alt='' />
                             </div>
-                            <h1 className='sm:block hidden md:text-3xl text-white font-semibold'>Totally Table Top</h1>
+                            <h1 className='sm:block hidden md:text-3xl text-white font-semibold'>Totally TableTop</h1>
                         </div>
 
                         <div className='flex gap-x-[1rem] items-center w-fit'>
-                            <p className='text-white text-nowrap'>Need help ?</p>
-                            <Button onClickFunc={() => nav("/register-form")} title={"Create an account"} className={"md:px-0 px-1 w-fit text-sm md:w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange"} />
+                            {/* <p className='text-white text-nowrap'>Need help ?</p> */}
+                            <Link className='text-white text-nowrap' to={"/contactus"}>Need help ?</Link>
+                            <Button onClickFunc={() => navigate("/register-form")} title={"Create an account"} className={"md:px-0 px-1 w-fit text-sm md:w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange"} />
                         </div>
                     </div>
 

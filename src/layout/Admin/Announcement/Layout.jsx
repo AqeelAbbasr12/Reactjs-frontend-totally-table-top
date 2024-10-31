@@ -100,7 +100,7 @@ function Convention({ onSearch }) {
 
       const data = await response.json();
       setAnnouncement(data);
-      console.log(data);
+      // console.log(data);
       setOriginalAnnouncements(data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
@@ -291,7 +291,7 @@ function Convention({ onSearch }) {
                       announcement.type === 'Advert' ? announcement.advert_logo :
                         ConventionImage // fallback to ConventionImage if no logos are available
                 }
-                className="w-10 h-10 md:w-66 md:h-66 rounded-full"
+                className="w-10 h-10 md:w-66 md:h-66 rounded-full object-cover"
                 alt="Convention Logo"
               />
               {/* Name */}

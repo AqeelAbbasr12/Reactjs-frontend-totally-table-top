@@ -81,23 +81,13 @@ const SingleGame = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
-                    Account
-                </a>
-                <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-
-                <a href="/user/convention" className='text-white'>
-                    Your conventions
-                </a>
-                {/* <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-
-                <a href="#" className='text-white'>
-                    Your conventions Attendance
-                </a> */}
+                <a href="#" className='text-white'>Account</a>
+                <BsFillCaretDownFill className='text-lightOrange -rotate-90' />
+                <a href="/user/convention" className='text-white'>Your conventions</a>
             </div>
 
-
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] overflow-y-auto flex flex-col md:flex-row justify-between items-start md:items-center pt-4 gap-y-6 md:gap-x-6'>
+
 
                 {/* Left Section */}
                 <div className='flex-1'>
@@ -106,35 +96,30 @@ const SingleGame = () => {
                     <p className='text-white mt-3'>{formatDescription(game.game_desc)}</p>
 
                     <div className='flex items-center gap-x-4 mt-4'>
-                        <img src={game.user_image || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full' />
+                        <img src={game.user_image || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                         <p className='text-white'>Listed for sale by <span className='text-lightOrange'>{game.user_name}</span></p>
                     </div>
                 </div>
 
                 {/* Right Section */}
                 <div className='h-fit bg-[#0d2539] rounded-md relative md:mt-0 mt-4 mb-4 md:mb-0 md:w-[30rem]'>
-                    {/* Conditionally render a SOLD triangle badge */}
                     {game.game_status === 'sold' && (
                         <div className="absolute top-0 right-0 w-0 h-0 border-t-[60px] border-t-red border-l-[60px] border-l-transparent">
                             <p className="absolute top-[-50px] right-[0px] rotate-45 text-white font-bold text-xs">SOLD</p>
                         </div>
                     )}
 
-                    <img src={game.game_image || ConventionImage} alt="" className='w-full md:w-[54rem]' />
+                    <img src={game.first_image || ConventionImage} alt="" className='w-full md:w-[54rem] object-cover' />
 
                     <div className='flex justify-between items-center m-2'>
-                        {/* Check if the game is sold */}
                         {game.game_status === 'sold' ? (
                             <p className='text-white font-semibold'>Sorry, this game is no longer available</p>
                         ) : (
                             <>
-                                {/* If the game is not sold, display price and condition */}
                                 <div>
                                     <p className='text-white font-semibold'>{game.game_currency_symbol}{game.game_price}</p>
                                     <p className='text-white'>{game.game_condition}</p>
                                 </div>
-
-                                {/* Conditionally render the button for enquiring if not sold */}
                                 {game.user_id !== currentUserId && (
                                     <div>
                                         <Button
@@ -148,20 +133,34 @@ const SingleGame = () => {
                                 )}
                             </>
                         )}
+
                     </div>
+                    <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Game Images</h2>
+                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 m-2'>
+                        {game.game_images && game.game_images.slice(1).map((image, index) => ( // Splice the first image
+                            <div key={index} className='relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer'>
+                                <img
+                                    src={image || ConventionImage}
+                                    alt={`Game Image ${index + 1}`}
+                                    className='w-full h-[10rem] object-cover'
+                                    // onClick={() => nav(`${image}`)} // Redirect to new page with image
+                                />
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
+
             </div>
 
+            {/* Game Images Grid */}
 
 
             <div className='mt-4 p-3'>
                 <p>All games are listed for sale by other members of Totally TableTop. Any arrangement is directly between users, and Totally TableTop takes no responsibility for the quality of games or accuracy of listings. Follow our <span className='text-lightOrange'>tips for staying safe when buying and selling.</span></p>
             </div>
-
-
-
-
         </div>
+
     )
 }
 

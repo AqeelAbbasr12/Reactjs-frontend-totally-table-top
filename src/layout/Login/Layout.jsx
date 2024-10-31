@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import logoImage from '../../assets/image.png';
@@ -18,9 +18,9 @@ const Layout = () => {
   const [errors, setErrors] = useState({});
   
   const data = [
-    "Sell and buy board games in advance of a convention",
-    "Create an agenda for each stand you wish to visit",
-    "Instantly invite friends to play games and events"
+    "Sell your games before arriving at conventions",
+    "Create, find and schedule games to play",
+    "Simple to use agenda to list the stands you wish to visit"
   ];
 
   const handleChange = (e) => {
@@ -50,7 +50,7 @@ const Layout = () => {
         localStorage.setItem('authToken', result.token);
         localStorage.setItem('current_user_id', result.user_id);
         // Navigate to the home page or handle successful login
-        toastr.success('Log in successfully');
+        toastr.success('success','Log in successfully');
         nav("/home");
         
       } else {
@@ -96,7 +96,7 @@ const Layout = () => {
               </div>
             ))
           }
-          <p className='text-white mt-[1rem] md:flex hidden'>Find out more</p>
+          <Link className='text-white mt-[1rem] md:flex hidden' to={"/register"}>Find out more</Link>
         </div>
 
         <div className='md:w-[40%] w-[100%] md:block flex justify-center items-center flex-col'>
@@ -134,7 +134,7 @@ const Layout = () => {
           </div>
           <div className='w-[80%] md:w-[100%] px-[2rem] py-[2rem] rounded-md'>
             <Button 
-              onClickFunc={() => nav("/register")} 
+              onClickFunc={() => nav("/register-form")} 
               title={"Create An Account"} 
               className={"w-[100%] h-[2.3rem] rounded-md text-white bg-transparent border border-white mt-3"} 
             />

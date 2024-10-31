@@ -6,8 +6,10 @@ import Left from '../../components/Left';
 import FaceImage from '../../assets/face.avif';
 import MapIcon from '../../assets/mapMarker.png';
 import Input from '../../components/Input';
+import Swal from 'sweetalert2';
 import Textarea from '../../components/Textarea';
 import { fetchWithAuth } from "../../services/apiService";
+import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -87,14 +89,50 @@ const Profile = () => {
       [name]: value
     }));
   };
-  const handleProfilePictureChange = (e) => {
+  const handleProfilePictureChange = async (e) => {
     const file = e.target.files[0];
+
     if (file) {
-      setProfilePicture(file);
-      const url = URL.createObjectURL(file);
-      setProfilePictureURL(url);
+      // Check file size (10 MB limit)
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 20) {
+        toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+        return;
+      }
+
+      // Compression options
+      const options = {
+        maxSizeMB: 1, // 1 MB limit
+        maxWidthOrHeight: 800, // Resize to fit within 800x800px
+        useWebWorker: true,
+        fileType: file.type // Preserve original file type
+      };
+
+      try {
+        // Compress image if size is greater than 1 MB
+        let compressedFile = file;
+        if (fileSizeInMB > 1) {
+          compressedFile = await imageCompression(file, options);
+        }
+
+        // Create a new File object with the original name and file type
+        const newFile = new File([compressedFile], file.name, {
+          type: file.type,
+          lastModified: Date.now(),
+        });
+
+        // Create a URL for the compressed image
+        const compressedURL = URL.createObjectURL(newFile);
+
+        // Set profile picture and URL
+        setProfilePicture(newFile); // Use the new File object
+        setProfilePictureURL(compressedURL);
+      } catch (error) {
+        console.error('Error during image compression:', error);
+      }
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -143,16 +181,16 @@ const Profile = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Create a plain JavaScript object with the necessary fields
     const dataToSend = {
       current_password: passwordFormData.cpassword,
       new_password: passwordFormData.npassword,
       new_password_confirmation: passwordFormData.cnfpsw, // Laravel expects this for confirmation
     };
-  
-    console.log("Data being sent:", dataToSend); // Debugging log
-  
+
+    // console.log("Data being sent:", dataToSend); // Debugging log
+
     try {
       const response = await fetchWithAuth(`/user/update-password`, {
         method: 'POST',
@@ -162,9 +200,9 @@ const Profile = () => {
         },
         body: JSON.stringify(dataToSend), // Send as JSON
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
         toastr.success('Password successfully updated');
         setPasswordFormData({
@@ -197,8 +235,64 @@ const Profile = () => {
       setPasswordErrors({ form: 'An error occurred. Please try again.' });
     }
   };
+
+  // Define the handleDeleteProfile function
+  const handleDeleteProfile = async () => {
+    // Show the SweetAlert confirmation popup
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Create the form data (if needed, depending on your backend's requirements)
+          const formDataToSend = new FormData();
   
+          // Make the API request to delete the profile
+          const response = await fetch(`${API_BASE_URL}/user/delete-profile`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: formDataToSend,  // Assuming FormData is needed, you can adjust this if necessary
+          });
   
+          // Handle the response
+          if (response.ok) {
+            const data = await response.json();
+            // console.log(data);
+            // console.log('Profile deleted successfully:', data);
+  
+            // Show success message with SweetAlert
+            Swal.fire({
+              title: "Deleted!",
+              text: data.message,
+              icon: "success"
+            });
+  
+            // Optionally, display a success toastr notification
+            toastr.success('Success',data.message);
+            localStorage.setItem('authToken', result.token);
+          localStorage.setItem('current_user_id', result.user_id);
+          nav("/");
+          } else {
+            console.error('Error:', response.statusText);
+            toastr.error('Error', 'Failed to delete the profile.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          toastr.error('Error', 'An error occurred while deleting the profile.');
+        }
+      }
+    });
+  };
+  
+
 
 
   return (
@@ -230,7 +324,7 @@ const Profile = () => {
                     value={formData.first_name}
                     onChange={handleInputChange}
                     className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
-                    placeholder={"Marry"}
+                    placeholder={"first name"}
                   />
                   {errors.first_name && <p className='text-red'>{errors.first_name.join(', ')}</p>}
 
@@ -239,7 +333,7 @@ const Profile = () => {
                     value={formData.last_name}
                     onChange={handleInputChange}
                     className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
-                    placeholder={"Harward"}
+                    placeholder={"second name"}
                   />
                   {errors.last_name && <p className='text-red'>{errors.last_name.join(', ')}</p>}
                 </div>
@@ -249,11 +343,11 @@ const Profile = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
-                  placeholder={"Marry@email.com"}
+                  placeholder={"email address"}
                 />
                 {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
 
-                <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2'> @{userData?.username || ''}</p>
+                <p className='mt-4 border-b border-b-[#F2F0EF] text-[#F2F0EF] pb-2'> {userData?.username || ''}</p>
                 <p className='mt-2 text-[#F2F0EF] pb-2'>Username cannot be changed</p>
 
                 <div className="pb-4">
@@ -263,7 +357,7 @@ const Profile = () => {
                       value={formData.location}
                       onChange={handleInputChange}
                       className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
-                      placeholder={"Bristol"}
+                      placeholder={"your location"}
                     />
                     {errors.location && <p className='text-red'>{errors.location.join(', ')}</p>}
                     <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
@@ -277,7 +371,7 @@ const Profile = () => {
                     name="bio"
                     value={formData.bio}
                     onChangeFunc={handleInputChange}
-                    className={`peer h-full min-h-[100px] w-full resize-none rounded-md px-3 bg-darkBlue mt-3 px-3 py-2.5 text-white ${errors.bio ? 'border-red' : ''}`}
+                    className={`peer h-full min-h-[100px] w-full resize-none rounded-md bg-darkBlue mt-3 px-3 py-2.5 text-white ${errors.bio ? 'border-red' : ''}`}
                     placeholder={"Your biography (160 characters)"}
                   />
                   {errors.bio && <p className='text-red'>{errors.bio.join(', ')}</p>}
@@ -297,7 +391,7 @@ const Profile = () => {
                 <img
                   src={profilePictureURL || formData.profilePicture || FaceImage}
                   alt="Profile"
-                  className="w-[10rem] h-[10rem] rounded-full"
+                  className="w-[10rem] h-[10rem] rounded-full object-cover" // Added object-cover
                 />
 
                 <input
@@ -314,7 +408,14 @@ const Profile = () => {
                 >
                   Upload Picture
                 </label>
+                <label
+                  className="w-[12rem] mt-6 h-[2.3rem] text-white bg-red border border-red-700 rounded-md flex items-center justify-center cursor-pointer"
+                  onClick={handleDeleteProfile}  // Attach the click event handler
+                >
+                  Delete Profile
+                </label>
               </div>
+
 
             </div>
           </form>

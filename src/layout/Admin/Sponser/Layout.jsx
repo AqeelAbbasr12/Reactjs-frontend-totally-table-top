@@ -83,7 +83,7 @@ function Convention({ onSearch }) {
 
       const data = await response.json();
       setSponser(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error('Error fetching Sponser data:', error);
     } finally {
@@ -243,7 +243,7 @@ function Convention({ onSearch }) {
                     {/* Image */}
                     <img
                       src={sponser.promo_logo || ConventionImage} // Fallback image if logo is not available
-                      className="w-10 h-10 md:w-66 md:h-66 rounded-full"
+                      className="w-10 h-10 md:w-66 md:h-66 rounded-full object-cover"
                       alt="Convention Logo"
                     />
                     {/* Name */}

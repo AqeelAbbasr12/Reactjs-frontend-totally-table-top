@@ -18,6 +18,8 @@ import SearchPage from '../pages/SearchPage';
 import SingleConventionPage from '../pages/SingleConventionPage';
 import AttendConventionPage from '../pages/AttendConventionPage';
 import UserConventionPage from '../pages/UserConventionPage';
+import UserUpcomingConventionPage from '../pages/UserUpcomingConventionPage';
+import UserSingleUpcomingConventionPage from '../pages/UserSingleUpcomingConventionPage';
 import AttendanceConventionPage from '../pages/AttendanceConventionPage';
 import AgendaPage from '../pages/AgendaPage';
 import ConventionAttendancePage from '../pages/ConventionAttendancePage';
@@ -27,6 +29,7 @@ import AccomodationPage from '../pages/AccomodationPage';
 import CreateAccomodationPage from '../pages/CreateAccomodationPage';
 import EditAccomodationPage from '../pages/EditAccomodationPage';
 import EventPage from '../pages/EventPage';
+import FindATablePage from '../pages/FindATablePage';
 import CreateEventPage from '../pages/CreateEventPage';
 import EditEventPage from '../pages/EditEventPage';
 import EditGamePage from '../pages/EditGamePage';
@@ -81,6 +84,8 @@ export const routing = [
   { id: 12, link: "/single/conv/:id", element: <SingleConventionPage />, protected: true },
   { id: 13, link: "/attend", element: <AttendConventionPage />, protected: true },
   { id: 14, link: "/user/convention", element: <UserConventionPage />, protected: true },
+  { id: 14, link: "/upcoming-convention", element: <UserUpcomingConventionPage />, protected: true },
+  { id: 14, link: "/single-upcoming-convention/:convention_id", element: <UserSingleUpcomingConventionPage />, protected: true },
   { id: 15, link: "/user/announcements", element: <UserAnnouncementsPage />, protected: true },
   { id: 16, link: "/convention/attendance/:convention_id", element: <AttendanceConventionPage />, protected: true },
   { id: 17, link: "/agenda/:convention_id", element: <AgendaPage />, protected: true },
@@ -89,6 +94,7 @@ export const routing = [
   { id: 20, link: "/accomodation/:convention_id", element: <AccomodationPage />, protected: true },
   { id: 21, link: "/new/accomodation/:convention_id", element: <CreateAccomodationPage />, protected: true },
   { id: 22, link: "/event/:convention_id", element: <EventPage />, protected: true },
+  { id: 22, link: "/find_a_table", element: <FindATablePage />, protected: true },
   { id: 23, link: "/new/event/:convention_id", element: <CreateEventPage />, protected: true },
   { id: 24, link: "/game/sale/:convention_id?", element: <GamesPage />, protected: true },
   { id: 25, link: "/new/game/:convention_id", element: <CreateGamePage />, protected: true },
