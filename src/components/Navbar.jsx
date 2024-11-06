@@ -157,7 +157,7 @@ const Navbar = ({ type }) => {
             }
 
             const data = await response.json();
-            console.log(data); // To check structure and content of response
+            // console.log(data); // To check structure and content of response
             // Update suggestions state with both users and conventions
             setSuggestions({
                 users: data.users || [],
