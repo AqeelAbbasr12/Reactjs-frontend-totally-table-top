@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import img1 from '../../../assets/icon-caret-down.svg';
 import Input from '../../../components/Admin/Input/Input';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import { useNavigate } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";
@@ -11,6 +11,7 @@ import feature from '../../../assets/Group features.svg';
 import advert from '../../../assets/Advert.svg';
 import Navbar from '../../../components/Admin/Navbar';
 import imageCompression from 'browser-image-compression';
+import { FaTrash, FaPlus } from 'react-icons/fa';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -86,11 +87,20 @@ function Create() {
         setIsDropdownOpen(false);
     };
 
+    const handleAddImage = () => {
+        if (imagePreviews.length < 4) { // Limit to 4 images
+            setImagePreview([...imagePreview, null]);
+            setFormData((prevData) => ({
+                ...prevData,
+                game_images: [...prevData.feature_logo, null],
+            }));
+        }
+    };
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         const { name } = e.target; // Get the input's name
-    
+
         if (file) {
             // Check file size (20 MB limit)
             const fileSizeInMB = file.size / (1024 * 1024);
@@ -98,7 +108,7 @@ function Create() {
                 toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
                 return;
             }
-    
+
             // Compression options
             const options = {
                 maxSizeMB: 1, // 1 MB limit
@@ -106,26 +116,26 @@ function Create() {
                 useWebWorker: true,
                 fileType: file.type, // Preserve original file type
             };
-    
+
             try {
                 // Compress image if size is greater than 1 MB
                 let compressedFile = file;
                 if (fileSizeInMB > 1) {
                     compressedFile = await imageCompression(file, options);
                 }
-    
+
                 // Create a new File object with the original name and file type
                 const newFile = new File([compressedFile], file.name, {
                     type: file.type,
                     lastModified: Date.now(),
                 });
-    
+
                 // Update the specific logo in formData based on the input name
                 setFormData((prevData) => ({
                     ...prevData,
                     [name]: newFile, // Dynamically set the corresponding logo field
                 }));
-    
+
                 // Set image preview for the specific logo being uploaded
                 setImagePreview(URL.createObjectURL(newFile));
             } catch (error) {
@@ -133,7 +143,7 @@ function Create() {
             }
         }
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
@@ -142,6 +152,20 @@ function Create() {
             [name]: value,
         }));
     };
+
+     // Handle deleting an image preview
+  const handleDeleteFeatureLogo = (index) => {
+    const newImagePreviews = [...imagePreviews];
+    newImagePreviews.splice(index, 1); // Remove the selected image preview
+    setImagePreviews(newImagePreviews);
+
+    // Remove the corresponding file from formData
+    setFormData((prevData) => {
+      const updatedImages = [...prevData.game_images];
+      updatedImages.splice(index, 1);
+      return { ...prevData, game_images: updatedImages };
+    });
+  };
 
     const validateForm = () => {
         const errors = {};
@@ -468,7 +492,7 @@ function Create() {
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Feature Details</span>
                                                         <div className=' mt-[37px] mb-[52px] pb-10'>
-                                                        {formErrors.name && (
+                                                            {formErrors.name && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.name}
                                                                 </p>
@@ -485,34 +509,55 @@ function Create() {
                                                                 style={{ minHeight: '150px' }}
                                                             />
                                                             <Input holder="Announcement URL…" name="url" onChange={handleChange} />
-                                                            <div className=''>
-
-                                                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
-                                                                    <div className='sm:mt-5 mt-2 flex flex-col items-center'>
+                                                            <div className="my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start">
+                                                                <div className="sm:mt-5 mt-2 flex flex-col items-center relative">
+                                                                    {/* Image Preview */}
+                                                                    <div className="relative">
                                                                         <img
                                                                             src={formData.feature_logo ? URL.createObjectURL(formData.feature_logo) : ConventionImage}
                                                                             alt="Preview"
-                                                                            className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                                                            className="w-[10rem] h-[10rem] rounded-full mb-2"
                                                                         />
-                                                                        <input
-                                                                            type="file"
-                                                                            id="featureLogoInput"
-                                                                            name='feature_logo'
-                                                                            className="hidden"
-                                                                            onChange={handleFileChange}
-                                                                            accept="image/png, image/jpeg"
+                                                                        {/* Trash Icon Centered */}
+                                                                        <FaTrash
+                                                                            onClick={() => handleDeleteFeatureLogo(index)}
+                                                                            className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                                                                            size={0}
                                                                         />
-                                                                        <label htmlFor="featureLogoInput" className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
-                                                                            Upload Logo
-                                                                        </label>
                                                                     </div>
-                                                                    {formErrors.logo && (
-                                                                        <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                                                                            {formErrors.logo}
-                                                                        </p>
-                                                                    )}
+
+                                                                    {/* Upload Logo Input */}
+                                                                    <input
+                                                                        type="file"
+                                                                        id="featureLogoInput"
+                                                                        name="feature_logo"
+                                                                        className="hidden"
+                                                                        onChange={handleFileChange}
+                                                                        accept="image/png, image/jpeg"
+                                                                    />
+                                                                    <label
+                                                                        htmlFor="featureLogoInput"
+                                                                        className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                                                                    >
+                                                                        Upload Logo
+                                                                    </label>
+
+                                                                    {/* Add Image Button */}
+                                                                    <FaPlus
+                                                                        onClick={handleAddImage}
+                                                                        className="text-white cursor-pointer hover:text-green-500 mt-4"
+                                                                        size={30}
+                                                                    />
                                                                 </div>
+
+                                                                {/* Error Message */}
+                                                                {formErrors.logo && (
+                                                                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                                        {formErrors.logo}
+                                                                    </p>
+                                                                )}
                                                             </div>
+
 
                                                         </div>
                                                     </div>
@@ -529,7 +574,7 @@ function Create() {
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
-                                                        {formErrors.name && (
+                                                            {formErrors.name && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.name}
                                                                 </p>

@@ -122,7 +122,7 @@ const ViewProfile = () => {
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[20rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
                     <img src={ProfileDetail.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[40%] md:left-[34%] w-[6rem] h-[6rem] rounded-full object-cover' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{ProfileDetail.first_name} {ProfileDetail.last_name}</p>
-                    <p className='text-center text-white mt-2'>@{ProfileDetail.username}</p>
+                    <p className='text-center text-white mt-2'>{ProfileDetail.username}</p>
                     {/* 
                     <Button
                         title={

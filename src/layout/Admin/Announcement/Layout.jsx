@@ -306,6 +306,8 @@ function Convention({ onSearch }) {
                   {announcement.created_at}
                 </td>
               </div>
+              
+              
             </div>
             <div className="flex items-center gap-x-20 justify-self-end">
               {/* Feature status */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import img1 from '../../../assets/icon-caret-down.svg';
 import Input from '../../../components/Admin/Input/Input';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";
@@ -141,7 +141,7 @@ function Edit() {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-    
+
         if (file) {
             // Check file size (20 MB limit)
             const fileSizeInMB = file.size / (1024 * 1024);
@@ -149,7 +149,7 @@ function Edit() {
                 toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
                 return;
             }
-    
+
             // Compression options
             const options = {
                 maxSizeMB: 1, // 1 MB limit
@@ -157,20 +157,20 @@ function Edit() {
                 useWebWorker: true,
                 fileType: file.type, // Preserve original file type
             };
-    
+
             try {
                 // Compress image if size is greater than 1 MB
                 let compressedFile = file;
                 if (fileSizeInMB > 1) {
                     compressedFile = await imageCompression(file, options);
                 }
-    
+
                 // Create a new File object with the original name and file type
                 const newFile = new File([compressedFile], file.name, {
                     type: file.type,
                     lastModified: Date.now(),
                 });
-    
+
                 // Update the formData and image preview with the new compressed file
                 setFormData((prevData) => ({
                     ...prevData,
@@ -189,6 +189,37 @@ function Edit() {
             ...prevData,
             [name]: value,
         }));
+    };
+
+    const handleDeleteImage = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_convention_image/${convention_id}`, {
+                method: 'DELETE', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
     };
 
     const validateForm = () => {
@@ -217,16 +248,6 @@ function Edit() {
         if (!formData.state) {
             toastr.error('Convention State is required');
             errors.state = 'Convention State is required';
-        }
-
-        if (!formData.fb_url) {
-            toastr.error('FB URL is required');
-            errors.fb_url = 'FB URL is required';
-        }
-
-        if (!formData.ig_url) {
-            toastr.error('IG URL is required');
-            errors.ig_url = 'IG URL is required';
         }
 
         // Validate URL for website
@@ -490,28 +511,87 @@ function Edit() {
                                         name="state"
                                         className='w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none'
                                         onChange={handleChange}
-                                        value={formData.state} // Set the value based on the formData
+                                        value={formData.state} // Set the value based on formData.state to persist selected option
                                     >
-                                        <option value="" disabled>Select a state</option>
+                                        <option value="" disabled>Select a Country</option>
+
+                                        {/* North America */}
+                                        <option value="Canada">Canada</option>
+                                        <option value="Mexico">Mexico</option>
                                         <option value="USA">USA</option>
-                                        <option value="UK">UK</option>
+
+                                        {/* South America */}
+                                        <option value="Argentina">Argentina</option>
+                                        <option value="Brazil">Brazil</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="Colombia">Colombia</option>
+                                        <option value="Peru">Peru</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="Venezuela">Venezuela</option>
+
+                                        {/* Europe */}
+                                        <option value="Austria">Austria</option>
+                                        <option value="Belgium">Belgium</option>
+                                        <option value="Bulgaria">Bulgaria</option>
+                                        <option value="Croatia">Croatia</option>
+                                        <option value="Cyprus">Cyprus</option>
+                                        <option value="Czech Republic">Czech Republic</option>
+                                        <option value="Denmark">Denmark</option>
+                                        <option value="Estonia">Estonia</option>
+                                        <option value="Finland">Finland</option>
+                                        <option value="France">France</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="Greece">Greece</option>
+                                        <option value="Hungary">Hungary</option>
+                                        <option value="Iceland">Iceland</option>
+                                        <option value="Ireland">Ireland</option>
+                                        <option value="Italy">Italy</option>
+                                        <option value="Latvia">Latvia</option>
+                                        <option value="Lithuania">Lithuania</option>
+                                        <option value="Luxembourg">Luxembourg</option>
+                                        <option value="Malta">Malta</option>
+                                        <option value="Netherlands">Netherlands</option>
+                                        <option value="Norway">Norway</option>
+                                        <option value="Poland">Poland</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Romania">Romania</option>
+                                        <option value="Slovakia">Slovakia</option>
+                                        <option value="Slovenia">Slovenia</option>
+                                        <option value="Spain">Spain</option>
+                                        <option value="Sweden">Sweden</option>
+                                        <option value="Switzerland">Switzerland</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+
+                                        {/* Asia and Oceania */}
+                                        <option value="Australia">Australia</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Thailand">Thailand</option>
                                     </select>
                                 </div>
+
                                 {formErrors.state && (
                                     <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
                                         {formErrors.state}
                                     </p>
                                 )}
 
+
                                 {/* Image Upload */}
                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                    
-                                        <img
-                                            src={imagePreview || ConventionImage}
-                                            alt="Preview"
-                                            className='w-[10rem] h-[10rem] rounded-full object-cover'
-                                        />
+                                        <div className='relative'>
+                                            <img
+                                                src={imagePreview || ConventionImage}
+                                                alt="Preview"
+                                                className='w-[10rem] h-[10rem] rounded-full object-cover'
+                                            />
+                                            {imagePreview || formData.logo ? (
+                                                <FaTrash
+                                                    onClick={handleDeleteImage}
+                                                    className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                />
+                                            ) : null}
+                                        </div>
                                         <input
                                             type="file"
                                             id="locationPictureInput"
@@ -523,7 +603,7 @@ function Edit() {
                                         <label htmlFor="locationPictureInput" className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
                                             Upload Logo
                                         </label>
-                                        
+
                                     </div>
                                     {formErrors.logo && (
                                         <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
@@ -559,45 +639,45 @@ function Edit() {
                                 </div>
 
                                 <div className='bg-[#0D2539] w-full'>
-            <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
-                <div>
-                    <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
-                        Convention dates
-                    </span>
-                </div>
-                {formErrors.date && (
-                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                        {formErrors.date}
-                    </p>
-                )}
-                <div>
-                    {dates.map((date, index) => (
-                        <div key={index} className='flex items-center mt-3'>
-                            {/* Date Input (read-only for edit screen) */}
-                            <Input
-                                name={`date-${index}`} // Unique name for each date input
-                                type="date"
-                                min={today}
-                                value={date} // Bind the date value
-                                readOnly // Dates are read-only in the edit screen
-                                onChange={(event) => handleDateChange(index, event)} // Handle date change if allowed
-                                className="w-[90%] px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
-                            />
-                            {/* Delete Button */}
-                            {dates.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => handleDeleteDate(index)}
-                                    className="ml-3 text-red-600"
-                                    title="Delete this date"
-                                >
-                                    <FaTrash className='text-red' size={20} />
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    {/* Uncomment if you want to add more dates dynamically */}
-                    {/* <div className='mt-5 flex justify-start'>
+                                    <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
+                                        <div>
+                                            <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
+                                                Convention dates
+                                            </span>
+                                        </div>
+                                        {formErrors.date && (
+                                            <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                {formErrors.date}
+                                            </p>
+                                        )}
+                                        <div>
+                                            {dates.map((date, index) => (
+                                                <div key={index} className='flex items-center mt-3'>
+                                                    {/* Date Input (read-only for edit screen) */}
+                                                    <Input
+                                                        name={`date-${index}`} // Unique name for each date input
+                                                        type="date"
+                                                        min={today}
+                                                        value={date} // Bind the date value
+                                                        readOnly // Dates are read-only in the edit screen
+                                                        onChange={(event) => handleDateChange(index, event)} // Handle date change if allowed
+                                                        className="w-[90%] px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
+                                                    />
+                                                    {/* Delete Button */}
+                                                    {dates.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDeleteDate(index)}
+                                                            className="ml-3 text-red-600"
+                                                            title="Delete this date"
+                                                        >
+                                                            <FaTrash className='text-red' size={20} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {/* Uncomment if you want to add more dates dynamically */}
+                                            {/* <div className='mt-5 flex justify-start'>
                         <button
                             type="button"
                             className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
@@ -606,9 +686,9 @@ function Edit() {
                             Add another date
                         </button>
                     </div> */}
-                </div>
-            </div>
-        </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

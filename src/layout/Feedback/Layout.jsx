@@ -12,7 +12,7 @@ const FeedBack = () => {
 
   return (
     <div className='flex flex-col w-[100vw]]'>
-        <Navbar type={"verified"} />
+        <Navbar />
 
       <div className='flex justify-between h-[100vh] md:flex-row flex-col bg-darkBlue p-[1rem] md:p-[2rem] gap-x-[4rem]'>
 
@@ -23,7 +23,6 @@ const FeedBack = () => {
               <div className=''>
                 <p className='text-white'>The best way to tell us about your experience using</p>
                 <p className='text-white pb-4'>TotallyTableTop is to fill in this form, and we’ll get your feedback right away.  </p>
-                <p className='text-white'>Alternatively, you can email <span className='text-f3c15f'>hello@totallytabletop.com</span></p>
               </div>
         </div>
 

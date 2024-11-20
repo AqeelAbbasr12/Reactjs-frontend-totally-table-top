@@ -219,7 +219,7 @@ const Navbar = ({ type }) => {
                                                                         <p className="text-white mt-3 font-bold">
                                                                             {user.first_name} {user.last_name}
                                                                         </p>
-                                                                        <p className="text-white mt-1 font-thin">@{user.username}</p>
+                                                                        <p className="text-white mt-1 font-thin">{user.username}</p>
                                                                     </div>
                                                                 </Link>
                                                             ))}

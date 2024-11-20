@@ -129,7 +129,7 @@ const Layout = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
+                <a href="/profile" className='text-white'>
                     Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -138,10 +138,6 @@ const Layout = () => {
                     Your conventions
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-
-                <a href="#" className='text-white'>
-                    UK Games Expo
-                </a>
             </div>
 
 

@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { FaExpand, FaList } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs';
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { BiSolidDownload } from 'react-icons/bi';
@@ -19,9 +19,10 @@ const CreateEvent = () => {
     const { convention_id } = useParams();
     const [loading, setLoading] = useState(true);
     const [friends, setFriends] = useState([]);
-    const [selectedFriends, setSelectedFriends] = useState([]); // State for selected friends
+    const [selectedFriends, setSelectedFriends] = useState([]); 
     const [imagePreview, setImagePreview] = useState(null);
     const [spaces, setSpaces] = useState('');
+    const [convention, setConvention] = useState('');
     const [spacesType, setSpacesType] = useState('');
     const [formErrors, setFormErrors] = useState({}); 
     const [formData, setFormData] = useState({
@@ -40,7 +41,34 @@ const CreateEvent = () => {
 
     useEffect(() => {
         fetchFriends();
+        fetchConvention(convention_id);
     }, []);
+
+    const fetchConvention = async () => {
+        setLoading(true); // Show loading spinner while fetching
+        try {
+            const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            // Transform data into the format required by react-select
+            setConvention(data);
+            
+        } catch (error) {
+            // console.error('Error fetching Events data:', error);
+        } finally {
+            setLoading(false); // Hide loading spinner
+        }
+    };
 
     const fetchFriends = async () => {
         setLoading(true); // Show loading spinner while fetching
@@ -295,6 +323,7 @@ const handleSpacesTypeChange = (e) => {
         }
     };
     
+    
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>
@@ -312,7 +341,7 @@ const handleSpacesTypeChange = (e) => {
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto'>
                 <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[55rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
-                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
+                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
                     <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new table</h1>
@@ -333,9 +362,7 @@ const handleSpacesTypeChange = (e) => {
                     {/* Description and Direction */}
                     <Input name={"event_description"} placeholder={"Description And Direction"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
     
-                    {/* Location Phone Number */}
-                    <Input name={"event_location_phone"} placeholder={"Location Phone Number"} type={"number"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
-    
+                    
                     {/* Image Upload */}
                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
                         <img
@@ -388,23 +415,7 @@ const handleSpacesTypeChange = (e) => {
                     </div>
                     {formErrors.invite_receiver_ids && <p className="text-red">{formErrors.invite_receiver_ids}</p>}
 
-                    {/* Dropdown to select number of spaces */}
-                    <div className='flex flex-col mt-2'>
-                        <select
-                            name="event_space_type"
-                            value={spacesType}
-                            onChange={handleSpacesTypeChange}
-                            className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
-                        >
-                            <option value="" disabled>Select space type</option>
-                            {['Space','No Space'].map((space) => (
-                                <option key={space} value={space}>
-                                    {space}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    {formErrors.event_space_type && <p className="text-red">{formErrors.event_space_type}</p>}
+                    
                     {/* Submit Button */}
                     <div className='flex justify-center items-center mt-4'>
                         <Button type="submit" title={"Save Table"} className={`w-[12rem] h-[2.3rem] rounded-md text-white bg-lightOrange`} />

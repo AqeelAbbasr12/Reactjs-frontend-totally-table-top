@@ -203,7 +203,7 @@ const OwnFeed = () => {
                 <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
                     <img src={user.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full object-cover' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{user.first_name} {user.last_name}</p>
-                    <p className='text-center text-white mt-2'>@{user.username}</p>
+                    <p className='text-center text-white mt-2'>{user.username}</p>
                     {/* {
                         !currentLocation.includes("ownFeed") && (
                             <Button title={"Add as friend"} className={`w-full h-[2.3rem] text-white rounded-md bg-lightOrange my-2`} />

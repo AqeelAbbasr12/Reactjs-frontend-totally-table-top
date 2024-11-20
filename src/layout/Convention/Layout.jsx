@@ -181,7 +181,7 @@ const Layout = () => {
             {/* <Button onClickFunc={() => nav("/complete")} title={"Add convention"} className={"min-w-[10rem] min-h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange sm:mt-0 mt-2"} /> */}
           </div>
           {conventions.length > 0 ? (
-            <div className="bg-[#0d2539] p-3 w-full min-h-[300px] md:max-h-fit rounded-md mt-6 overflow-y-auto overflow-x-hidden">
+            <div className="bg-[#0d2539] p-3 w-full min-h-[700px] md:max-h-fit rounded-md mt-6 overflow-y-auto overflow-x-hidden">
               {conventions.map((convention) => (
                 <div key={convention.id} className='flex flex-col md:flex-row justify-between items-start mb-4 p-2 bg-[#1a2a3a] rounded-md'>
 
@@ -198,11 +198,11 @@ const Layout = () => {
 
                   {/* 3rd Column */}
                   <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
-                  <Link to={`/next/agenda/${convention.id}`}>
-                    <FaList
-                      className='cursor-pointer'
-                      color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
+                    <Link to={`/next/agenda/${convention.id}`}>
+                      <FaList
+                        className='cursor-pointer'
+                        color={AgendaItems.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
+                      />
                     </Link>
                     <Link to={`/accomodation/${convention.id}`}>
                     <FaBuilding

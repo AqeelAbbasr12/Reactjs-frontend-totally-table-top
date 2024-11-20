@@ -6,7 +6,7 @@ import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import IconCaretSvg from "../../assets/icon-caret-down.svg";
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import toastr from 'toastr';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
@@ -237,11 +237,10 @@ const CreateGame = () => {
       <Navbar type={"verified"} />
 
       <div className="bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3 ">
-        <span className="text-white">Account</span>
+        <a href="/profile" className="text-white">Account</a>
         <BsFillCaretDownFill className="text-lightOrange -rotate-90" />
-        <span className="text-white">Your conventions</span>
-        <BsFillCaretDownFill className="text-lightOrange -rotate-90" />
-        <span className="text-white">UK Games Expo 2024</span>
+        <a href="/user/convention" className="text-white">Your conventions</a>
+        
       </div>
 
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">

@@ -64,7 +64,7 @@ function Create() {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-    
+
         if (file) {
             // Check file size (20 MB limit)
             const fileSizeInMB = file.size / (1024 * 1024);
@@ -72,7 +72,7 @@ function Create() {
                 toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
                 return;
             }
-    
+
             // Compression options
             const options = {
                 maxSizeMB: 1, // 1 MB limit
@@ -80,20 +80,20 @@ function Create() {
                 useWebWorker: true,
                 fileType: file.type, // Preserve original file type
             };
-    
+
             try {
                 // Compress image if size is greater than 1 MB
                 let compressedFile = file;
                 if (fileSizeInMB > 1) {
                     compressedFile = await imageCompression(file, options);
                 }
-    
+
                 // Create a new File object with the original name and file type
                 const newFile = new File([compressedFile], file.name, {
                     type: file.type,
                     lastModified: Date.now(),
                 });
-    
+
                 // Update the formData and image preview with the new compressed file
                 setFormData((prevData) => ({
                     ...prevData,
@@ -105,7 +105,7 @@ function Create() {
             }
         }
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
@@ -157,16 +157,6 @@ function Create() {
             errors.state = 'Convention State is required';
         }
 
-        if (!formData.fb_url) {
-            toastr.error('FB URL is required');
-            errors.fb_url = 'FB URL is required';
-        }
-
-        if (!formData.ig_url) {
-            toastr.error('IG URL is required');
-            errors.ig_url = 'IG URL is required';
-        }
-
         // Validate URL for website
         const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/; // Basic URL pattern
         if (formData.website && !urlPattern.test(formData.website)) {
@@ -183,7 +173,7 @@ function Create() {
             toastr.error('Please enter a valid URL');
             errors.ig_url = 'Please enter a valid URL';
         }
-        
+
 
         if (!formData.dates || formData.dates.length === 0 || !formData.dates.some(date => date)) {
             errors.dates = 'At least one Convention Date is required';
@@ -270,7 +260,7 @@ function Create() {
             toastr.error('Failed to create convention.');
         }
     };
-    
+
 
     return (
         <div className="bg-[#102F47] w-full opacity-100 min-h-screen">
@@ -411,7 +401,7 @@ function Create() {
                                     </p>
                                 )}
 
-                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
                                     <Input holder='IG URL e.g. https://www.instagram.com/' name="ig_url" onChange={handleChange} />
                                 </div>
                                 {formErrors.ig_url && (
@@ -427,18 +417,70 @@ function Create() {
                                         className='w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none'
                                         onChange={handleChange}
                                     >
-                                        <option value="" disabled selected>Select a state</option>
+                                        <option value="" disabled selected>Select a Country</option>
+
+                                        {/* North America */}
+                                        <option value="Canada">Canada</option>
+                                        <option value="Mexico">Mexico</option>
                                         <option value="USA">USA</option>
-                                        <option value="UK">UK</option>
+
+                                        {/* South America */}
+                                        <option value="Argentina">Argentina</option>
+                                        <option value="Brazil">Brazil</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="Colombia">Colombia</option>
+                                        <option value="Peru">Peru</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="Venezuela">Venezuela</option>
+
+                                        {/* Europe */}
+                                        <option value="Austria">Austria</option>
+                                        <option value="Belgium">Belgium</option>
+                                        <option value="Bulgaria">Bulgaria</option>
+                                        <option value="Croatia">Croatia</option>
+                                        <option value="Cyprus">Cyprus</option>
+                                        <option value="Czech Republic">Czech Republic</option>
+                                        <option value="Denmark">Denmark</option>
+                                        <option value="Estonia">Estonia</option>
+                                        <option value="Finland">Finland</option>
+                                        <option value="France">France</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="Greece">Greece</option>
+                                        <option value="Hungary">Hungary</option>
+                                        <option value="Iceland">Iceland</option>
+                                        <option value="Ireland">Ireland</option>
+                                        <option value="Italy">Italy</option>
+                                        <option value="Latvia">Latvia</option>
+                                        <option value="Lithuania">Lithuania</option>
+                                        <option value="Luxembourg">Luxembourg</option>
+                                        <option value="Malta">Malta</option>
+                                        <option value="Netherlands">Netherlands</option>
+                                        <option value="Norway">Norway</option>
+                                        <option value="Poland">Poland</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Romania">Romania</option>
+                                        <option value="Slovakia">Slovakia</option>
+                                        <option value="Slovenia">Slovenia</option>
+                                        <option value="Spain">Spain</option>
+                                        <option value="Sweden">Sweden</option>
+                                        <option value="Switzerland">Switzerland</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+
+                                        {/* Asia and Oceania */}
+                                        <option value="Australia">Australia</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Thailand">Thailand</option>
                                     </select>
                                 </div>
+
                                 {formErrors.state && (
                                     <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
                                         {formErrors.state}
                                     </p>
                                 )}
 
-                                
+
+
 
                                 {/* Image Upload */}
                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
@@ -470,57 +512,57 @@ function Create() {
 
                             {/* Dates Section */}
                             <div className='xl:col-span-4 col-span-8'>
-            <div className='bg-[#0D2539] w-full'>
-                <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
-                    <div>
-                        <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
-                            Convention dates
-                        </span>
-                    </div>
-                    {formErrors.dates && (
-                        <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                            {formErrors.dates}
-                        </p>
-                    )}
-                    <div>
-                        {dates.map((date, index) => (
-                            <div key={index} className='flex items-center mt-3'>
-                                {/* Date Input */}
-                                <Input
-                                    name={`date-${index}`} // Unique name for each date input
-                                    type="date"
-                                    min={today}
-                                    value={date} // Bind the date value
-                                    onChange={(event) => handleDateChange(index, event)} // Handle date change
-                                    className="w-[90%] px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
-                                />
-                                {/* Delete Button */}
-                                {dates.length > 1 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteDate(index)}
-                                        className="ml-3 text-red-600"
-                                        title="Delete this date"
-                                    >
-                                        <FaTrash className='text-red' size={20} />
-                                    </button>
-                                )}
+                                <div className='bg-[#0D2539] w-full'>
+                                    <div className='w-10/12 mx-auto py-[26px] flex-col justify-start items-center'>
+                                        <div>
+                                            <span className='text-xl leading-10 sm:text-28 sm:leading-35 tracking-[0.56px]'>
+                                                Convention dates
+                                            </span>
+                                        </div>
+                                        {formErrors.dates && (
+                                            <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                {formErrors.dates}
+                                            </p>
+                                        )}
+                                        <div>
+                                            {dates.map((date, index) => (
+                                                <div key={index} className='flex items-center mt-3'>
+                                                    {/* Date Input */}
+                                                    <Input
+                                                        name={`date-${index}`} // Unique name for each date input
+                                                        type="date"
+                                                        min={today}
+                                                        value={date} // Bind the date value
+                                                        onChange={(event) => handleDateChange(index, event)} // Handle date change
+                                                        className="w-[90%] px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
+                                                    />
+                                                    {/* Delete Button */}
+                                                    {dates.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDeleteDate(index)}
+                                                            className="ml-3 text-red-600"
+                                                            title="Delete this date"
+                                                        >
+                                                            <FaTrash className='text-red' size={20} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {/* Add another date button */}
+                                            <div className='mt-5 flex justify-start'>
+                                                <button
+                                                    type="button"
+                                                    className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
+                                                    onClick={addDateField}
+                                                >
+                                                    Add another date
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
-                        {/* Add another date button */}
-                        <div className='mt-5 flex justify-start'>
-                            <button
-                                type="button"
-                                className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
-                                onClick={addDateField}
-                            >
-                                Add another date
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
                         </div>
                     </div>
                 </div>

@@ -180,7 +180,7 @@ const Layout = () => {
 
                         <div className='bg-[#0d2539] p-3'>
                             <p className='text-white text-wrap'>We take your privacy seriously, and put control in your hands. Use the options below to control who can see your different actions and updates on Totally TableTop. Please refer to our privacy policy for more information about how your data is used.</p>
-                            <p className='text-white text-lg font-semibold mt-2'>Who can see ?</p>
+                            <p className='text-white text-lg font-semibold mt-2'>Who can see you ?</p>
 
                             {/* Profile Changes Dropdown */}
                             <form onSubmit={handleSubmitWhoCan} className="space-y-4">
@@ -276,7 +276,7 @@ const Layout = () => {
 
 
 
-                            <p className='text-white text-lg font-semibold mt-2'>All other users to find by ?</p>
+                            <p className='text-white text-lg font-semibold mt-2'>How can other’s find you ?</p>
 
                             {/* Find By Username Dropdown */}
                             <form onSubmit={handleSubmitFindBy} className="space-y-4">

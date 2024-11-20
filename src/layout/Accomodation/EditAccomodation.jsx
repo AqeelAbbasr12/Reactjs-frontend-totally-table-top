@@ -7,7 +7,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { fetchWithAuth } from '../../services/apiService';
 import imageCompression from 'browser-image-compression';
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import toastr from 'toastr';
 import { FaTrash } from 'react-icons/fa'; // Import delete icon
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -262,9 +262,9 @@ const EditAccommodation = () => {
             )}
             <Navbar type={"verified"} />
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <span className='text-white'>Account</span>
+                <a href='/profile' className='text-white'>Account</a>
                 <BsFillCaretDownFill className='text-lightOrange -rotate-90' />
-                <span className='text-white'>Your conventions</span>
+                <a href='/user/convention' className='text-white'>Your conventions</a>
             </div>
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
                 <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[48rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
@@ -325,6 +325,8 @@ const EditAccommodation = () => {
                         name="location_phone_number"
                         placeholder="Phone Number"
                         type="text"
+                        inputMode="numeric"
+                        pattern="\d*"
                         value={formData.location_phone_number}
                         onChange={handleChange}
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}

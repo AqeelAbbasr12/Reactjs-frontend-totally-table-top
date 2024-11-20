@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar'
 import { FaExpand, FaGripLines, FaList } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { BsFillCaretDownFill, BsLine, BsPrinterFill } from 'react-icons/bs'
+import ConventionImage from '../../assets/traditional.png'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import DraggableList from '../../components/DragAbleTodoList'
@@ -40,7 +41,7 @@ const NextAgenda = () => {
             }
 
             const data = await response.json();
-            // console.log(data);
+            console.log(data);
             setConvention(data);
         } catch (error) {
             // console.error('Error fetching conventions data:', error);
@@ -86,7 +87,7 @@ const NextAgenda = () => {
             
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
+                <a href="/profile" className='text-white'>
                 Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -94,7 +95,6 @@ const NextAgenda = () => {
                 <a href="/user/convention" className='text-white'>
                 Your conventions
                 </a>
-                <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 
             </div>
@@ -104,7 +104,7 @@ const NextAgenda = () => {
 
                 <div className='sm:w-[50%] w-[100%] bg-[#0d2539]  px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
-                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
+                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'> <img src={conventions.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
                     <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Your {agendaName.agenda_item} Agenda</h1>

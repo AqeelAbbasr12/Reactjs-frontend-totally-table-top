@@ -126,7 +126,7 @@ return (
                 {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
 
                 <Input 
-                    placeholder={"@ Choose a username"} 
+                    placeholder={"Choose a username"} 
                     name={"username"} 
                     type={"text"} 
                     className={`w-[100%] mt-3 h-[2.3rem] px-3 rounded-md bg-darkBlue text-white ${errors.username ? 'border-red' : ''}`} 
@@ -135,7 +135,7 @@ return (
                 />
                 {errors.username && <p className='text-red'>{errors.username.join(', ')}</p>}
                 
-                <p className='text-white mt-3'>Select a username. Cannot already be in use, cannot be changed </p>
+                <p className='text-white mt-3'>Please select a unique username, it cannot be changed </p>
                 
                 <Input 
                     placeholder={"Create Password"} 

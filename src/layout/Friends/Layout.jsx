@@ -247,7 +247,7 @@ const Layout = () => {
                     {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}
                   </p>
                   <p className="text-white mt-1 font-thin">
-                    @{friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
+                    {friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
                   </p>
                   <div className="flex justify-center items-center gap-x-4 mt-4">
                     <Link to={`/feed/${friend.sender_id === currentUserId ? friend.receiver_id : friend.sender_id}`}>
@@ -283,7 +283,7 @@ const Layout = () => {
                         {friend.sender_id === currentUserId ? friend.receiver_first_name : friend.sender_first_name} {friend.sender_id === currentUserId ? friend.receiver_last_name : friend.sender_last_name}
                       </p>
                       <p className="text-white mt-1 font-thin">
-                        @{friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
+                        {friend.sender_id === currentUserId ? friend.receiver_user_name : friend.sender_user_name}
                       </p>
                     </div>
                   </div>

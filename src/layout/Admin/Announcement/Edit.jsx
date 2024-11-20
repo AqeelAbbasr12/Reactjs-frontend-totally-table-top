@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import img1 from '../../../assets/icon-caret-down.svg';
 import Input from '../../../components/Admin/Input/Input';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";
@@ -12,6 +12,7 @@ import advert from '../../../assets/Advert.svg';
 import Navbar from '../../../components/Admin/Navbar';
 import { fetchWithAuth } from '../../../services/apiService';
 import imageCompression from 'browser-image-compression';
+import { FaTrash } from 'react-icons/fa'; // Import delete icon
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -81,7 +82,7 @@ function Edit() {
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         const { name } = e.target; // Get the input's name
-    
+
         if (file) {
             // Check file size (20 MB limit)
             const fileSizeInMB = file.size / (1024 * 1024);
@@ -89,7 +90,7 @@ function Edit() {
                 toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
                 return;
             }
-    
+
             // Compression options
             const options = {
                 maxSizeMB: 1, // 1 MB limit
@@ -97,26 +98,26 @@ function Edit() {
                 useWebWorker: true,
                 fileType: file.type, // Preserve original file type
             };
-    
+
             try {
                 // Compress image if size is greater than 1 MB
                 let compressedFile = file;
                 if (fileSizeInMB > 1) {
                     compressedFile = await imageCompression(file, options);
                 }
-    
+
                 // Create a new File object with the original name and file type
                 const newFile = new File([compressedFile], file.name, {
                     type: file.type,
                     lastModified: Date.now(),
                 });
-    
+
                 // Update the specific logo in formData based on the input name
                 setFormData((prevData) => ({
                     ...prevData,
                     [name]: newFile, // Dynamically set the corresponding logo field
                 }));
-    
+
                 // Set image preview for the specific logo being uploaded
                 setImagePreview(URL.createObjectURL(newFile));
             } catch (error) {
@@ -224,26 +225,26 @@ function Edit() {
         formDataToSend.append('call_to_action', formData.call_to_action); // Convention call to action
         formDataToSend.append('type', activeTab); // Convention type
         formDataToSend.append('feature', formData.feature || 0); // Feature flag
-        
+
 
         // Append logos if they exist
-       
-    // Append logos if they are valid File instances
-    if (formData.expo_logo instanceof File) {
-        formDataToSend.append('expo_logo', formData.expo_logo);
-    }
 
-    if (formData.promo_logo instanceof File) {
-        formDataToSend.append('promo_logo', formData.promo_logo);
-    }
+        // Append logos if they are valid File instances
+        if (formData.expo_logo instanceof File) {
+            formDataToSend.append('expo_logo', formData.expo_logo);
+        }
 
-    if (formData.feature_logo instanceof File) {
-        formDataToSend.append('feature_logo', formData.feature_logo);
-    }
+        if (formData.promo_logo instanceof File) {
+            formDataToSend.append('promo_logo', formData.promo_logo);
+        }
 
-    if (formData.advert_logo instanceof File) {
-        formDataToSend.append('advert_logo', formData.advert_logo);
-    }
+        if (formData.feature_logo instanceof File) {
+            formDataToSend.append('feature_logo', formData.feature_logo);
+        }
+
+        if (formData.advert_logo instanceof File) {
+            formDataToSend.append('advert_logo', formData.advert_logo);
+        }
         // Log form data for debugging
         // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries()));
 
@@ -298,6 +299,129 @@ function Edit() {
         }
     };
 
+    const handleDeleteExpoLogo = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_expo_logo/${announcement_id}`, {
+                method: 'DELETE', // Assuming DELETE method for removing the image
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, expo_logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
+    };
+
+    const handleDeleteImage = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_promo_logo/${announcement_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, promo_logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
+    };
+
+    const handleDeleteFeatureLogo = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_feature_logo/${announcement_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, feature_logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
+    };
+    const handleDeleteAdvertLogo = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_advert_logo/${announcement_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, advert_logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
+    };
+
     return (
         <div className="bg-[#102F47] w-full opacity-100 min-h-screen">
             {loading && (
@@ -329,7 +453,7 @@ function Edit() {
                                 <button
                                     type='button'
                                     className='w-full h-full lg:w-[460px] lg:h-[73px] border-b-2 border-[#707070] text-xl sm:text-[28px] sm:leading-35 tracking-[0.56px] py-4 px-3 flex items-center justify-between bg-[#0D2539]'
-                                    // onClick={toggleDropdown}
+                                // onClick={toggleDropdown}
                                 >
                                     <div className='flex gap-8 items-center'>
                                         {selectedOption === '1' ? (
@@ -423,10 +547,10 @@ function Edit() {
                                                                     {formErrors.name}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name}/>
+                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
 
 
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange}  value={formData.title} />
+                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} value={formData.title} />
 
                                                             <textarea
                                                                 name="description"
@@ -449,15 +573,23 @@ function Edit() {
                                                                 <div className=' flex flex-col items-center xl:items-start'>
                                                                     <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                                                         <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                                                            <img
-                                                                                src={
-                                                                                    formData.expo_logo instanceof File
-                                                                                        ? URL.createObjectURL(formData.expo_logo)
-                                                                                        : formData.expo_logo || ConventionImage
-                                                                                }
-                                                                                alt="Expo Logo Preview"
-                                                                                className='w-[10rem] h-[10rem] rounded-full object-cover'
-                                                                            />
+                                                                            <div className='relative'>
+                                                                                <img
+                                                                                    src={
+                                                                                        formData.expo_logo instanceof File
+                                                                                            ? URL.createObjectURL(formData.expo_logo)
+                                                                                            : formData.expo_logo || ConventionImage
+                                                                                    }
+                                                                                    alt="Expo Logo Preview"
+                                                                                    className='w-[10rem] h-[10rem] rounded-full object-cover'
+                                                                                />
+                                                                                {imagePreview || formData.expo_logo ? (
+                                                                                    <FaTrash
+                                                                                        onClick={handleDeleteExpoLogo} // Call delete function on click
+                                                                                        className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                                                    />
+                                                                                ) : null}
+                                                                            </div>
                                                                             <input
                                                                                 type="file"
                                                                                 id="expoLogoInput"
@@ -481,15 +613,23 @@ function Edit() {
                                                                 <div className=' flex flex-col items-center xl:items-start'>
                                                                     <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                                                         <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                                                            <img
-                                                                                src={
-                                                                                    formData.promo_logo instanceof File
-                                                                                        ? URL.createObjectURL(formData.promo_logo)
-                                                                                        : formData.promo_logo || ConventionImage
-                                                                                }
-                                                                                alt="Promo Logo Preview"
-                                                                                className='w-[10rem] h-[10rem] rounded-full object-cover'
-                                                                            />
+                                                                            <div className='relative'>
+                                                                                <img
+                                                                                    src={
+                                                                                        formData.promo_logo instanceof File
+                                                                                            ? URL.createObjectURL(formData.promo_logo)
+                                                                                            : formData.promo_logo || ConventionImage
+                                                                                    }
+                                                                                    alt="Promo Logo Preview"
+                                                                                    className='w-[10rem] h-[10rem] rounded-full object-cover'
+                                                                                />
+                                                                                {imagePreview || formData.promo_logo ? (
+                                                                                    <FaTrash
+                                                                                        onClick={handleDeleteImage}
+                                                                                        className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                                                    />
+                                                                                ) : null}
+                                                                            </div>
                                                                             <input
                                                                                 type="file"
                                                                                 id="promoLogoInput"
@@ -529,8 +669,8 @@ function Edit() {
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Feature Details</span>
                                                         <div className=' mt-[37px] mb-[52px] pb-10'>
 
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name}/>
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} value={formData.title}/>
+                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
+                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} value={formData.title} />
 
                                                             <textarea
                                                                 name="description"
@@ -541,20 +681,28 @@ function Edit() {
                                                                 onChange={handleChange}
                                                                 style={{ minHeight: '150px' }}
                                                             />
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url}/>
+                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
                                                             <div className=''>
 
                                                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                                                        <img
-                                                                            src={
-                                                                                formData.feature_logo instanceof File
-                                                                                    ? URL.createObjectURL(formData.feature_logo)
-                                                                                    : formData.feature_logo || ConventionImage
-                                                                            }
-                                                                            alt="Preview"
-                                                                            className='w-[10rem] h-[10rem] rounded-full mb-2'
-                                                                        />
+                                                                        <div className='relative'>
+                                                                            <img
+                                                                                src={
+                                                                                    formData.feature_logo instanceof File
+                                                                                        ? URL.createObjectURL(formData.feature_logo)
+                                                                                        : formData.feature_logo || ConventionImage
+                                                                                }
+                                                                                alt="Preview"
+                                                                                className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                                                            />
+                                                                            {imagePreview || formData.feature_logo ? (
+                                                                                <FaTrash
+                                                                                    onClick={handleDeleteFeatureLogo}
+                                                                                    className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                                                />
+                                                                            ) : null}
+                                                                        </div>
                                                                         <input
                                                                             type="file"
                                                                             id="featureLogoInput"
@@ -591,12 +739,13 @@ function Edit() {
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
 
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name}/>
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url}/>
+                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
+                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
                                                             <div className='flex flex-col items-center md:items-start pb-10'>
 
                                                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
+                                                                    <div className='relative'>
                                                                         <img
                                                                             src={formData.advert_logo instanceof File
                                                                                 ? URL.createObjectURL(formData.advert_logo)
@@ -604,6 +753,13 @@ function Edit() {
                                                                             alt="Preview"
                                                                             className='w-[10rem] h-[10rem] rounded-full mb-2'
                                                                         />
+                                                                         {imagePreview || formData.advert_logo ? (
+                                                                                <FaTrash
+                                                                                    onClick={handleDeleteAdvertLogo}
+                                                                                    className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                                                />
+                                                                            ) : null}
+                                                                    </div>
                                                                         <input
                                                                             type="file"
                                                                             id="advertLogoInput"
@@ -635,7 +791,7 @@ function Edit() {
                             </div>
 
                             <div className='lg:col-span-4 col-span-8 bg-[#102F47] order-1 lg:order-last'>
-                            <div className='bg-[#0D2539] w-full'>
+                                <div className='bg-[#0D2539] w-full'>
                                     {/* Feature */}
                                     <div className='w-10/12 bg-[#0D2539] mx-auto h-[102px] flex justify-between items-center'>
                                         <div>

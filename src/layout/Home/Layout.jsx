@@ -100,11 +100,11 @@ const Layout = () => {
   const renderAnnouncementLogo = (announcement) => {
     switch (announcement.type) {
       case 'Expo':
-        return <img src={announcement.promo_logo} alt="Expo Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.promo_logo} alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       case 'Feature':
-        return <img src={announcement.feature_logo} alt="Feature Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.feature_logo} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       case 'Advert':
-        return <img src={announcement.advert_logo} alt="Advert Announcement" className="w-[100%] lg:w-[80%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.advert_logo} alt="Advert Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       default:
         return null;
     }
@@ -218,12 +218,27 @@ const Layout = () => {
               <p className='text-white'>Feature Announcements</p>
             </div>
             {announcements.filter(a => a.type === 'Feature').map((announcement) => (
-              <div key={announcement.id} className="mb-3">
-                <Link to={`/single/announcement/${announcement.id}`}>
+            <Link
+              key={announcement.id}
+              to={`/single/announcement/${announcement.id}`}
+              className="block bg-darkBlue p-4 rounded-[1.37rem] mb-3 border border-white transition-transform transform hover:scale-105"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-center md:items-center">
+                {/* Name */}
+                <h1 className="text-white text-2xl font-semibold text-center md:text-left">
+                  {announcement.name}
+                </h1>
+
+                {/* Divider (hidden on mobile) */}
+                <div className="hidden md:block w-[1px] h-8 bg-white mx-4"></div>
+
+                {/* Logo (below name on mobile) */}
+                <div className="mt-4 md:mt-0 flex-shrink-0">
                   {renderAnnouncementLogo(announcement)}
-                </Link>
+                </div>
               </div>
-            ))}
+            </Link>
+          ))}
 
             {/* Advert Announcements */}
             <div className='flex items-center gap-x-[1rem] my-[1rem]'>

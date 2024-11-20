@@ -15,7 +15,7 @@ const upcoming = () => {
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [conventions, setConvention] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('Sort by State...');
+  const [selectedOption, setSelectedOption] = useState('Sort by Country...');
   const [filteredConventions, setFilteredConventions] = useState([]);
   const [attendance, setAttendance] = useState();
   const [AgendaItems, setItems] = useState([]);
@@ -34,23 +34,72 @@ const upcoming = () => {
     fetchGame();
   }, []);
 
+  const countries = [
+    // North America
+    { label: "Canada", value: "Canada" },
+    { label: "Mexico", value: "Mexico" },
+    { label: "USA", value: "USA" },
+    // South America
+    { label: "Argentina", value: "Argentina" },
+    { label: "Brazil", value: "Brazil" },
+    { label: "Chile", value: "Chile" },
+    { label: "Colombia", value: "Colombia" },
+    { label: "Peru", value: "Peru" },
+    { label: "Uruguay", value: "Uruguay" },
+    { label: "Venezuela", value: "Venezuela" },
+    // Europe
+    { label: "Austria", value: "Austria" },
+    { label: "Belgium", value: "Belgium" },
+    { label: "Bulgaria", value: "Bulgaria" },
+    { label: "Croatia", value: "Croatia" },
+    { label: "Cyprus", value: "Cyprus" },
+    { label: "Czech Republic", value: "Czech Republic" },
+    { label: "Denmark", value: "Denmark" },
+    { label: "Estonia", value: "Estonia" },
+    { label: "Finland", value: "Finland" },
+    { label: "France", value: "France" },
+    { label: "Germany", value: "Germany" },
+    { label: "Greece", value: "Greece" },
+    { label: "Hungary", value: "Hungary" },
+    { label: "Iceland", value: "Iceland" },
+    { label: "Ireland", value: "Ireland" },
+    { label: "Italy", value: "Italy" },
+    { label: "Latvia", value: "Latvia" },
+    { label: "Lithuania", value: "Lithuania" },
+    { label: "Luxembourg", value: "Luxembourg" },
+    { label: "Malta", value: "Malta" },
+    { label: "Netherlands", value: "Netherlands" },
+    { label: "Norway", value: "Norway" },
+    { label: "Poland", value: "Poland" },
+    { label: "Portugal", value: "Portugal" },
+    { label: "Romania", value: "Romania" },
+    { label: "Slovakia", value: "Slovakia" },
+    { label: "Slovenia", value: "Slovenia" },
+    { label: "Spain", value: "Spain" },
+    { label: "Sweden", value: "Sweden" },
+    { label: "Switzerland", value: "Switzerland" },
+    { label: "United Kingdom", value: "United Kingdom" },
+    // Asia and Oceania
+    { label: "Australia", value: "Australia" },
+    { label: "Japan", value: "Japan" },
+    { label: "Thailand", value: "Thailand" },
+  ];
+
 
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-
-    let filteredData;
-    if (option === 'USA') {
-      filteredData = conventions.filter(convention => convention.convention_state === 'USA');
-    } else if (option === 'UK') {
-      filteredData = conventions.filter(convention => convention.convention_state === 'UK');
-    } else {
-      filteredData = conventions; // Show all conventions
-    }
-
+  
+    // Filter conventions based on the selected country
+    const filteredData = option === "All"
+      ? conventions // Show all conventions if "All" is selected
+      : conventions.filter(convention => convention.convention_state === option);
+  
     setFilteredConventions(filteredData);
   };
+  
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
@@ -211,41 +260,43 @@ const upcoming = () => {
             <h1 className='text-white text-2xl font-semibold'>Upcoming Conventions</h1>
 
             {/* Sort by Dropdown moved to the right */}
-            <div className='relative'>
+            <div className="relative">
               <button
-                type='button'
-                className='w-full lg:w-72 text-white border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
+                type="button"
+                className="w-full lg:w-72 text-white border-2 px-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between"
                 onClick={toggleDropdown}
               >
-                {selectedOption}
+                {selectedOption || "Select a country"}
                 <img src={drop} alt="" />
               </button>
 
               {isDropdownOpen && (
-                <div className='absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50'>
-                  <ul>
+                <div
+                  className="absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50 max-h-64 overflow-y-auto"
+                  style={{ maxHeight: '300px' }} // Maximum height for the dropdown
+                >
+                  <ul className="divide-y divide-gray-600">
                     <li
-                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('USA')}
-                    >
-                      USA
-                    </li>
-                    <li
-                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('UK')}
-                    >
-                      UK
-                    </li>
-                    <li
-                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-                      onClick={() => handleOptionClick('All')}
+                      className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                      onClick={() => handleOptionClick("All")}
                     >
                       All
                     </li>
+                    {countries.map((country) => (
+                      <li
+                        key={country.value}
+                        className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                        onClick={() => handleOptionClick(country.value)}
+                      >
+                        {country.label}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
             </div>
+
+
 
 
           </div>
@@ -279,7 +330,7 @@ const upcoming = () => {
 
                   {/* 3rd Column */}
                   <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
-                  <p className='text-lightOrange font-semibold text-lg break-words'>
+                    <p className='text-lightOrange font-semibold text-lg break-words'>
                       {convention.convention_state}
                     </p>
                   </div>

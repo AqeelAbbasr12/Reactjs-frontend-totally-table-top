@@ -5,6 +5,7 @@ import { FaList } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { BsFillCaretDownFill, BsPrinterFill } from 'react-icons/bs';
 import Button from '../../components/Button';
+import ConventionImage from '../../assets/traditional.png'
 import { useParams } from 'react-router-dom';
 import { BiSolidDownload } from 'react-icons/bi';
 import toastr from 'toastr';
@@ -148,7 +149,7 @@ const ConventionAttendance = () => {
 
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
+                <a href="/profile" className='text-white'>
                     Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -164,7 +165,7 @@ const ConventionAttendance = () => {
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
                 <div className='sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
-                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
+                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
                     <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Select Your {convention.convention_name} Attendance</h1>

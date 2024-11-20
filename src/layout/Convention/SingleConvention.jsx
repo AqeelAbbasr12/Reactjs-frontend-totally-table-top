@@ -82,7 +82,7 @@ const SingleConvention = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>Account</a>
+                <a href="/profile" className='text-white'>Account</a>
                 <BsFillCaretDownFill className='text-lightOrange -rotate-90' />
                 <a href="/upcoming-convention" className='text-white'>Upcoming conventions</a>
             </div>
@@ -97,10 +97,10 @@ const SingleConvention = () => {
                         Dates: {upcoming.convention_dates ? upcoming.convention_dates.join(', ') : 'No dates available'}
                     </p>
                     <div className='flex items-center gap-x-4 mt-4'>
-                        <p className='text-white'>Location: <span className='text-lightOrange'>{upcoming.convention_location}</span></p>
+                        <p className='text-white'>Address: <span className='text-lightOrange'>{upcoming.convention_location}</span></p>
                     </div>
                     <div className='flex items-center gap-x-4 mt-4'>
-                        <p className='text-white'>State: <span className='text-lightOrange'>{upcoming.convention_state}</span></p>
+                        <p className='text-white'>Country: <span className='text-lightOrange'>{upcoming.convention_state}</span></p>
                     </div>
 
                     <p className='text-white mt-3'>{formatDescription(upcoming.convention_description)}</p>
@@ -138,7 +138,7 @@ const SingleConvention = () => {
                             onClickFunc={() => {
                                 nav(`/convention/attendance/${convention_id}`);
                             }}
-                            title={"Mark Your Attendance"}
+                            title={"Confirm Your Attendance"}
                             className={`text-white bg-lightOrange w-[16rem] h-[2.3rem] rounded-md`}
                         />
                     </div>
