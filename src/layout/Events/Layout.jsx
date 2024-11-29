@@ -131,7 +131,7 @@ const Layout = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
+                <a href="/profile" className='text-white'>
                     Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -151,7 +151,7 @@ const Layout = () => {
 
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>
-                        <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'>UKGE</div>
+                        <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <h1 className='text-3xl font-bold text-white'>{convention.convention_name} Tables</h1>
                     </div>
                     <Button onClickFunc={() => { nav(`/new/event/${convention_id}`) }} title={"Add New"} className={`w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white sm:mt-0 mt-3`} />

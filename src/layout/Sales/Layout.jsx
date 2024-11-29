@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar'
 import { useNavigate } from 'react-router-dom'
 import { TbGridDots } from 'react-icons/tb'
 import { IoListSharp } from 'react-icons/io5'
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import Input from '../../components/Input'
 import { useParams } from 'react-router-dom';
 import { fetchWithAuth } from '../../services/apiService';

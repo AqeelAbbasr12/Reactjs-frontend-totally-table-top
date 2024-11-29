@@ -20,7 +20,7 @@ function Create() {
     const [selectedOption, setSelectedOption] = useState('Invisible to users');
     const [formErrors, setFormErrors] = useState({});
     const [dates, setDates] = useState(['']);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreviews, setImagePreviews] = useState([ConventionImage]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState();
     const [formData, setFormData] = useState({
@@ -87,17 +87,59 @@ function Create() {
         setIsDropdownOpen(false);
     };
 
-    const handleAddImage = () => {
-        if (imagePreviews.length < 4) { // Limit to 4 images
-            setImagePreview([...imagePreview, null]);
+    const handleAddLogo = () => {
+        if (imagePreviews.length < 15) { // Limit to 4 images
+            setImagePreviews([...imagePreviews, null]); // Add a placeholder for the new logo
             setFormData((prevData) => ({
                 ...prevData,
-                game_images: [...prevData.feature_logo, null],
+                feature_logo: [...(prevData.feature_logo || []), null], // Ensure feature_logo is an array
             }));
         }
     };
 
-    const handleFileChange = async (e) => {
+    const handleFileChange = async (index, e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 800,
+                useWebWorker: true,
+                fileType: file.type,
+            };
+
+            try {
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+
+                setFormData((prevData) => {
+                    const updatedFeatureLogo = [...(prevData.feature_logo || [])];
+                    updatedFeatureLogo[index] = newFile; // Update the specific index
+                    return { ...prevData, feature_logo: updatedFeatureLogo };
+                });
+
+                const newImagePreviews = [...imagePreviews];
+                newImagePreviews[index] = URL.createObjectURL(compressedFile); // Update the specific index
+                setImagePreviews(newImagePreviews);
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
+    };
+
+    const handleFileChangeOther = async (e) => {
         const file = e.target.files[0];
         const { name } = e.target; // Get the input's name
 
@@ -137,12 +179,13 @@ function Create() {
                 }));
 
                 // Set image preview for the specific logo being uploaded
-                setImagePreview(URL.createObjectURL(newFile));
+                setImagePreviews(URL.createObjectURL(newFile));
             } catch (error) {
                 console.error('Error during image compression:', error);
             }
         }
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -153,19 +196,19 @@ function Create() {
         }));
     };
 
-     // Handle deleting an image preview
-  const handleDeleteFeatureLogo = (index) => {
-    const newImagePreviews = [...imagePreviews];
-    newImagePreviews.splice(index, 1); // Remove the selected image preview
-    setImagePreviews(newImagePreviews);
+    // Handle deleting an image preview
+    const handleDeleteLogo = (index) => {
+        const newImagePreviews = [...imagePreviews];
+        newImagePreviews.splice(index, 1); // Remove the selected logo preview
+        setImagePreviews(newImagePreviews);
 
-    // Remove the corresponding file from formData
-    setFormData((prevData) => {
-      const updatedImages = [...prevData.game_images];
-      updatedImages.splice(index, 1);
-      return { ...prevData, game_images: updatedImages };
-    });
-  };
+        setFormData((prevData) => {
+            const updatedFeatureLogo = [...(prevData.feature_logo || [])];
+            updatedFeatureLogo.splice(index, 1); // Remove the corresponding file
+            return { ...prevData, feature_logo: updatedFeatureLogo };
+        });
+    };
+
 
     const validateForm = () => {
         const errors = {};
@@ -214,9 +257,13 @@ function Create() {
             formDataToSend.append('promo_logo', formData.promo_logo);
         }
 
-        if (formData.feature_logo) {
-            formDataToSend.append('feature_logo', formData.feature_logo);
+        // Append feature_logo files individually
+        if (formData.feature_logo && formData.feature_logo.length > 0) {
+            formData.feature_logo.forEach((file, index) => {
+                formDataToSend.append(`feature_logo[${index}]`, file);
+            });
         }
+
 
         if (formData.advert_logo) {
             formDataToSend.append('advert_logo', formData.advert_logo);
@@ -264,9 +311,8 @@ function Create() {
                 advert_logo: null,        // Convention logo (initially null for file)
                 feature: 0    // Initialize feature if needed, adjust according to your logic
             });
-            setImagePreview(null);
+            setImagePreviews(null);
             setFormErrors({});
-
             navigate(`/admin/announcement`);
 
         } catch (error) {
@@ -431,7 +477,7 @@ function Create() {
                                                                                 id="expoLogoInput"
                                                                                 name='expo_logo'
                                                                                 className="hidden"
-                                                                                onChange={handleFileChange}
+                                                                                onChange={handleFileChangeOther}
                                                                                 accept="image/png, image/jpeg"
                                                                             />
                                                                             <label htmlFor="expoLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
@@ -459,7 +505,7 @@ function Create() {
                                                                                 id="promoLogoInput"
                                                                                 name='promo_logo'
                                                                                 className="hidden"
-                                                                                onChange={handleFileChange}
+                                                                                onChange={handleFileChangeOther}
                                                                                 accept="image/png, image/jpeg"
                                                                             />
                                                                             <label htmlFor="promoLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
@@ -509,54 +555,43 @@ function Create() {
                                                                 style={{ minHeight: '150px' }}
                                                             />
                                                             <Input holder="Announcement URL…" name="url" onChange={handleChange} />
-                                                            <div className="my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start">
-                                                                <div className="sm:mt-5 mt-2 flex flex-col items-center relative">
-                                                                    {/* Image Preview */}
-                                                                    <div className="relative">
-                                                                        <img
-                                                                            src={formData.feature_logo ? URL.createObjectURL(formData.feature_logo) : ConventionImage}
-                                                                            alt="Preview"
-                                                                            className="w-[10rem] h-[10rem] rounded-full mb-2"
-                                                                        />
-                                                                        {/* Trash Icon Centered */}
-                                                                        <FaTrash
-                                                                            onClick={() => handleDeleteFeatureLogo(index)}
-                                                                            className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
-                                                                            size={0}
-                                                                        />
-                                                                    </div>
-
-                                                                    {/* Upload Logo Input */}
-                                                                    <input
-                                                                        type="file"
-                                                                        id="featureLogoInput"
-                                                                        name="feature_logo"
-                                                                        className="hidden"
-                                                                        onChange={handleFileChange}
-                                                                        accept="image/png, image/jpeg"
-                                                                    />
-                                                                    <label
-                                                                        htmlFor="featureLogoInput"
-                                                                        className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
-                                                                    >
-                                                                        Upload Logo
-                                                                    </label>
-
-                                                                    {/* Add Image Button */}
-                                                                    <FaPlus
-                                                                        onClick={handleAddImage}
-                                                                        className="text-white cursor-pointer hover:text-green-500 mt-4"
-                                                                        size={30}
-                                                                    />
+                                                            <div className="flex flex-col items-center">
+                                                                <div className="flex flex-wrap justify-center">
+                                                                    {imagePreviews.map((imagePreview, index) => (
+                                                                        <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
+                                                                            <img
+                                                                                src={imagePreview || ConventionImage} // Use a default if no preview available
+                                                                                alt={`Preview ${index + 1}`}
+                                                                                className="w-[10rem] h-[10rem] rounded-full object-cover"
+                                                                            />
+                                                                            <input
+                                                                                type="file"
+                                                                                id={`featureLogoInput${index}`}
+                                                                                className="hidden"
+                                                                                onChange={(event) => handleFileChange(index, event)}
+                                                                                accept="image/png, image/jpeg"
+                                                                            />
+                                                                            <label
+                                                                                htmlFor={`featureLogoInput${index}`}
+                                                                                className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                                                                            >
+                                                                                Upload Logo
+                                                                            </label>
+                                                                            <FaTrash
+                                                                                onClick={() => handleDeleteLogo(index)}
+                                                                                className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                                                                                size={20}
+                                                                            />
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
-
-                                                                {/* Error Message */}
-                                                                {formErrors.logo && (
-                                                                    <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                                                                        {formErrors.logo}
-                                                                    </p>
-                                                                )}
+                                                                <FaPlus
+                                                                    onClick={handleAddLogo}
+                                                                    className="text-white cursor-pointer hover:text-green-500 mt-4"
+                                                                    size={30}
+                                                                />
                                                             </div>
+
 
 
                                                         </div>
@@ -595,7 +630,7 @@ function Create() {
                                                                             id="advertLogoInput"
                                                                             name='advert_logo'
                                                                             className="hidden"
-                                                                            onChange={handleFileChange}
+                                                                            onChange={handleFileChangeOther}
                                                                             accept="image/png, image/jpeg"
                                                                         />
                                                                         <label htmlFor="advertLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">

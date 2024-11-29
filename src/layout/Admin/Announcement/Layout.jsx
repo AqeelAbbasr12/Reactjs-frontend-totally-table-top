@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import img1 from '../../../assets/Announcement.svg';
 import img2 from '../../../assets/Convention.svg';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import drop from '../../../assets/icon-caret-down.svg';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Admin/Navbar';
@@ -28,12 +28,12 @@ function Convention({ onSearch }) {
     fetchAnnoucements();
   }, []);
   // Handle selection of an option
- 
+
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-  
+
     if (option === 'Sort by A to Z') {
       setAnnouncement([...originalAnnouncements].sort((a, b) => a.name.localeCompare(b.name))); // Sort original announcements
     } else if (option === 'Sort by Z to A') {
@@ -41,7 +41,7 @@ function Convention({ onSearch }) {
     } else {
       // Reset to original announcements before filtering
       let filteredAnnouncements = [...originalAnnouncements]; // Start with original announcements
-  
+
       if (option === 'Sort by Expo') {
         filteredAnnouncements = filteredAnnouncements.filter(a => a.type === 'Expo'); // Filter by Expo
       } else if (option === 'Sort by Feature') {
@@ -51,11 +51,11 @@ function Convention({ onSearch }) {
       } else if (option === 'Show All') {
         filteredAnnouncements = [...originalAnnouncements]; // Show all announcements
       }
-  
+
       setAnnouncement(filteredAnnouncements); // Update the displayed announcements
     }
   };
-  
+
   // Function to handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -202,58 +202,58 @@ function Convention({ onSearch }) {
 
             {/* Sort by Dropdown */}
             <div className='relative'>
-  <button
-    type='button'
-    className='w-full lg:w-72 border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
-    onClick={toggleDropdown}
-  >
-    {selectedOption}
-    <img src={drop} alt="" />
-  </button>
+              <button
+                type='button'
+                className='w-full lg:w-72 border-2 pr-5 pl-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between'
+                onClick={toggleDropdown}
+              >
+                {selectedOption}
+                <img src={drop} alt="" />
+              </button>
 
-  {isDropdownOpen && (
-    <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
-      <ul>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Sort by A to Z')}
-        >
-          Sort by A to Z
-        </li>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Sort by Z to A')}
-        >
-          Sort by Z to A
-        </li>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Sort by Expo')}
-        >
-          Sort by Expo
-        </li>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Sort by Feature')}
-        >
-          Sort by Feature
-        </li>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Sort by Advert')}
-        >
-          Sort by Advert
-        </li>
-        <li
-          className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
-          onClick={() => handleOptionClick('Show All')}
-        >
-          Show All
-        </li>
-      </ul>
-    </div>
-  )}
-</div>
+              {isDropdownOpen && (
+                <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
+                  <ul>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by A to Z')}
+                    >
+                      Sort by A to Z
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Z to A')}
+                    >
+                      Sort by Z to A
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Expo')}
+                    >
+                      Sort by Expo
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Feature')}
+                    >
+                      Sort by Feature
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Sort by Advert')}
+                    >
+                      Sort by Advert
+                    </li>
+                    <li
+                      className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
+                      onClick={() => handleOptionClick('Show All')}
+                    >
+                      Show All
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
 
 
             {/* Create New Button */}
@@ -273,90 +273,94 @@ function Convention({ onSearch }) {
       {/* table */}
       <div className="w-full bg-[#102F47] min-h-screen">
         <div className="w-10/12 mx-auto text-white pt-[42px]">
-        <div className="overflow-x-auto mb-10">
-  {filteredAnnouncements.length > 0 ? ( // Check if there are filtered announcements
-    <table className='w-full table-auto'>
-      <tbody>
-        {filteredAnnouncements.map((announcement, index) => (
-          <tr
-            className={`w-full items-center flex gap-x-14 gap-y-5 py-5 px-8 justify-between ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'}`}
-            key={announcement.id}
-          >
-            <div className="flex items-center gap-x-10 justify-center w-full">
-              {/* Image */}
-              <img
-                src={
-                  announcement.type === 'Expo' ? announcement.expo_logo :
-                    announcement.type === 'Feature' ? announcement.feature_logo :
-                      announcement.type === 'Advert' ? announcement.advert_logo :
-                        ConventionImage // fallback to ConventionImage if no logos are available
-                }
-                className="w-10 h-10 md:w-66 md:h-66 rounded-full object-cover"
-                alt="Convention Logo"
-              />
-              {/* Name */}
-              <div className="flex flex-col justify-center md:w-72 w-48">
-                <td className="font-mulish text-md leading-7 md:text-26 md:leading-33">
-                  {announcement.name}
-                </td>
+          <div className="overflow-x-auto mb-10">
+            {filteredAnnouncements.length > 0 ? ( // Check if there are filtered announcements
+              <table className='w-full table-auto'>
+                <tbody>
+                  {filteredAnnouncements.map((announcement, index) => (
+                    <tr
+                      className={`w-full items-center flex gap-x-14 gap-y-5 py-5 px-8 justify-between ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'}`}
+                      key={announcement.id}
+                    >
+                      <div className="flex items-center gap-x-10 justify-center w-full">
+                        {/* Image */}
+                        <img
+                          src={
+                            announcement.expo_logo && announcement.expo_logo !== null
+                              ? announcement.expo_logo
+                              : announcement.feature_logo && announcement.feature_logo !== null
+                                ? announcement.feature_logo
+                                : announcement.advert_logo && announcement.advert_logo !== null
+                                  ? announcement.advert_logo
+                                  : ConventionImage
+                          }
+                          className="w-10 h-10 md:w-66 md:h-66 rounded-full object-cover"
+                          alt="Convention Logo"
+                        />
+
+                        {/* Name */}
+                        <div className="flex flex-col justify-center md:w-72 w-48">
+                          <td className="font-mulish text-md leading-7 md:text-26 md:leading-33">
+                            {announcement.name}
+                          </td>
+                        </div>
+                        {/* Date */}
+                        <div className="flex-grow flex items-end w-48 md:w-72">
+                          <td className="font-mulish text-sm leading-5 md:text-26 md:leading-33">
+                            {announcement.created_at}
+                          </td>
+                        </div>
+
+
+                      </div>
+                      <div className="flex items-center gap-x-20 justify-self-end">
+                        {/* Feature status */}
+                        <td className="font-mulish text-sm leading-7 md:text-lg md:leading-33">
+                          {announcement.feature === "1" ? (
+                            <button className="bg-[#F3C15F] text-black px-2 py-1 rounded">
+                              Featured
+                            </button>
+                          ) : (
+                            ''
+                          )}
+                        </td>
+                        {/* Active status */}
+                        {/* Status Cell with Toggle */}
+                        <td
+                          className={`font-mulish text-26 leading-33 ${announcement.active === "1" ? 'text-yellow-500' : ''}`}
+                          onClick={() => toggleActiveStatus(announcement.id, announcement.active)} // Call the function on click
+                          style={{ cursor: 'pointer' }} // Add pointer cursor to indicate it's clickable
+                        >
+                          {announcement.active === "1" ? <MdRemoveRedEye /> : <IoMdEyeOff />}
+                        </td>
+                        {/* Delete Button */}
+                        <td
+                          className="font-mulish text-lg leading-10 md:text-26 md:leading-47 text-[#C53A33] cursor-pointer"
+                          onClick={() => handleDeleteClick(announcement)} // Use announcement for the delete action
+                        >
+                          Delete
+                        </td>
+                        {/* Edit Button */}
+                        <td
+                          className="font-mulish text-lg leading-10 md:text-26 md:leading-47 cursor-pointer"
+                          onClick={() => onhandleEdit(announcement.id)} // Pass the announcement id here
+                        >
+                          Edit
+                        </td>
+                      </div>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className='flex justify-center items-center py-16'> {/* Add padding for spacing */}
+                <span className='text-[#F2F0EF] tracking-custom text-lg leading-6 md:text-24 md:leading-30'>
+                  There are no more results for this search query.
+                  <span className='text-[#F3C15F] cursor-pointer' onClick={() => setSearchInput('')}> Clear search</span>
+                </span>
               </div>
-              {/* Date */}
-              <div className="flex-grow flex items-end w-48 md:w-72">
-                <td className="font-mulish text-sm leading-5 md:text-26 md:leading-33">
-                  {announcement.created_at}
-                </td>
-              </div>
-              
-              
-            </div>
-            <div className="flex items-center gap-x-20 justify-self-end">
-              {/* Feature status */}
-              <td className="font-mulish text-sm leading-7 md:text-lg md:leading-33">
-                {announcement.feature === "1" ? (
-                  <button className="bg-[#F3C15F] text-black px-2 py-1 rounded">
-                    Featured
-                  </button>
-                ) : (
-                  ''
-                )}
-              </td>
-              {/* Active status */}
-              {/* Status Cell with Toggle */}
-              <td
-                className={`font-mulish text-26 leading-33 ${announcement.active === "1" ? 'text-yellow-500' : ''}`}
-                onClick={() => toggleActiveStatus(announcement.id, announcement.active)} // Call the function on click
-                style={{ cursor: 'pointer' }} // Add pointer cursor to indicate it's clickable
-              >
-                {announcement.active === "1" ? <MdRemoveRedEye /> : <IoMdEyeOff />}
-              </td>
-              {/* Delete Button */}
-              <td
-                className="font-mulish text-lg leading-10 md:text-26 md:leading-47 text-[#C53A33] cursor-pointer"
-                onClick={() => handleDeleteClick(announcement)} // Use announcement for the delete action
-              >
-                Delete
-              </td>
-              {/* Edit Button */}
-              <td
-                className="font-mulish text-lg leading-10 md:text-26 md:leading-47 cursor-pointer"
-                onClick={() => onhandleEdit(announcement.id)} // Pass the announcement id here
-              >
-                Edit
-              </td>
-            </div>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <div className='flex justify-center items-center py-16'> {/* Add padding for spacing */}
-      <span className='text-[#F2F0EF] tracking-custom text-lg leading-6 md:text-24 md:leading-30'>
-        There are no more results for this search query.
-        <span className='text-[#F3C15F] cursor-pointer' onClick={() => setSearchInput('')}> Clear search</span>
-      </span>
-    </div>
-  )}
-</div>
+            )}
+          </div>
 
           {/*  */}
           {/* Modal */}

@@ -254,7 +254,13 @@ const OwnFeed = () => {
                                                     <div className='flex items-center gap-x-3'>
                                                         <div className='flex items-center'>
                                                             <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                                                            <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                            <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
+                                                                <img 
+                                                                    src={feedItem.convention_attendance.convention_logo || FaceImage} 
+                                                                    alt="" 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                                  />
+                                                            </div>
                                                         </div>
                                                         <div>
                                                             <p className='text-white'>
@@ -316,7 +322,13 @@ const OwnFeed = () => {
                                                             <div className='flex items-center gap-x-3'>
                                                                 <div className='flex items-center'>
                                                                     <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                                                                    <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                                    <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
+                                                                    <img 
+                                                                    src={feedItem.convention_accommodation.convention_logo || FaceImage} 
+                                                                    alt="" 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                                  />
+                                                                    </div>
                                                                 </div>
                                                                 <div>
                                                                     <p className='text-white break-all'>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
 import FaceImage from '../../assets/face.avif'
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import { FaCalendarAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { BsFillCaretDownFill } from 'react-icons/bs'
@@ -16,13 +16,40 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Layout = () => {
     const data = [1, 2, 3, 4, 5]
     const { convention_id } = useParams();
+    const [convention, setConvention] = useState([]);
     const [games, setGames] = useState([]);
     const nav = useNavigate()
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchGames(convention_id);
+        fetchConventions(convention_id)
     }, []);
+
+    const fetchConventions = async (convention_id) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            setConvention(data);
+            // console.log(data);
+        } catch (error) {
+            console.error('Error fetching conventions data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchGames = async () => {
         setLoading(true); // Show loading spinner while fetching
@@ -127,7 +154,7 @@ const Layout = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>
+            <a href="/profile" className='text-white'>
                     Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -147,7 +174,7 @@ const Layout = () => {
 
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>
-                        <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'>UKGE</div>
+                        <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <h1 className='text-3xl font-bold text-white'>Your UK Games Expo Games</h1>
                     </div>
 

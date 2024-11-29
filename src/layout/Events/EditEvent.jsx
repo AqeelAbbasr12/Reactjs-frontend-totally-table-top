@@ -32,7 +32,6 @@ const EditEvent = () => {
         event_time: '',
         event_location: '',
         event_description: '',
-        event_location_phone: '',
         event_image: '',
         event_space: '',
         event_space_type: '',
@@ -155,6 +154,51 @@ const EditEvent = () => {
             setLoading(false); // Hide loading spinner
         }
     };
+
+     // Convert the convention dates to an array of objects for react-select
+     const dateOptions = convention.convention_dates
+     ? convention.convention_dates.map((date, index) => ({
+         value: date,
+         label: date,
+         key: index
+     }))
+     : [];
+
+ // console.log(dateOptions)
+
+ const formatDate = (dateString) => {
+     const date = new Date(dateString); // Create a new Date object
+     const year = date.getFullYear();
+     const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+     const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+     return `${year}-${month}-${day}`; // Return the formatted date
+ };
+
+ const handleDateChange = (selectedOptions, fieldName) => {
+     // Convert the selected date to 'yyyy-mm-dd' format
+     const selectedDate = selectedOptions && selectedOptions[0] ? formatDate(selectedOptions[0].value) : '';
+
+     setFormData((prevData) => ({
+         ...prevData,
+         [fieldName]: selectedDate,
+     }));
+ };
+
+
+
+ const formatToConventionDate = (dateString) => {
+     if (!dateString) return ''; // Return an empty string if the date is not defined
+     const date = new Date(dateString);
+     if (isNaN(date)) return ''; // Handle invalid date inputs
+
+     // Extract day, month, and year
+     const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+     const month = date.toLocaleString('en-US', { month: 'long' }); // Get full month name
+     const year = date.getFullYear(); // Get full year
+
+     // Return the formatted string
+     return `${day} ${month} ${year}`;
+ };
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -285,17 +329,13 @@ const EditEvent = () => {
         if (!formData.event_time) {
             errors.event_time = 'Event time is required.';
         }
-        if (!formData.event_space_type) {
-            errors.event_space_type = 'Table space type is required.';
-        }
+        
 
         if (formData.event_location && formData.event_location.length > 255) {
             errors.event_location = 'Event location cannot exceed 255 characters.';
         }
 
-        if (formData.event_location_phone && formData.event_location_phone.length > 20) {
-            errors.event_location_phone = 'Event location phone number cannot exceed 20 characters.';
-        }
+        
 
         // if (formData.invite_receiver_ids) {
         //    if (formData.invite_receiver_ids.length > formData.event_space) {
@@ -332,7 +372,6 @@ const EditEvent = () => {
         submissionData.append('event_time', formData.event_time);
         submissionData.append('event_location', formData.event_location);
         submissionData.append('event_description', formData.event_description);
-        submissionData.append('event_location_phone', formData.event_location_phone);
         submissionData.append('event_space', formData.event_space);
         submissionData.append('event_space_type', formData.event_space_type);
 
@@ -373,7 +412,6 @@ const EditEvent = () => {
                 event_time: '',
                 event_location: '',
                 event_description: '',
-                event_location_phone: '',
                 event_space: '',
                 event_space_type: '',
             });
@@ -396,9 +434,13 @@ const EditEvent = () => {
             )}
             <Navbar type={"verified"} />
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3 '>
-                <span className='text-white'>Account</span>
+            <a href="/profile" className='text-white'>
+                    Account
+                </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-                <span className='text-white'>Your conventions</span>
+                <a href="/user/convention" className='text-white'>
+                    Your conventions
+                </a>
             </div>
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto'>
                 <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[55rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
@@ -406,15 +448,22 @@ const EditEvent = () => {
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
-                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Edit Event</h1>
+                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Edit Table</h1>
 
                     {/* Event Name */}
                     <Input name={"event_name"} placeholder={"Table Name"} type={"text"} value={formData.event_name} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     {formErrors.event_name && <p className="text-red">{formErrors.event_name}</p>}
                     {/* Event Date and Time */}
                     <div className='flex justify-center items-center md:flex-row flex-col mt-2 gap-x-4'>
-                        <Input name={"event_date"} min={today} placeholder={"Table Date"} type={"date"} value={formData.event_date} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 outline-none bg-darkBlue`} />
-                        <Input name={"event_time"} placeholder={"Table Time"} type={"time"} value={formData.event_time} onChange={handleChange} className={`w-[100%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
+                        <Select
+                            options={dateOptions}
+                            onChange={(selectedOption) => handleDateChange([selectedOption], 'event_date')}
+                            value={dateOptions.find(option => option.value === formatToConventionDate(formData.event_date))}
+                            name="from_date"
+                            className="w-[100%] sm:w-[50%] h-[2.3rem] rounded-md text-black mb-4 mt-4 outline-none bg-darkBlue"
+                            placeholder="From date"
+                        />
+                        <Input name={"event_time"} placeholder={"Table Time"} type={"time"} value={formData.event_time} onChange={handleChange} className={`w-[100%] sm:w-[50%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     </div>
                     {formErrors.event_date && <p className="text-red">{formErrors.event_date}</p>}
 
@@ -424,9 +473,7 @@ const EditEvent = () => {
                     {/* Description and Direction */}
                     <Input name={"event_description"} placeholder={"Description And Direction"} type={"text"} value={formData.event_description} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
 
-                    {/* Location Phone Number */}
-                    <Input name={"event_location_phone"} placeholder={"Location Phone Number"} type={"number"} value={formData.event_location_phone} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
-
+                   
                     {/* Image Upload */}
                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
                         <div className='relative'>

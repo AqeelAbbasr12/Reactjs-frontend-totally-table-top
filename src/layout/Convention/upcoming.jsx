@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '../../components/Button';
 import Left from '../../components/Left';
 import drop from '../../assets/icon-caret-down.svg';
-import ConventionImage from '../../assets/convention.jpeg'
-import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa';
+import ConventionImage from '../../assets/traditional.png'
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { fetchWithAuth } from '../../services/apiService';
 import ImageCross from '../../assets/red-cross.png'

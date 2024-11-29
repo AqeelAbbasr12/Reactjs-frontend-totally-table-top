@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { FaList } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import Button from '../../components/Button';
+import Select from 'react-select';
 import Input from '../../components/Input';
 import { fetchWithAuth } from '../../services/apiService';
 import ConventionImage from '../../assets/traditional.png'
@@ -15,7 +16,8 @@ const CreateAccommodation = () => {
     const nav = useNavigate();
     const { convention_id } = useParams();
     const [loading, setLoading] = useState();
-    // console.log(convention_id);
+    const [convention, setConvention] = useState({});
+    const [selectedDates, setSelectedDates] = useState([]);
     const [formData, setFormData] = useState({
         location_name: '',
         from_date: '',
@@ -31,6 +33,69 @@ const CreateAccommodation = () => {
 
     // Calculate today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
+
+    useEffect(() => {
+        fetchConventions(convention_id);
+    }, []);
+
+    const fetchConventions = async (convention_id) => {
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            setConvention(data);
+            // console.log(data);
+        } catch (error) {
+            // console.error('Error fetching conventions data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Convert the convention dates to an array of objects for react-select
+    const dateOptions = convention.convention_dates
+        ? convention.convention_dates.map((date, index) => ({
+            value: date,
+            label: date,
+            key: index
+        }))
+        : [];
+
+    // console.log(dateOptions)
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString); // Create a new Date object
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+        return `${year}-${month}-${day}`; // Return the formatted date
+    };
+
+    const handleDateChange = (selectedOptions, fieldName) => {
+        // Convert the selected date to 'yyyy-mm-dd' format
+        const selectedDate = selectedOptions && selectedOptions[0] ? formatDate(selectedOptions[0].value) : '';
+
+        setFormData((prevData) => ({
+            ...prevData,
+            [fieldName]: selectedDate,
+        }));
+    };
+
+
+    const filteredToDateOptions = formData.from_date
+        ? dateOptions.filter(option => new Date(option.value) >= new Date(formData.from_date))
+        : dateOptions;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -196,7 +261,7 @@ const CreateAccommodation = () => {
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
                 <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[48rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
-                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'>UKGE</div>
+                        <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
                     <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new accommodation</h1>
@@ -211,24 +276,25 @@ const CreateAccommodation = () => {
                     {formErrors.location_name && <p className="text-red">{formErrors.location_name}</p>}
 
                     <div className='flex justify-center items-center md:flex-row flex-col mt-2 gap-x-4'>
-                        <Input
+                        <Select
+                            options={dateOptions}
+                            onChange={(selectedOption) => handleDateChange([selectedOption], 'from_date')}
+                            value={dateOptions.find(option => option.value === formData.from_date)}
                             name="from_date"
-                            placeholder="Date From"
-                            type="date"
-                            min={today} // Disable dates before today
-                            onChange={handleChange}
-                            className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 outline-none bg-darkBlue`}
+                            className="w-[100%] sm:w-[50%] h-[2.3rem] rounded-md text-black mb-4 mt-4 outline-none bg-darkBlue"
+                            placeholder="From date"
                         />
                         {formErrors.from_date && <p className="text-red">{formErrors.from_date}</p>}
 
-                        <Input
+                        <Select
+                            options={filteredToDateOptions} // Use filtered options for to_date
+                            onChange={(selectedOption) => handleDateChange([selectedOption], 'to_date')}
+                            value={dateOptions.find(option => option.value === formData.to_date)}
                             name="to_date"
-                            placeholder="Date To"
-                            type="date"
-                            min={formData.from_date || today} // Disable dates before the selected "From Date"
-                            onChange={handleChange}
-                            className={`w-[100%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
+                            className="w-[100%] sm:w-[50%] h-[2.3rem] rounded-md text-black mb-4 mt-4 outline-none bg-darkBlue"
+                            placeholder="To date"
                         />
+
                         {formErrors.to_date && <p className="text-red">{formErrors.to_date}</p>}
                     </div>
 
@@ -248,6 +314,7 @@ const CreateAccommodation = () => {
                         className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`}
                     />
                     {formErrors.location_website && <p className="text-red">{formErrors.location_website}</p>}
+
                     <Input
                         name="location_phone_number"
                         placeholder="Location Phone Number"
@@ -259,7 +326,6 @@ const CreateAccommodation = () => {
                     />
 
                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-
                         <img
                             src={imagePreview || ConventionImage}
                             alt="Preview"
@@ -286,6 +352,8 @@ const CreateAccommodation = () => {
                     </div>
                 </form>
             </div>
+
+
         </div>
     );
 };

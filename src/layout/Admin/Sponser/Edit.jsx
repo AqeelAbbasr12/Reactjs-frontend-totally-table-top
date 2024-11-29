@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import img1 from '../../../assets/icon-caret-down.svg';
 import Input from '../../../components/Admin/Input/Input';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";
 import toastr from 'toastr';
+import { FaTrash } from 'react-icons/fa';
 import Navbar from '../../../components/Admin/Navbar';
 import { fetchWithAuth } from '../../../services/apiService';
 import imageCompression from 'browser-image-compression';
@@ -233,6 +234,36 @@ function Create() {
         }
     };
 
+    const handleDeleteImage = async () => {
+        try {
+            // Call API to delete the event image
+            const response = await fetch(`${API_BASE_URL}/admin/delete_sponser_logo/${sponser_id}`, {
+                method: 'DELETE', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                const result = await response.json();
+                toastr.error(result.message);
+            }
+
+            const result = await response.json();
+            // Display success message
+            // Clear the image from form data and preview
+            setFormData(prev => ({ ...prev, logo: '' }));
+            setImagePreview(null); // Clear the preview
+            toastr.success(result.message);
+            // Optionally handle success (like showing a notification)
+            // console.log('Image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // Optionally handle error (like showing a notification)
+        }
+    };
     return (
         <div className="bg-[#102F47] w-full opacity-100 min-h-screen">
             {loading && (
@@ -344,11 +375,19 @@ function Create() {
                                 {/* Image Upload */}
                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
+                                    <div className='relative'>
                                         <img
                                             src={imagePreview || ConventionImage}
                                             alt="Preview"
                                             className='w-[10rem] h-[10rem] rounded-full object-cover'
                                         />
+                                        {imagePreview || formData.logo ? (
+                                                <FaTrash
+                                                    onClick={handleDeleteImage}
+                                                    className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
+                                                />
+                                            ) : null}
+                                            </div>
                                         <input
                                             type="file"
                                             id="locationPictureInput"

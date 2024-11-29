@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { FaList } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import ConventionImage from '../../assets/traditional.png'
 import toastr from 'toastr';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
+import { fetchWithAuth } from "../../services/apiService";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,6 +18,7 @@ const CreateGame = () => {
   const nav = useNavigate();
   const { convention_id } = useParams();
   const [loading, setLoading] = useState();
+  const [convention, setConvention] = useState([]);
   const CONDITIONS = [
     "Brand new",
     "Excellent",
@@ -36,6 +38,35 @@ const CreateGame = () => {
   const [imagePreviews, setImagePreviews] = useState([ConventionImage]);
   const [formErrors, setFormErrors] = useState({}); // State for form errors
 
+  useEffect(() => {
+    fetchConventions(convention_id);
+}, []);
+
+  const fetchConventions = async (convention_id) => {
+    setLoading(true);
+    try {
+        const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setConvention(data);
+        // console.log(data);
+    } catch (error) {
+        console.error('Error fetching conventions data:', error);
+    } finally {
+        setLoading(false);
+    }
+};
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -250,7 +281,7 @@ const CreateGame = () => {
         >
           <div className="flex justify-center items-center">
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
-              UKGE
+            <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
             </div>
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
               <FaList className="text-white" />

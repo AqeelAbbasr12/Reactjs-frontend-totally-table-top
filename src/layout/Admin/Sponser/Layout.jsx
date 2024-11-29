@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import img1 from '../../../assets/Announcement.svg';
 import img2 from '../../../assets/Convention.svg';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import drop from '../../../assets/icon-caret-down.svg';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Admin/Navbar';

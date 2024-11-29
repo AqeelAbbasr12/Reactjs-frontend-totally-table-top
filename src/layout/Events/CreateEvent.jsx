@@ -186,6 +186,39 @@ const handleSpacesTypeChange = (e) => {
         event_space_type: e.target.value,
     }));
 };
+
+
+    // Convert the convention dates to an array of objects for react-select
+    const dateOptions = convention.convention_dates
+        ? convention.convention_dates.map((date, index) => ({
+            value: date,
+            label: date,
+            key: index
+        }))
+        : [];
+
+    // console.log(dateOptions)
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString); // Create a new Date object
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+        return `${year}-${month}-${day}`; // Return the formatted date
+    };
+
+    const handleDateChange = (selectedOptions, fieldName) => {
+        // Convert the selected date to 'yyyy-mm-dd' format
+        const selectedDate = selectedOptions && selectedOptions[0] ? formatDate(selectedOptions[0].value) : '';
+
+        setFormData((prevData) => ({
+            ...prevData,
+            [fieldName]: selectedDate,
+        }));
+    };
+
+
+
     // Handle form inputs change
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -195,8 +228,6 @@ const handleSpacesTypeChange = (e) => {
         }));
     };
 
-    // Calculate today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0];
 
     const validateForm = () => {
         const errors = {};
@@ -217,9 +248,6 @@ const handleSpacesTypeChange = (e) => {
             errors.event_time = 'Table time is required.';
         }
 
-        if (!formData.event_space_type) {
-            errors.event_space_type = 'Table space type is required.';
-        }
     
         if (formData.event_location && formData.event_location.length > 255) {
             errors.event_location = 'Table location cannot exceed 255 characters.';
@@ -334,9 +362,13 @@ const handleSpacesTypeChange = (e) => {
             )}
             <Navbar type={"verified"} />
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3 '>
-                <span className='text-white'>Account</span>
+            <a href="/profile" className='text-white'>
+                    Account
+                </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
-                <span className='text-white'>Your conventions</span>
+                <a href="/user/convention" className='text-white'>
+                    Your conventions
+                </a>
             </div>
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto'>
                 <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[55rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
@@ -344,17 +376,27 @@ const handleSpacesTypeChange = (e) => {
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>
                     </div>
-                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add new table</h1>
+                    <h1 className='text-3xl mt-3 text-center text-white font-semibold'>Add New Table</h1>
     
                     {/* Event Name */}
                     <Input name={"event_name"} placeholder={"Table Name"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     {formErrors.event_name && <p className="text-red">{formErrors.event_name}</p>}
                     {/* Event Date and Time */}
                     <div className='flex justify-center items-center md:flex-row flex-col mt-2 gap-x-4'>
-                        <Input name={"event_date"}  min={today} placeholder={"Event Date"} type={"date"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 outline-none bg-darkBlue`} />
-                        <Input name={"event_time"} placeholder={"Event Time"} type={"time"} onChange={handleChange} className={`w-[100%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
+                       
+                        <Select
+                            options={dateOptions}
+                            onChange={(selectedOption) => handleDateChange([selectedOption], 'event_date')}
+                            value={dateOptions.find(option => option.value === formData.from_date)}
+                            name="event_date"
+                            className="w-[100%] sm:w-[50%] h-[2.3rem] rounded-md text-black mb-4 mt-4 outline-none bg-darkBlue"
+                            placeholder="Table Date"
+                        />
+
+                        <Input name={"event_time"} placeholder={"Event Time"} type={"time"} onChange={handleChange} className={`w-[100%] sm:w-[50%] md:mt-0 h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />
                     </div>
                         {formErrors.event_date && <p className="text-red">{formErrors.event_date}</p>}
+                        {formErrors.event_time && <p className="text-red">{formErrors.event_time}</p>}
     
                     {/* Event Location */}
                     <Input name={"event_location"} placeholder={"Table Location"} type={"text"} onChange={handleChange} className={`w-[100%] h-[2.3rem] rounded-md text-white px-4 mt-2 outline-none bg-darkBlue`} />

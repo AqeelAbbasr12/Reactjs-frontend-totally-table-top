@@ -3,8 +3,6 @@ import Navbar from '../../components/Navbar'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import Left from '../../components/Left'
-import { ImCross } from 'react-icons/im'
-import { BsFillCaretDownFill } from 'react-icons/bs'
 import FaceImage from '../../assets/face.avif'
 import { FaRegStar } from 'react-icons/fa'
 import { FaMessage } from 'react-icons/fa6'
@@ -151,7 +149,7 @@ const Layout = () => {
                                                             <div className='flex items-center gap-x-3'>
                                                                 <div className='flex items-center'>
                                                                     <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                                                                    <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                                    <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'><img src={feedItem.convention_attendance.convention_logo || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                                                                 </div>
                                                                 <div>
                                                                     <p className='text-white'>
@@ -236,7 +234,11 @@ const Layout = () => {
                                                                   />
                                                                   {/* UKGE Placeholder */}
                                                                   <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
-                                                                    UKGE
+                                                                  <img 
+                                                                    src={feedItem.convention_accommodation.convention_logo || FaceImage} 
+                                                                    alt="" 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                                  />
                                                                   </div>
                                                                 </div>
                                                 

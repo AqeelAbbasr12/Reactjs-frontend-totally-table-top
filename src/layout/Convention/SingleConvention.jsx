@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
-import ConventionImage from '../../assets/convention.jpeg'
-import { FaCalendarAlt } from 'react-icons/fa'
+import ConventionImage from '../../assets/traditional.png'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
-import { FaLocationDot } from 'react-icons/fa6'
 import { fetchWithAuth } from "../../services/apiService";
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 

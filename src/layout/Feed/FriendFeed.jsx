@@ -215,7 +215,13 @@ const FriendFeed = () => {
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-center'>
                                                                 <img src={feedItem.convention_attendance.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                                                                <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                                <div className='w-[3rem] h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
+                                                                <img 
+                                                                    src={feedItem.convention_attendance.convention_logo || FaceImage} 
+                                                                    alt="" 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                                  />
+                                                                </div>
                                                             </div>
                                                             <div className='mt-2 md:mt-0'>
                                                                 <p className='text-white'>
@@ -294,7 +300,13 @@ const FriendFeed = () => {
                                                         <div className='flex items-start md:items-center gap-x-3'>
                                                             <div className='flex items-start md:items-center gap-x-2'>
                                                                 <img src={feedItem.convention_accommodation.profile_picture || FaceImage} alt="" className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full object-cover' />
-                                                                <div className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>UKGE</div>
+                                                                <div className='w-[2.5rem] h-[2.5rem] md:w-[3rem] md:h-[3rem] rounded-full flex justify-center items-center bg-lightOrange'>
+                                                                <img 
+                                                                    src={feedItem.convention_accommodation.convention_logo || FaceImage} 
+                                                                    alt="" 
+                                                                    className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                                  />
+                                                                </div>
                                                             </div>
                                                             <div className='mt-2 md:mt-0'>
                                                                 <p className='text-white text-sm md:text-base'>

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
 import FaceImage from '../../assets/face.avif'
-import ConventionImage from '../../assets/convention.jpeg'
-import { FaCalendarAlt } from 'react-icons/fa'
+import ConventionImage from '../../assets/traditional.png'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
-import { FaLocationDot } from 'react-icons/fa6'
 import { fetchWithAuth } from "../../services/apiService";
 
 
@@ -81,7 +79,9 @@ const SingleGame = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-                <a href="#" className='text-white'>Account</a>
+            <a href="/profile" className='text-white'>
+                    Account
+                </a>
                 <BsFillCaretDownFill className='text-lightOrange -rotate-90' />
                 <a href="/user/convention" className='text-white'>Your conventions</a>
             </div>
@@ -156,9 +156,7 @@ const SingleGame = () => {
             {/* Game Images Grid */}
 
 
-            <div className='mt-4 p-3'>
-                <p>All games are listed for sale by other members of Totally TableTop. Any arrangement is directly between users, and Totally TableTop takes no responsibility for the quality of games or accuracy of listings. Follow our <span className='text-lightOrange'>tips for staying safe when buying and selling.</span></p>
-            </div>
+            
         </div>
 
     )

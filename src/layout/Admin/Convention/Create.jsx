@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import img1 from '../../../assets/icon-caret-down.svg';
 import Input from '../../../components/Admin/Input/Input';
-import ConventionImage from '../../../assets/convention.jpeg'
+import ConventionImage from '../../../assets/traditional.png'
 import { useNavigate } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";

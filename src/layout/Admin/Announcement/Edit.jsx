@@ -12,7 +12,7 @@ import advert from '../../../assets/Advert.svg';
 import Navbar from '../../../components/Admin/Navbar';
 import { fetchWithAuth } from '../../../services/apiService';
 import imageCompression from 'browser-image-compression';
-import { FaTrash } from 'react-icons/fa'; // Import delete icon
+import { FaTrash, FaPlus } from 'react-icons/fa';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -34,9 +34,10 @@ function Edit() {
         type: '',      // Convention location
         expo_logo: null,        // Convention logo (initially null for file)
         promo_logo: null,        // Convention logo (initially null for file)
-        feature_logo: null,        // Convention logo (initially null for file)
         advert_logo: null,        // Convention logo (initially null for file)
-        feature: 0         // Feature flag (initially set to 0)
+        feature: 0   ,
+        feature_logo: [],        // Convention logo (initially null for file)
+        feature_logo_id: []      // Feature flag (initially set to 0)
     });
 
     const Announcement_Format = [
@@ -126,6 +127,60 @@ function Edit() {
         }
     };
 
+    const handleFileChangeFeature = async (index, e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const fileSizeInMB = file.size / (1024 * 1024);
+            if (fileSizeInMB > 20) {
+                toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
+                return;
+            }
+    
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 800,
+                useWebWorker: true,
+                fileType: file.type,
+            };
+    
+            try {
+                let compressedFile = file;
+                if (fileSizeInMB > 1) {
+                    compressedFile = await imageCompression(file, options);
+                }
+    
+                const newFile = new File([compressedFile], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                });
+    
+                setFormData((prevData) => {
+                    const updatedFeatureLogos = [...(prevData.feature_logo || [])];
+                    const updatedFeatureLogoIds = [...(prevData.feature_logo_id || [])];
+    
+                    updatedFeatureLogos[index] = newFile; // Update the file at the specific index
+                    updatedFeatureLogoIds[index] = null; // Set ID to null because it's a new file
+    
+                    return {
+                        ...prevData,
+                        feature_logo: updatedFeatureLogos,
+                        feature_logo_id: updatedFeatureLogoIds,
+                    };
+                });
+    
+                setImagePreview((prevPreview) => {
+                    const updatedPreviews = [...prevPreview];
+                    updatedPreviews[index] = URL.createObjectURL(compressedFile); // Update the specific index
+                    return updatedPreviews;
+                });
+            } catch (error) {
+                console.error('Error during image compression:', error);
+            }
+        }
+    };
+    
+    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
@@ -133,6 +188,29 @@ function Edit() {
             ...prevData,
             [name]: value,
         }));
+    };
+
+    // Handle deleting an image preview
+    const handleDeleteLogo = (index) => {
+        const newImagePreviews = [...imagePreview];
+        newImagePreviews.splice(index, 1); // Remove the selected logo preview
+        setImagePreview(newImagePreviews);
+
+        setFormData((prevData) => {
+            const updatedFeatureLogo = [...(prevData.feature_logo || [])];
+            updatedFeatureLogo.splice(index, 1); // Remove the corresponding file
+            return { ...prevData, feature_logo: updatedFeatureLogo };
+        });
+    };
+
+    const handleAddLogo = () => {
+        if (imagePreview.length < 15) { // Limit to 4 images
+            setImagePreview([...imagePreview, null]); // Add a placeholder for the new logo
+            setFormData((prevData) => ({
+                ...prevData,
+                feature_logo: [...(prevData.feature_logo || []), null], // Ensure feature_logo is an array
+            }));
+        }
     };
 
     const handleToggle = () => {
@@ -159,7 +237,7 @@ function Edit() {
 
             const data = await response.json();
 
-            // console.log(data);
+            console.log(data);
 
             setFormData({
                 name: data.name,          // Convention name
@@ -170,10 +248,14 @@ function Edit() {
                 type: data,      // Convention location 
                 feature: data.feature,
                 expo_logo: data.expo_logo || null,   // Expo logo
-                feature_logo: data.feature_logo || null, // Feature logo
+                 // Feature logo
                 advert_logo: data.advert_logo || null,   // Advert logo     // Feature flag (initially set to 0)
                 promo_logo: data.promo_logo || null,
+
+                feature_logo_id: data.featureLogos.map((logo) => logo.feature_logo_id) || [], // Set image IDs
+
             });
+            setImagePreview(data.featureLogos.map((logo) => logo.feature_logo) || []); // Set preview images
             setSelectedOption(data.active);
             setActiveTab(data.type);
 
@@ -238,8 +320,18 @@ function Edit() {
             formDataToSend.append('promo_logo', formData.promo_logo);
         }
 
-        if (formData.feature_logo instanceof File) {
-            formDataToSend.append('feature_logo', formData.feature_logo);
+
+        
+        if (Array.isArray(formData.feature_logo)) {
+            formData.feature_logo.forEach((file, index) => {
+                if (file instanceof File) {
+                    // Append the file to FormData
+                    formDataToSend.append(`feature_logo[${index}]`, file);
+    
+                    // Append the corresponding ID (null for new files if no ID is available)
+                    formDataToSend.append(`feature_logo_id[${index}]`, formData.feature_logo_id[index] || null);
+                }
+            });
         }
 
         if (formData.advert_logo instanceof File) {
@@ -361,36 +453,57 @@ function Edit() {
         }
     };
 
-    const handleDeleteFeatureLogo = async () => {
+    const handleDeleteFeatureLogo = async (feature_logo_id, index) => {
         try {
-            // Call API to delete the event image
-            const response = await fetch(`${API_BASE_URL}/admin/delete_feature_logo/${announcement_id}`, {
+            // Call API to delete the feature logo
+            const response = await fetch(`${API_BASE_URL}/admin/delete_feature_logo/${feature_logo_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
-
+    
             // Check if the response is ok
             if (!response.ok) {
                 const result = await response.json();
                 toastr.error(result.message);
+                throw new Error('Failed to delete the image');
             }
-
+    
             const result = await response.json();
             // Display success message
-            // Clear the image from form data and preview
-            setFormData(prev => ({ ...prev, feature_logo: '' }));
-            setImagePreview(null); // Clear the preview
             toastr.success(result.message);
-            // Optionally handle success (like showing a notification)
-            // console.log('Image deleted successfully');
+    
+            // Update state to remove the image and its ID
+            setFormData((prev) => {
+                const updatedFeatureLogos = Array.isArray(prev.feature_logo) ? [...prev.feature_logo] : []; // Ensure feature_logo is an array
+                const updatedFeatureLogoIds = Array.isArray(prev.feature_logo_id) ? [...prev.feature_logo_id] : []; // Ensure feature_logo_id is an array
+    
+                // Remove the image and ID from the respective arrays
+                updatedFeatureLogos.splice(index, 1);  // Remove image from array
+                updatedFeatureLogoIds.splice(index, 1); // Remove ID from array
+    
+                return {
+                    ...prev,
+                    feature_logo: updatedFeatureLogos,    // Update feature_logo array
+                    feature_logo_id: updatedFeatureLogoIds, // Update feature_logo_id array
+                };
+            });
+    
+            // Update the image previews to remove the deleted image
+            setImagePreview((prevPreviews) => {
+                const updatedPreviews = [...prevPreviews]; // Copy the image preview array
+                updatedPreviews.splice(index, 1); // Remove the specific preview image
+                return updatedPreviews; // Return updated previews without the deleted one
+            });
+    
         } catch (error) {
             console.error('Error deleting image:', error);
-            // Optionally handle error (like showing a notification)
         }
     };
+    
+    
     const handleDeleteAdvertLogo = async () => {
         try {
             // Call API to delete the event image
@@ -682,46 +795,43 @@ function Edit() {
                                                                 style={{ minHeight: '150px' }}
                                                             />
                                                             <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
-                                                            <div className=''>
-
-                                                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
-                                                                    <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                                                        <div className='relative'>
-                                                                            <img
-                                                                                src={
-                                                                                    formData.feature_logo instanceof File
-                                                                                        ? URL.createObjectURL(formData.feature_logo)
-                                                                                        : formData.feature_logo || ConventionImage
-                                                                                }
-                                                                                alt="Preview"
-                                                                                className='w-[10rem] h-[10rem] rounded-full mb-2'
-                                                                            />
-                                                                            {imagePreview || formData.feature_logo ? (
-                                                                                <FaTrash
-                                                                                    onClick={handleDeleteFeatureLogo}
-                                                                                    className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
-                                                                                />
-                                                                            ) : null}
-                                                                        </div>
+                                                            <div className="flex flex-col items-center">
+                                                            <div className="flex flex-wrap justify-center">
+                                                                {imagePreview.map((preview, index) => (
+                                                                    <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
+                                                                        <img
+                                                                            src={preview || ConventionImage} // Use default image if preview not available
+                                                                            alt={`Feature Logo ${index + 1}`}
+                                                                            className="w-[10rem] h-[10rem] rounded-full object-cover"
+                                                                        />
                                                                         <input
                                                                             type="file"
-                                                                            id="featureLogoInput"
-                                                                            name='feature_logo'
+                                                                            id={`featureLogoInput${index}`}
                                                                             className="hidden"
-                                                                            onChange={handleFileChange}
+                                                                            onChange={(e) => handleFileChangeFeature(index, e)}
                                                                             accept="image/png, image/jpeg"
                                                                         />
-                                                                        <label htmlFor="featureLogoInput" className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
+                                                                        <label
+                                                                            htmlFor={`featureLogoInput${index}`}
+                                                                            className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                                                                        >
                                                                             Upload Logo
                                                                         </label>
+                                                                        <FaTrash
+                                                                            onClick={() => handleDeleteFeatureLogo(formData.feature_logo_id[index], index)} 
+                                                                            className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                                                                            size={20}
+                                                                        />
                                                                     </div>
-                                                                    {formErrors.logo && (
-                                                                        <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
-                                                                            {formErrors.logo}
-                                                                        </p>
-                                                                    )}
+                                                                ))}
                                                                 </div>
+                                                                <FaPlus
+                                                                    onClick={handleAddLogo}
+                                                                    className="text-white cursor-pointer hover:text-green-500 mt-4"
+                                                                    size={30}
+                                                                />
                                                             </div>
+
 
                                                         </div>
                                                     </div>
@@ -745,21 +855,21 @@ function Edit() {
 
                                                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
                                                                     <div className='sm:mt-5 mt-2 flex flex-col items-center'>
-                                                                    <div className='relative'>
-                                                                        <img
-                                                                            src={formData.advert_logo instanceof File
-                                                                                ? URL.createObjectURL(formData.advert_logo)
-                                                                                : formData.advert_logo || ConventionImage}
-                                                                            alt="Preview"
-                                                                            className='w-[10rem] h-[10rem] rounded-full mb-2'
-                                                                        />
-                                                                         {imagePreview || formData.advert_logo ? (
+                                                                        <div className='relative'>
+                                                                            <img
+                                                                                src={formData.advert_logo instanceof File
+                                                                                    ? URL.createObjectURL(formData.advert_logo)
+                                                                                    : formData.advert_logo || ConventionImage}
+                                                                                alt="Preview"
+                                                                                className='w-[10rem] h-[10rem] rounded-full mb-2'
+                                                                            />
+                                                                            {imagePreview || formData.advert_logo ? (
                                                                                 <FaTrash
                                                                                     onClick={handleDeleteAdvertLogo}
                                                                                     className='absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange'
                                                                                 />
                                                                             ) : null}
-                                                                    </div>
+                                                                        </div>
                                                                         <input
                                                                             type="file"
                                                                             id="advertLogoInput"

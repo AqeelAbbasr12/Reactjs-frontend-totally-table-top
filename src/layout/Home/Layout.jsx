@@ -3,11 +3,11 @@ import Navbar from '../../components/Navbar'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
-import { BsMicFill } from 'react-icons/bs'
 import annoucementImage from '../../assets/annoucement.jpg'
-import connectImage from '../../assets/connect.svg'
+import featureImage from '../../assets/traditional.png'
+
 import announceImage from '../../assets/announce.svg'
-import circelImage from '../../assets/circel.svg'
+
 import circel1Image from '../../assets/circel1.svg'
 import circel2Image from '../../assets/circel2.svg'
 import circel3Image from '../../assets/circel3.svg'
@@ -100,11 +100,11 @@ const Layout = () => {
   const renderAnnouncementLogo = (announcement) => {
     switch (announcement.type) {
       case 'Expo':
-        return <img src={announcement.promo_logo} alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.promo_logo || annoucementImage } alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       case 'Feature':
-        return <img src={announcement.feature_logo} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.feature_logo || featureImage} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       case 'Advert':
-        return <img src={announcement.advert_logo} alt="Advert Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
+        return <img src={announcement.advert_logo || annoucementImage} alt="Advert Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       default:
         return null;
     }

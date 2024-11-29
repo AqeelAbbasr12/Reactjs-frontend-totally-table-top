@@ -19,6 +19,7 @@ const EditGame = () => {
   const nav = useNavigate();
   const { convention_id, game_id } = useParams();
   const [loading, setLoading] = useState();
+  const [convention, setConvention] = useState([]);
   const CONDITIONS = [
     "Brand new",
     "Excellent",
@@ -41,8 +42,33 @@ const EditGame = () => {
 
   useEffect(() => {
     fetchGame(game_id);
+    fetchConventions(convention_id);
   }, [game_id]);
 
+  const fetchConventions = async (convention_id) => {
+    setLoading(true);
+    try {
+        const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setConvention(data);
+        // console.log(data);
+    } catch (error) {
+        console.error('Error fetching conventions data:', error);
+    } finally {
+        setLoading(false);
+    }
+};
   const fetchGame = async (game_id) => {
     setLoading(true); // Show loading spinner while fetching
     try {
@@ -351,7 +377,7 @@ const EditGame = () => {
         >
           <div className="flex justify-center items-center">
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
-              UKGE
+            <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
             </div>
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
               <FaList className="text-white" />

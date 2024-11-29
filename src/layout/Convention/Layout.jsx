@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Left from '../../components/Left';
-import ConventionImage from '../../assets/convention.jpeg'
+import ConventionImage from '../../assets/traditional.png'
 import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { fetchWithAuth } from '../../services/apiService';
