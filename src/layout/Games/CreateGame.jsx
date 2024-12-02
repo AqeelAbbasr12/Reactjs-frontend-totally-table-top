@@ -194,7 +194,7 @@ const CreateGame = () => {
     formDataToSend.append('name', formData.name);
     formDataToSend.append('price', formData.price);
     formDataToSend.append('currency', formData.currency);
-    formDataToSend.append('currency_tag', formData.currency_tag);  // Appending the updated value
+    formDataToSend.append('currency_tag', formData.currency_tag);  
     formDataToSend.append('condition', formData.condition);
     formDataToSend.append('desc', formData.desc);
 

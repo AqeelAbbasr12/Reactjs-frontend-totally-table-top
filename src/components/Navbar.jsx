@@ -81,7 +81,7 @@ const Navbar = ({ type }) => {
                 }
 
                 const data = await response.json();
-
+                console.log(data);
                 setUser(data);
             } catch (error) {
                 // console.error('Error fetching user data:', error);
@@ -309,7 +309,7 @@ const Navbar = ({ type }) => {
                                     <p className='text-white'>{user ? user.username : 'Loading...'}</p>
                                     <BsFillCaretDownFill className='text-white' />
                                 </div>
-                                <img onClick={() => setshowMenu(!showMenu)} src={user ? user.profile_picture : FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full object-cover' />
+                                <img onClick={() => setshowMenu(!showMenu)} src={user?.profile_picture || FaceImage}  alt="" className='w-[2rem] h-[2rem] rounded-full object-cover' />
                                 {
                                     showMenu && (
                                         <div className=' absolute left-0 top-[3.4rem] w-full h-[fit] p-2 rounded-md bg-[#0d2539] z-50'>

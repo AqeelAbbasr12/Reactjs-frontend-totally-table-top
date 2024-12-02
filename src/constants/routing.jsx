@@ -9,6 +9,7 @@ import LoginPage from '../pages/LoginPage';
 import RegisterInfo from '../pages/RegisterInfo';
 import RegisterPage from '../pages/RegisterPage';
 import VerifyEmail from '../pages/VerifyEmail';
+import VerifyPasswordEmail from '../pages/VerifyPasswordEmail';
 import ForgetPage from '../pages/ForgetPage';
 import ResetPage from '../pages/ResetPage';
 import HomePage from '../pages/HomePage';
@@ -76,6 +77,7 @@ export const routing = [
   { id: 5, link: "/forget", element: <ForgetPage />, public: true },
   { id: 6, link: "/reset", element: <ResetPage />, public: true },
   { id: 7, link: "/verify-email/:id/:token", element: <VerifyEmail />, public: true },
+  { id: 7, link: "/verify-password-email/:id/:token", element: <VerifyPasswordEmail />, public: true },
   
   { id: 8, link: "/home", element: <HomePage />, protected: true },
   { id: 9, link: "/complete", element: <CompleteProfilePage />, protected: true },

@@ -26,7 +26,7 @@ const ForgetLayout = () => {
         setErrors({});
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/check-email`, {
+            const response = await fetch(`${API_BASE_URL}/auth/check-email-for-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,10 +46,13 @@ const ForgetLayout = () => {
                 
             } else {
                 // Handle validation errors
-                if (result.error) {
-                    toastr.error(result.error);
-                    setErrors(result.error);
-                } else {
+                if (result.success) {
+                    toastr.success(result.success);
+                    localStorage.setItem('resetEmail', formData.email);
+                    
+                }
+                
+                 else {
                     setErrors({ form: result.error || "Error Occured" });
                 }
             }
@@ -71,7 +74,7 @@ const ForgetLayout = () => {
                         <Input
                             placeholder={"Email Address"}
                             name={"email"}
-                            type={"text"}
+                            type={"email"}
                             className={`w-[100%] h-[2.3rem] px-3 mt-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.email ? 'border-red' : ''}`}
                             value={formData.email}
                             onChange={handleChange}
