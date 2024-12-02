@@ -70,6 +70,8 @@ const ForgetLayout = () => {
                     <h1 className='text-white text-lg font-semibold text-center'>Forgotten your password?</h1>
                     <p className='text-white mt-3'>Enter the email address you used to register and we'll</p>
                     <p className='text-white mt-1'>send you instruction to reset your password.</p>
+                    
+                    <p className='text-red mt-1'>Using Forget Password: Please log in to your email in the same browser and avoid using Guest mode or Incognito.</p>
                     <form onSubmit={handleSubmit}>
                         <Input
                             placeholder={"Email Address"}

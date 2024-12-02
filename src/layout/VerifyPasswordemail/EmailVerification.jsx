@@ -19,7 +19,7 @@ const EmailVerification = () => {
         if (response.ok) {
           toastr.success(data.message || 'Your email has been verified!');
           setTimeout(() => {
-            navigate('/reset'); // Redirect to homepage after a successful verification
+            navigate('/reset'); 
           }, 2000); // 2 seconds delay
         } else {
           toastr.error(data.message || 'Invalid or expired verification link.');
