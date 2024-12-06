@@ -80,6 +80,7 @@ const CreateGame = () => {
   };
 
   // Handle file change for individual image uploads
+  
   const handleFileChange = async (index, event) => {
     const file = event.target.files[0];
   
@@ -96,12 +97,15 @@ const CreateGame = () => {
           maxSizeMB: 2, // Set maximum size for compression
           maxWidthOrHeight: 1920, // Set maximum width or height
           useWebWorker: true, // Use a web worker for better performance
+          fileType: 'image/jpeg', // Convert to JPEG
         };
+  
+        // Compress the file using the options
         const compressedBlob = await imageCompression(file, options);
   
-        // Create a new File object from the compressed blob, preserving the original file name and type
-        const compressedFile = new File([compressedBlob], file.name, {
-          type: file.type, // Preserve the original file type (mime type)
+        // Create a new File object from the compressed blob and force the type to JPEG
+        const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+          type: 'image/jpeg', // Force the file type to JPEG
           lastModified: Date.now(), // Optional: Set the last modified time to now
         });
   
@@ -123,6 +127,57 @@ const CreateGame = () => {
     }
   };
   
+  
+
+  // OLD
+  // const handleFileChange = async (index, event) => {
+
+  //   const file = event.target.files[0];
+  
+  //   if (file) {
+  //     // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
+  //     if (file.size > 20 * 1024 * 1024) {
+  //       toastr.warning("Your image is greater than 20 MB.");
+  //       return; // Exit if the file is too large
+  //     }
+  
+  //     try {
+  //       // Compress the image
+  //       const options = {
+  //         maxSizeMB: 2, // Set maximum size for compression
+  //         maxWidthOrHeight: 1920, // Set maximum width or height
+  //         useWebWorker: true, // Use a web worker for better performance
+  //         fileType: 'image/jpeg', // Convert to JPEG
+  //       };
+  //       const compressedBlob = await imageCompression(file, options);
+  
+  //       // Create a new File object from the compressed blob, preserving the original file name and type
+  //       const compressedFile = new File([compressedBlob], file.name, {
+  //         type: file.type, // Preserve the original file type (mime type)
+  //         lastModified: Date.now(), // Optional: Set the last modified time to now
+  //       });
+
+  
+  //       // Update the image preview at the specified index
+  //       const newImagePreviews = [...imagePreviews];
+  //       newImagePreviews[index] = URL.createObjectURL(compressedFile);
+  //       setImagePreviews(newImagePreviews);
+  
+  //       // Update formData with the new compressed image file
+  //       setFormData((prevData) => {
+  //         const updatedImages = [...prevData.game_images];
+  //         updatedImages[index] = compressedFile; // Save as File object, not Blob
+  //         return { ...prevData, game_images: updatedImages };
+  //       });
+  //     } catch (error) {
+  //       console.error("Error compressing image:", error);
+  //       toastr.error("Failed to compress the image.");
+  //     }
+  //   }
+  // };
+  
+  
+
 
   // Handle adding a new image section
   const handleAddImage = () => {
