@@ -85,47 +85,31 @@ const CreateGame = () => {
     const file = event.target.files[0];
   
     if (file) {
-      // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
-      if (file.size > 20 * 1024 * 1024) {
-        toastr.warning("Your image is greater than 20 MB.");
+      // Check if the file size exceeds 10 MB (10 * 1024 * 1024 bytes)
+      if (file.size > 10 * 1024 * 1024) {
+        toastr.warning("Your image is greater than 10 MB.");
         return; // Exit if the file is too large
       }
   
       try {
-        // Compress the image
-        const options = {
-          maxSizeMB: 2, // Set maximum size for compression
-          maxWidthOrHeight: 1920, // Set maximum width or height
-          useWebWorker: true, // Use a web worker for better performance
-          fileType: 'image/jpeg', // Convert to JPEG
-        };
-  
-        // Compress the file using the options
-        const compressedBlob = await imageCompression(file, options);
-  
-        // Create a new File object from the compressed blob and force the type to JPEG
-        const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
-          type: 'image/jpeg', // Force the file type to JPEG
-          lastModified: Date.now(), // Optional: Set the last modified time to now
-        });
-  
-        // Update the image preview at the specified index
+        // No compression, just save the original file
         const newImagePreviews = [...imagePreviews];
-        newImagePreviews[index] = URL.createObjectURL(compressedFile);
+        newImagePreviews[index] = URL.createObjectURL(file);
         setImagePreviews(newImagePreviews);
   
-        // Update formData with the new compressed image file
+        // Update formData with the original image file
         setFormData((prevData) => {
           const updatedImages = [...prevData.game_images];
-          updatedImages[index] = compressedFile; // Save as File object, not Blob
+          updatedImages[index] = file; // Save the original file object
           return { ...prevData, game_images: updatedImages };
         });
       } catch (error) {
-        console.error("Error compressing image:", error);
-        toastr.error("Failed to compress the image.");
+        console.error("Error handling file:", error);
+        toastr.error("Failed to process the image.");
       }
     }
   };
+  
   
   
 
