@@ -9,6 +9,7 @@ import IconCaretSvg from "../../assets/icon-caret-down.svg";
 import ConventionImage from '../../assets/traditional.png'
 import { fetchWithAuth } from '../../services/apiService';
 import toastr from 'toastr';
+import { FaSpinner } from 'react-icons/fa'; // For a spinner icon
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
 
@@ -19,6 +20,7 @@ const EditGame = () => {
   const nav = useNavigate();
   const { convention_id, game_id } = useParams();
   const [loading, setLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [convention, setConvention] = useState([]);
   const CONDITIONS = [
     "Brand new",
@@ -278,6 +280,8 @@ const EditGame = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const formDataToSend = new FormData();
     formDataToSend.append('convention_game_id', game_id);
     formDataToSend.append('convention_id', convention_id);
@@ -352,6 +356,8 @@ const EditGame = () => {
     } catch (error) {
       // console.error('Error creating accommodation:', error);
       toastr.error('Failed to create accommodation.');
+    } finally {
+      setIsLoading(false); // Set loading to false when submission is complete
     }
   };
 
@@ -372,7 +378,7 @@ const EditGame = () => {
 
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">
         <form
-          className="sm:w-[50%] w-[100%] h-[50rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
+          className="sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
           onSubmit={handleSubmit}
         >
           <div className="flex justify-center items-center">
@@ -526,11 +532,22 @@ const EditGame = () => {
 
 
           <div className="flex justify-center items-center mt-4">
-            <Button
-              type="submit"
-              title={"Update Game"}
-              className={`w-[12rem] h-[3rem] rounded-md text-white bg-lightOrange`}
-            />
+          <button
+          type="submit"
+          className={`w-[12rem] h-[3rem] rounded-md text-white ${
+            isLoading ? 'bg-gray-500' : 'bg-lightOrange'
+          }`}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex justify-center items-center gap-2">
+              <FaSpinner className="animate-spin" />
+              Processing...
+            </div>
+          ) : (
+            'Update Game'
+          )}
+        </button>
           </div>
         </form>
       </div>

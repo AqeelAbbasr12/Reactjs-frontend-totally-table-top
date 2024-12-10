@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdEyeOff } from "react-icons/io";
 import toastr from 'toastr';
+import { FaSpinner } from 'react-icons/fa'; // For a spinner icon
 import expo from '../../../assets/Group expo.svg';
 import feature from '../../../assets/Group features.svg';
 import advert from '../../../assets/Advert.svg';
@@ -21,6 +22,7 @@ function Edit() {
     const [selectedOption, setSelectedOption] = useState('Invisible to users');
     const [formErrors, setFormErrors] = useState({});
     const [dates, setDates] = useState(['']);
+    const [isLoading, setIsLoading] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const { announcement_id } = useParams();
     const navigate = useNavigate();
@@ -298,6 +300,8 @@ function Edit() {
             return;
         }
 
+        setIsLoading(true);
+
         const formDataToSend = new FormData();
         formDataToSend.append('announcement_id', announcement_id); // Convention name
         formDataToSend.append('name', formData.name); // Convention name
@@ -388,7 +392,9 @@ function Edit() {
         } catch (error) {
             // console.error('Error creating convention:', error);
             toastr.error('Failed to create convention.');
-        }
+        } finally {
+            setIsLoading(false);
+          }
     };
 
     const handleDeleteExpoLogo = async () => {
@@ -605,10 +611,20 @@ function Edit() {
                             {/* Save Button */}
                             <div className='w-full lg:w-[197px]'>
                                 <button
-                                    type='submit'
-                                    className='w-full h-full lg:w-[197px] lg:h-[73px] text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3'
-                                >
-                                    Save
+                                    type="submit"
+                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${
+                                        isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
+                                    }`}
+                                    disabled={isLoading}
+                                    >
+                                    {isLoading ? (
+                                        <div className="flex justify-center items-center gap-2 text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3">
+                                        <FaSpinner className="animate-spin" />
+                                        Saving...
+                                        </div>
+                                    ) : (
+                                        'Save'
+                                    )}
                                 </button>
                             </div>
                         </div>

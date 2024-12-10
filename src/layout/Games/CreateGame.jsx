@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import { FaSpinner } from 'react-icons/fa'; // For a spinner icon
 import IconCaretSvg from "../../assets/icon-caret-down.svg";
 import ConventionImage from '../../assets/traditional.png'
 import toastr from 'toastr';
@@ -17,6 +18,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const CreateGame = () => {
   const nav = useNavigate();
   const { convention_id } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState();
   const [convention, setConvention] = useState([]);
   const CONDITIONS = [
@@ -228,6 +230,8 @@ const CreateGame = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const formDataToSend = new FormData();
     formDataToSend.append('convention_id', convention_id);
     formDataToSend.append('name', formData.name);
@@ -294,6 +298,8 @@ const CreateGame = () => {
     } catch (error) {
       // console.error('Error creating accommodation:', error);
       toastr.error('Failed to create Game.');
+    } finally {
+      setIsLoading(false); // Set loading to false when submission is complete
     }
   };
 
@@ -315,7 +321,7 @@ const CreateGame = () => {
 
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">
         <form
-          className="sm:w-[50%] w-[100%] h-[50rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
+          className="sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6"
           onSubmit={handleSubmit}
         >
           <div className="flex justify-center items-center">
@@ -462,11 +468,22 @@ const CreateGame = () => {
           </div>
 
           <div className="flex justify-center items-center mt-4">
-            <Button
-              type="submit"
-              title={"List Game"}
-              className={`w-[12rem] h-[3rem] rounded-md text-white bg-lightOrange`}
-            />
+          <button
+          type="submit"
+          className={`w-[12rem] h-[3rem] rounded-md text-white ${
+            isLoading ? 'bg-gray-500' : 'bg-lightOrange'
+          }`}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex justify-center items-center gap-2">
+              <FaSpinner className="animate-spin" />
+              Processing...
+            </div>
+          ) : (
+            'List Game'
+          )}
+        </button>
           </div>
         </form>
       </div>

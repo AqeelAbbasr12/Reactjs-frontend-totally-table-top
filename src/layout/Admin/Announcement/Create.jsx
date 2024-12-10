@@ -9,6 +9,7 @@ import toastr from 'toastr';
 import expo from '../../../assets/Group expo.svg';
 import feature from '../../../assets/Group features.svg';
 import advert from '../../../assets/Advert.svg';
+import { FaSpinner } from 'react-icons/fa'; // For a spinner icon
 import Navbar from '../../../components/Admin/Navbar';
 import imageCompression from 'browser-image-compression';
 import { FaTrash, FaPlus } from 'react-icons/fa';
@@ -19,6 +20,7 @@ function Create() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('Invisible to users');
     const [formErrors, setFormErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const [dates, setDates] = useState(['']);
     const [imagePreviews, setImagePreviews] = useState([ConventionImage]);
     const navigate = useNavigate();
@@ -239,6 +241,8 @@ function Create() {
             return;
         }
 
+        setIsLoading(true);
+
         const formDataToSend = new FormData();
         formDataToSend.append('name', formData.name); // Convention name
         formDataToSend.append('description', formData.description); // Convention description
@@ -316,9 +320,11 @@ function Create() {
             navigate(`/admin/announcement`);
 
         } catch (error) {
-            // console.error('Error creating convention:', error);
+            
             toastr.error('Failed to create convention.');
-        }
+        } finally {
+            setIsLoading(false);
+          }
     };
 
     return (
@@ -386,11 +392,22 @@ function Create() {
 
                             {/* Save Button */}
                             <div className='w-full lg:w-[197px]'>
-                                <button
-                                    type='submit'
-                                    className='w-full h-full lg:w-[197px] lg:h-[73px] text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3'
-                                >
-                                    Save
+                               
+                            <button
+                                    type="submit"
+                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${
+                                        isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
+                                    }`}
+                                    disabled={isLoading}
+                                    >
+                                    {isLoading ? (
+                                        <div className="flex justify-center items-center gap-2 text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3">
+                                        <FaSpinner className="animate-spin" />
+                                        Saving...
+                                        </div>
+                                    ) : (
+                                        'Save'
+                                    )}
                                 </button>
                             </div>
                         </div>
