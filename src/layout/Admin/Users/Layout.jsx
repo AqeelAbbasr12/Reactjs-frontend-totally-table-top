@@ -149,7 +149,7 @@ function layout({ onSearch }) {
       if (result.isConfirmed) {
         try {
           // API Call to delete the user
-          const response = await fetchWithAuth(`/users/${userId}`, {
+          const response = await fetchWithAuth(`/admin/users/${userId}`, {
             method: 'DELETE', // DELETE request to the API
             headers: {
               'Content-Type': 'application/json',
