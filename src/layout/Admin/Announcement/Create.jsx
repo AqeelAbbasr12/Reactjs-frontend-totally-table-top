@@ -459,7 +459,7 @@ function Create() {
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advet Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
                                                             {/* mt-[37px] */}
                                                             {formErrors.name && (

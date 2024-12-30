@@ -175,7 +175,7 @@ const Layout = () => {
                 <div className='flex justify-between items-start sm:items-center flex-wrap w-[100%] sm:flex-row flex-col'>
                     <div className='flex items-center gap-x-4'>
                         <div className='min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange  flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
-                        <h1 className='text-3xl font-bold text-white'>Your UK Games Expo Games</h1>
+                        <h1 className='text-3xl font-bold text-white'>{convention.convention_name} Game</h1>
                     </div>
 
                     <div class="flex items-center gap-x-4 sm:mt-0 mt-2">
