@@ -275,7 +275,7 @@ const FriendFeed = () => {
                                                             {formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}
                                                         </p>
                                                     </div>
-                                                    <p className='text-white text-sm md:text-base mt-3'>{formatDescription(feedItem.post.content)}</p>
+                                                    <p className='text-white text-sm md:text-base mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.post.content)}</p>
                                                     <div className='flex items-center gap-x-4 mt-4'>
                                                         <div className='flex items-center gap-x-2'>
                                                             <FaMessage className='text-white text-sm md:text-base' />
@@ -398,7 +398,7 @@ const FriendFeed = () => {
                                                         <b>{feedItem.convention_game.game_currency_tag}{feedItem.convention_game.game_price}</b> ({feedItem.convention_game.game_condition})
                                                     </p>
 
-                                                    <p className='text-white text-sm md:text-base mt-3'>
+                                                    <p className='text-white text-sm md:text-base mt-3 break-words whitespace-pre-wrap max-w-full'>
                                                         {formatDescription(feedItem.convention_game.game_desc)}
                                                     </p>
 

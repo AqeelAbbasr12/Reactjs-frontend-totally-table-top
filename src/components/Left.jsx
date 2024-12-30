@@ -79,7 +79,7 @@ const Left = () => {
     }
   };
   return (
-    <div className="flex flex-col w-[97%] md:w-[15rem] gap-y-4">
+    <div className="flex flex-col min-w-full md:min-w-[15rem] md:w-[15rem] gap-y-4">
       {/* Sidebar */}
       <div className='bg-[#0d2539] h-fit rounded-md p-2 md:mx-0 mx-2'>
         <h1 className='text-white text-center text-lg mt-2'>

@@ -200,7 +200,7 @@ const OwnFeed = () => {
             </div>
 
             <div className='flex items-start md:flex-row flex-col mt-[5rem] md:px-[2rem] px-[1rem] gap-x-[2rem]'>
-                <div className='bg-[#0d2539] relative min-w-full md:min-w-[13rem] p-2 rounded-md h-[fit] md:mb-0 mb-3'>
+            <div className="bg-[#0d2539] relative min-w-full md:min-w-[15rem] p-2 rounded-md h-full md:mb-0 mb-3">
                     <img src={user.profile_picture || FaceImage} alt="" className=' absolute top-[-3rem] left-[34%] md:left-[27%] w-[6rem] h-[6rem] rounded-full object-cover' />
                     <p className='text-center text-white font-semibold mt-[2.5rem] text-lg'>{user.first_name} {user.last_name}</p>
                     <p className='text-center text-white mt-2'>{user.username}</p>
@@ -214,7 +214,7 @@ const OwnFeed = () => {
                     <p className='text-center text-white my-2'>Member since {user.member_since}</p>
 
                 </div>
-                <div className='flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4'>
+                <div className='flex-1 rounded-md px-2 mb-2 w-full min-w-full md:min-w-[80rem] md:mt-0 mt-4'>
                     {
                         currentLocation.includes("ownFeed") && (
                             <div className='w-[100%] bg-[#0d2539] py-5 px-5 mt-0 rounded-md mb-2'>
@@ -304,7 +304,7 @@ const OwnFeed = () => {
                                                     </div>
                                                     <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
                                                 </div>
-                                                <p className='text-white mt-2 md:mt-3'>{formatDescription(feedItem.post.content)}</p>
+                                                <p className='text-white mt-2 md:mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.post.content)}</p>
                                                 <div className='flex items-center gap-x-4 mt-2 md:mt-4'>
                                                     <div className='flex items-center gap-x-2'>
                                                         <FaMessage className='text-white' />
@@ -415,7 +415,7 @@ const OwnFeed = () => {
                                                     <b>{feedItem.convention_game.game_currency_tag}{feedItem.convention_game.game_price}</b>
                                                     ({feedItem.convention_game.game_condition})
                                                 </p>
-                                                <p className='text-white mt-3'>{formatDescription(feedItem.convention_game.game_desc)}</p>
+                                                <p className='text-white mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.convention_game.game_desc)}</p>
                                                 <div className='flex items-center gap-x-4 mt-4'>
                                                     <div className='flex items-center gap-x-2'>
                                                         <FaMessage className='text-white' />

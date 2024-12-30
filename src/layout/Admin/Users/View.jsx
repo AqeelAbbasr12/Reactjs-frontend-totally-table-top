@@ -461,7 +461,7 @@ const handleBlock = async (userId, status) => {
 
                 {/* 1st Column */}
                 <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
-                  <img src={convention.convention_logo} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
+                  <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
                   <Link to={`/admin/edit/convention/${convention.id}`}>
                     <p className='text-lightOrange font-semibold text-lg break-words'>{convention.convention_name}</p>
                   </Link>
@@ -669,8 +669,8 @@ const handleBlock = async (userId, status) => {
                           <div>
                             <p className='text-white'>
                               <span className='text-lightOrange'>{user?.name || ""}</span> will attending <span
-                                onClick={() => nav(`/convention/attendance/${feedItem.convention_attendance?.convention_id}`)}
-                                className='text-lightOrange underline ml-1 cursor-pointer'
+                                
+                                className='text-lightOrange  ml-1 cursor-pointer'
                               >
                                 {feedItem.convention_attendance?.convention_name}
                               </span>
@@ -707,7 +707,7 @@ const handleBlock = async (userId, status) => {
                         </div>
                         <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
                       </div>
-                      <p className='text-white mt-2 md:mt-3'>{formatDescription(feedItem.post.content)}</p>
+                      <p className='text-white mt-2 md:mt-3 break-words whitespace-pre-wrap'>{formatDescription(feedItem.post.content)}</p>
                       <div className='flex items-center gap-x-4 mt-2 md:mt-4'>
                         <div className='flex items-center gap-x-2'>
                           <FaMessage className='text-white' />
@@ -737,7 +737,7 @@ const handleBlock = async (userId, status) => {
                           <div>
                             <p className='text-white break-all'>
                               <span className='text-lightOrange'>You</span> are staying at
-                              <span onClick={() => nav(`/accomodation/${feedItem.convention_id}`)} className='text-lightOrange underline ml-1 cursor-pointer'>
+                              <span className='text-lightOrange ml-1 cursor-pointer'>
                                 {feedItem.convention_accommodation?.location_name}
                               </span>
                             </p>
@@ -748,7 +748,7 @@ const handleBlock = async (userId, status) => {
                       <p className='text-white mt-2 md:mt-3'>
                         From <span className='text-lightOrange'>{formatDate(feedItem.convention_accommodation?.from_date)}</span> To
                         <span className='text-lightOrange'> {formatDate(feedItem.convention_accommodation?.to_date)}</span> for
-                        <span onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)} className='text-lightOrange underline ml-1 cursor-pointer'>
+                        <span className='text-lightOrange ml-1 cursor-pointer'>
                           {feedItem.convention_accommodation?.convention_name}
                         </span>
                       </p>
@@ -799,14 +799,12 @@ const handleBlock = async (userId, status) => {
                             <p className='text-white'>
                               <span className='text-lightOrange'>{user?.name || ""} </span> is selling
                               <span
-                                onClick={() => nav(`/game/single/${feedItem.convention_game.id}`)}
-                                className='text-lightOrange underline ml-1 cursor-pointer'>
+                                className='text-lightOrange  ml-1 cursor-pointer'>
                                 {feedItem.convention_game.game_name}
                               </span>
                               under
                               <span
-                                onClick={() => nav(`/convention/attendance/${feedItem.convention_id}`)}
-                                className='text-lightOrange underline ml-1 cursor-pointer'>
+                                className='text-lightOrange  ml-1 cursor-pointer'>
                                 {feedItem.convention_game.convention_name}
                               </span>
                             </p>
@@ -818,7 +816,7 @@ const handleBlock = async (userId, status) => {
                         <b>{feedItem.convention_game.game_currency_tag}{feedItem.convention_game.game_price}</b>
                         ({feedItem.convention_game.game_condition})
                       </p>
-                      <p className='text-white mt-3'>{formatDescription(feedItem.convention_game.game_desc)}</p>
+                      <p className='text-white mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.convention_game.game_desc)}</p>
                       <div className='flex items-center gap-x-4 mt-4'>
                         <div className='flex items-center gap-x-2'>
                           <FaMessage className='text-white' />
