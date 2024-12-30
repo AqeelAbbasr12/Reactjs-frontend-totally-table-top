@@ -36,30 +36,33 @@ function Create() {
         promo_logo: null,        // Convention logo (initially null for file)
         feature_logo: null,        // Convention logo (initially null for file)
         advert_logo: null,        // Convention logo (initially null for file)
-        feature: 0         // Feature flag (initially set to 0)
+        feature: 0,         // Feature flag (initially set to 0)
+        country: '',
+        position_of_announcement: '',
+        position_of_picture: ''
     });
 
     const Announcement_Format = [
         {
             id: 1,
             image: expo,
-            name: "Expo",
+            name: "Adverts",
             path: "/expo"
         },
         {
             id: 2,
             image: feature,
-            name: "Feature",
+            name: "Announcement",
             path: "/feature"
         },
         {
             id: 3,
             image: advert,
-            name: "Advert",
+            name: "Picture",
             path: "/advert"
         },
     ]
-    const [activeTab, setActiveTab] = useState('Expo');
+    const [activeTab, setActiveTab] = useState('Adverts');
     const onhandletab = (tab) => {
         setActiveTab(tab);
     }
@@ -251,6 +254,9 @@ function Create() {
         formDataToSend.append('call_to_action', formData.call_to_action); // Convention call to action
         formDataToSend.append('type', activeTab); // Convention type
         formDataToSend.append('feature', formData.feature || 0); // Feature flag
+        formDataToSend.append('country', formData.country); // Feature flag
+        formDataToSend.append('position_of_announcement', formData.position_of_announcement); // Feature flag
+        formDataToSend.append('position_of_picture', formData.position_of_picture); // Feature flag
 
         // Append logos if they exist
         if (formData.expo_logo) {
@@ -313,18 +319,21 @@ function Create() {
                 promo_logo: null,        // Convention logo (initially null for file)
                 feature_logo: null,        // Convention logo (initially null for file)
                 advert_logo: null,        // Convention logo (initially null for file)
-                feature: 0    // Initialize feature if needed, adjust according to your logic
+                feature: 0,    // Initialize feature if needed, adjust according to your logic
+                country: '',
+                position_of_announcement: '',
+                position_of_picture: ''
             });
             setImagePreviews(null);
             setFormErrors({});
             navigate(`/admin/announcement`);
 
         } catch (error) {
-            
+
             toastr.error('Failed to create convention.');
         } finally {
             setIsLoading(false);
-          }
+        }
     };
 
     return (
@@ -340,7 +349,7 @@ function Create() {
                     <div className="grid grid-cols-1 2xl:grid-cols-2 items-center justify-between gap-x-10">
                         {/* Title */}
                         <p className='text-[29px] sm:text-3xl md:text-6xl leading-35 md:leading-[108px] font-palanquin-dark'>
-                            Add an announcement
+                            Add an advert
                         </p>
 
                         {/* Sort by + Status Label + Dropdown + Save Button */}
@@ -392,18 +401,17 @@ function Create() {
 
                             {/* Save Button */}
                             <div className='w-full lg:w-[197px]'>
-                               
-                            <button
+
+                                <button
                                     type="submit"
-                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${
-                                        isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
-                                    }`}
+                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
+                                        }`}
                                     disabled={isLoading}
-                                    >
+                                >
                                     {isLoading ? (
                                         <div className="flex justify-center items-center gap-2 text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3">
-                                        <FaSpinner className="animate-spin" />
-                                        Saving...
+                                            <FaSpinner className="animate-spin" />
+                                            Saving...
                                         </div>
                                     ) : (
                                         'Save'
@@ -420,7 +428,7 @@ function Create() {
                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-10 text-white ">
                             <div className='col-span-8 lg:col-span-8 order-last lg:order-1'>
                                 <div className='flex-col bg-[#0D2539] pt-[26px] pb-10'>
-                                    <span className='text-xl leading-7 md:text-35 md:leading-63 font-palanquin-dark px-[39px]'>Announcement format</span>
+                                    <span className='text-xl leading-7 md:text-35 md:leading-63 font-palanquin-dark px-[39px]'>Advert format</span>
                                     <div className='mt-7 mx-[39px]'>
                                         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-10">
                                             {
@@ -446,12 +454,12 @@ function Create() {
 
                                 </div>
                                 {
-                                    activeTab === 'Expo' && (
+                                    activeTab === 'Adverts' && (
                                         <div className="w-full bg-[#102F47] mt-10">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Expo Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advet Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
                                                             {/* mt-[37px] */}
                                                             {formErrors.name && (
@@ -459,27 +467,27 @@ function Create() {
                                                                     {formErrors.name}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} />
+                                                            <Input holder="Name…" name="name" onChange={handleChange} />
 
 
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} />
+                                                            <Input holder="Title....." name="title" onChange={handleChange} />
 
                                                             <textarea
                                                                 name="description"
                                                                 className='w-full text-white mb-5 bg-[#102F47] p-4 focus:outline-none resize-none text-sm leading-3 sm:text-xl sm:leading-7 md:text-2xl md:leading-10 lg:text-28 lg:leading-35 tracking-[0.56px]'
-                                                                placeholder='Announcement description…'
+                                                                placeholder='Description…'
                                                                 rows="5"
                                                                 onChange={handleChange}
                                                                 style={{ minHeight: '150px' }}
                                                             />
-                                                            <Input holder="Announcement call to action text…" name="call_to_action" onChange={handleChange} />
+                                                            <Input holder="Call to action text…" name="call_to_action" onChange={handleChange} />
 
                                                             {formErrors.url && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.url}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} />
+                                                            <Input holder=" URL…" name="url" onChange={handleChange} />
                                                             <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-y-5 pb-10'>
                                                                 <div className=' flex flex-col items-center xl:items-start'>
                                                                     <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
@@ -498,7 +506,7 @@ function Create() {
                                                                                 accept="image/png, image/jpeg"
                                                                             />
                                                                             <label htmlFor="expoLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
-                                                                                Upload Expo Logo
+                                                                                Upload Adverts Logo
                                                                             </label>
                                                                         </div>
                                                                         {formErrors.logo && (
@@ -548,30 +556,44 @@ function Create() {
                                     )
                                 }
                                 {
-                                    activeTab === 'Feature' && (
+                                    activeTab === 'Announcement' && (
                                         <div className="w-full bg-[#102F47] mt-10 ">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Feature Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Announcement Details</span>
                                                         <div className=' mt-[37px] mb-[52px] pb-10'>
                                                             {formErrors.name && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.name}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} />
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} />
+                                                            <Input holder="Name…" name="name" onChange={handleChange} />
+                                                            <Input holder="Title....." name="title" onChange={handleChange} />
 
                                                             <textarea
                                                                 name="description"
                                                                 className='w-full text-white mb-5 bg-[#102F47] p-4 focus:outline-none resize-none text-sm leading-3 sm:text-xl sm:leading-7 md:text-2xl md:leading-10 lg:text-28 lg:leading-35 tracking-[0.56px]'
-                                                                placeholder='Announcement description…'
+                                                                placeholder='Description…'
                                                                 rows="5"
                                                                 onChange={handleChange}
                                                                 style={{ minHeight: '150px' }}
                                                             />
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} />
+                                                            <Input holder="URL…" name="url" onChange={handleChange} />
+                                                            {/* <select
+                                                                name="position_of_announcement"
+                                                                className="w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none"
+                                                                onChange={handleChange}
+                                                                defaultValue=""
+                                                            >
+                                                                <option value="" disabled>
+                                                                    Select Position
+                                                                </option>
+                                                                <option value="1st_position">!st Position</option>
+                                                                <option value="2nd_position">2nd Position</option>
+                                                                <option value="3rd_position">3rd Position</option>
+                                                                
+                                                            </select> */}
                                                             <div className="flex flex-col items-center">
                                                                 <div className="flex flex-wrap justify-center">
                                                                     {imagePreviews.map((imagePreview, index) => (
@@ -619,20 +641,100 @@ function Create() {
                                     )
                                 }
                                 {
-                                    activeTab === 'Advert' && (
+                                    activeTab === 'Picture' && (
                                         <div className="w-full bg-[#102F47] mt-10">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Picture Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
                                                             {formErrors.name && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.name}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} />
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} />
+                                                            <Input holder="name…" name="name" onChange={handleChange} />
+                                                            <Input holder="URL…" name="url" onChange={handleChange} />
+                                                            {/* State Dropdown */}
+                                                            {/* <div className="mt-4">
+                                                            <select
+                                                                name="position_of_picture"
+                                                                className="w-full text-white h-12 sm:h-[4.8rem] bg-[#102F47] rounded-md p-3 focus:outline-none"
+                                                                onChange={handleChange}
+                                                                defaultValue=""
+                                                            >
+                                                                <option value="" disabled>
+                                                                    Select Position
+                                                                </option>
+                                                                <option value="1st_position">!st Position</option>
+                                                                <option value="2nd_position">2nd Position</option>
+                                                                <option value="3rd_position">3rd Position</option>
+                                                                
+                                                            </select>
+                                                            </div> */}
+                                                            <div className="mt-4">
+                                                            <select
+                                                                name="country"
+                                                                className="w-full text-white h-12 sm:h-[4.8rem] bg-[#102F47] rounded-md p-3 focus:outline-none"
+                                                                onChange={handleChange}
+                                                                defaultValue=""
+                                                            >
+                                                                <option value="" disabled>
+                                                                    Select a Country
+                                                                </option>
+                                                                <option value="Argentina">Argentina</option>
+                                                                <option value="Australia">Australia</option>
+                                                                <option value="Austria">Austria</option>
+                                                                <option value="Belgium">Belgium</option>
+                                                                <option value="Brazil">Brazil</option>
+                                                                <option value="Bulgaria">Bulgaria</option>
+                                                                <option value="Canada">Canada</option>
+                                                                <option value="Chile">Chile</option>
+                                                                <option value="Colombia">Colombia</option>
+                                                                <option value="Croatia">Croatia</option>
+                                                                <option value="Cyprus">Cyprus</option>
+                                                                <option value="Czech Republic">Czech Republic</option>
+                                                                <option value="Denmark">Denmark</option>
+                                                                <option value="Estonia">Estonia</option>
+                                                                <option value="Finland">Finland</option>
+                                                                <option value="France">France</option>
+                                                                <option value="Germany">Germany</option>
+                                                                <option value="Greece">Greece</option>
+                                                                <option value="Hungary">Hungary</option>
+                                                                <option value="Iceland">Iceland</option>
+                                                                <option value="Ireland">Ireland</option>
+                                                                <option value="Italy">Italy</option>
+                                                                <option value="Japan">Japan</option>
+                                                                <option value="Latvia">Latvia</option>
+                                                                <option value="Lithuania">Lithuania</option>
+                                                                <option value="Luxembourg">Luxembourg</option>
+                                                                <option value="Malta">Malta</option>
+                                                                <option value="Mexico">Mexico</option>
+                                                                <option value="Netherlands">Netherlands</option>
+                                                                <option value="Norway">Norway</option>
+                                                                <option value="Peru">Peru</option>
+                                                                <option value="Poland">Poland</option>
+                                                                <option value="Portugal">Portugal</option>
+                                                                <option value="Romania">Romania</option>
+                                                                <option value="Slovakia">Slovakia</option>
+                                                                <option value="Slovenia">Slovenia</option>
+                                                                <option value="Spain">Spain</option>
+                                                                <option value="Sweden">Sweden</option>
+                                                                <option value="Switzerland">Switzerland</option>
+                                                                <option value="Thailand">Thailand</option>
+                                                                <option value="United Kingdom">United Kingdom</option>
+                                                                <option value="USA">USA</option>
+                                                                <option value="Uruguay">Uruguay</option>
+                                                                <option value="Venezuela">Venezuela</option>
+                                                            </select>
+
+                                                            </div>
+
+                                                            {formErrors.country && (
+                                                                <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                                    {formErrors.country}
+                                                                </p>
+                                                            )}
                                                             <div className='flex flex-col items-center md:items-start pb-10'>
 
                                                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
@@ -651,7 +753,7 @@ function Create() {
                                                                             accept="image/png, image/jpeg"
                                                                         />
                                                                         <label htmlFor="advertLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
-                                                                            Upload Advert Logo
+                                                                            Upload Picture
                                                                         </label>
                                                                     </div>
                                                                     {formErrors.logo && (

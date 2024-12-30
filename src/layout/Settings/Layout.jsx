@@ -196,6 +196,7 @@ const Layout = () => {
                                             className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
+                                            <option value="anyone">Anyone</option>
                                             <option value="private">Private</option>
                                         </select>
                                     </div>
@@ -213,6 +214,7 @@ const Layout = () => {
                                             className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
+                                            <option value="anyone">Anyone</option>
                                             <option value="private">Private</option>
                                         </select>
                                     </div>
@@ -230,6 +232,7 @@ const Layout = () => {
                                             className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
+                                            <option value="anyone">Anyone</option>
                                             <option value="private">Private</option>
                                         </select>
                                     </div>
@@ -247,6 +250,7 @@ const Layout = () => {
                                             className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
+                                            <option value="anyone">Anyone</option>
                                             <option value="private">Private</option>
                                         </select>
                                     </div>
@@ -264,6 +268,7 @@ const Layout = () => {
                                             className="w-full h-[2.3rem] rounded-md text-white bg-darkBlue border border-gray-500"
                                         >
                                             <option value="friends_only">Friends Only</option>
+                                            <option value="anyone">Anyone</option>
                                             <option value="private">Private</option>
                                         </select>
                                     </div>

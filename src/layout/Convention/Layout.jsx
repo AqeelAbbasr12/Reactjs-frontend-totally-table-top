@@ -17,6 +17,7 @@ const Layout = () => {
   const [AccommodationItem, setAccommodation] = useState([]);
   const [EventItem, setEvent] = useState([]);
   const [GameItem, setGame] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
 
   useEffect((id) => {
@@ -25,6 +26,7 @@ const Layout = () => {
     fetchAccommodation();
     fetchEvent();
     fetchGame();
+    fetchAnnouncements();
   }, []);
 
   const fetchConventions = async () => {
@@ -160,6 +162,46 @@ const Layout = () => {
       setGame([]);
     }
   };
+
+  const fetchAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWithAuth(`/user/announcement`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
+      // Filter and sort the data
+      const pictureAnnouncements = data.filter(
+        (item) => item.type === 'Picture' && item.position_of_picture
+      );
+
+      const sortedAnnouncements = pictureAnnouncements.sort((a, b) => {
+        const positions = {
+          '1st_position': 1,
+          '2nd_position': 2,
+          '3rd_position': 3,
+        };
+        return positions[a.position_of_picture] - positions[b.position_of_picture];
+      });
+
+      setAnnouncements(sortedAnnouncements);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto bg-darkBlue'>
       {loading && (
@@ -176,19 +218,40 @@ const Layout = () => {
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 md:mt-0 mt-4 w-[100%]'>
 
+          {/* Show loading spinner */}
+          {loading ? (
+            <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
+              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
+            </div>
+          ) : null}
+          {/* Render 1st position at the top */}
+          {announcements[0] && announcements[0].position_of_picture === '1st_position' && (
+            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+              <img
+                src={announcements[0].advert_logo}
+                alt={announcements[0].name}
+                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+              />
+            </div>
+          )}
+
+          {/* Title */}
           <div className='flex justify-between items-center flex-wrap'>
             <h1 className='text-white text-2xl font-semibold'>Your conventions</h1>
-            {/* <Button onClickFunc={() => nav("/complete")} title={"Add convention"} className={"min-w-[10rem] min-h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange sm:mt-0 mt-2"} /> */}
           </div>
+
+          {/* Conventions */}
           {conventions.length > 0 ? (
-            <div className="bg-[#0d2539] p-3 w-full min-h-[700px] md:max-h-fit rounded-md mt-6 overflow-y-auto overflow-x-hidden">
+            <div className="bg-[#0d2539] p-3 w-full min-h-[300px] md:max-h-fit rounded-md mt-6 overflow-y-auto overflow-x-hidden">
               {conventions.map((convention) => (
                 <div key={convention.id} className='flex flex-col md:flex-row justify-between items-start mb-4 p-2 bg-[#1a2a3a] rounded-md'>
 
                   {/* 1st Column */}
                   <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
                     <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
-                    <p className='text-lightOrange font-semibold text-lg break-words'>{convention.convention_name}</p>
+                    <Link to={`/convention/attendance/${convention.id}`}>
+                      <p className='text-lightOrange font-semibold text-lg break-words'>{convention.convention_name}</p>
+                    </Link>
                   </div>
 
                   {/* 2nd Column */}
@@ -205,22 +268,22 @@ const Layout = () => {
                       />
                     </Link>
                     <Link to={`/accomodation/${convention.id}`}>
-                    <FaBuilding
-                      className='cursor-pointer'
-                      color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
+                      <FaBuilding
+                        className='cursor-pointer'
+                        color={AccommodationItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
+                      />
                     </Link>
                     <Link to={`/event/${convention.id}`} >
-                    <FaCalendarAlt
-                      className='cursor-pointer'
-                      color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
+                      <FaCalendarAlt
+                        className='cursor-pointer'
+                        color={EventItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
+                      />
                     </Link>
                     <Link to={`/game/sale/${convention.id}`} >
-                    <FaDiceFive
-                      className='cursor-pointer'
-                      color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
-                    />
+                      <FaDiceFive
+                        className='cursor-pointer'
+                        color={GameItem.some(item => item.convention_id === convention.id) ? '#F3C15F' : '#FFFFFF'}
+                      />
                     </Link>
                   </div>
 
@@ -256,11 +319,21 @@ const Layout = () => {
             </div>
           )}
 
+          {/* 3rd Position Advert Logo */}
+          {announcements.length > 0 && announcements.find(a => a.position_of_picture === '3rd_position') && (
+            <div className='mt-6 flex justify-center'>
+              <img
+                src={announcements.find(a => a.position_of_picture === '3rd_position').advert_logo}
+                alt="3rd Position Ad"
+                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+              />
+            </div>
+          )}
         </div>
-
       </div>
     </div>
   );
+
 }
 
 export default Layout;

@@ -68,6 +68,13 @@ import EditAnnouncementPage from '../pages/Admin/EditAnnouncementPage';
 import SponserPage from '../pages/Admin/SponserPage';
 import CreateSponserPage from '../pages/Admin/CreateSponserPage';
 import EditSponserPage from '../pages/Admin/EditSponserPage';
+import ReportPage from '../pages/Admin/ReportPage';
+import ViewReportPage from '../pages/Admin/ViewReportPage';
+import UsersPage from '../pages/Admin/UsersPage';
+import ViewUserPage from '../pages/Admin/ViewUserPage';
+import AdminSingleGamePage from '../pages/Admin/AdminSingleGamePage';
+import AdminMessagesPage from '../pages/Admin/AdminMessagePage';
+import AdminSingleEventPage from '../pages/Admin/AdminSingleEventPage';
 
 export const routing = [
   { id: 1, link: "/", element: <LoginPage />, public: true },
@@ -135,6 +142,13 @@ export const routing = [
   { id: 49, link: "/admin/sponser", element: <SponserPage />, protected: true },
   { id: 49, link: "/admin/create/sponser", element: <CreateSponserPage />, protected: true },
   { id: 49, link: "/admin/edit/sponser/:sponser_id", element: <EditSponserPage />, protected: true },
+  { id: 49, link: "/admin/report", element: <ReportPage />, protected: true },
+  { id: 49, link: "/admin/view/report/:report_id", element: <ViewReportPage />, protected: true },
+  { id: 49, link: "/admin/users", element: <UsersPage />, protected: true },
+  { id: 49, link: "/admin/view/users/:user_id", element: <ViewUserPage />, protected: true },
+  { id: 26, link: "/admin/game/single/:game_id", element: <AdminSingleGamePage />, protected: true },
+  { id: 49, link: "/admin/messages/:receiver_id?", element: <AdminMessagesPage />, protected: true },
+  { id: 26, link: "/admin/event/single/:event_id", element: <AdminSingleEventPage />, protected: true },
 
 ];
 

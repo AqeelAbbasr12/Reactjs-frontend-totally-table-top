@@ -31,7 +31,7 @@ const CreateGame = () => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
-    currency: '',
+    currency: 'USD',
     currency_tag: '',
     condition: '',
     desc: '',
@@ -42,33 +42,92 @@ const CreateGame = () => {
 
   useEffect(() => {
     fetchConventions(convention_id);
-}, []);
+
+    if (convention.state) {
+      const countryCurrency = countryToCurrency[convention.state];
+      if (countryCurrency) {
+        setFormData(prevData => ({
+          ...prevData,
+          currency: countryCurrency
+        }));
+      }
+    }
+  }, [convention.state]);
+
+
+
+  const countryToCurrency = {
+    "Argentina": "ARS",
+    "Australia": "AUD",
+    "Austria": "EUR",
+    "Belgium": "EUR",
+    "Brazil": "BRL",
+    "Bulgaria": "BGN",
+    "Canada": "CAD",
+    "Chile": "CLP",
+    "Colombia": "COP",
+    "Croatia": "HRK",
+    "Cyprus": "CYP",
+    "Czech Republic": "CZK",
+    "Denmark": "DKK",
+    "Estonia": "EEK",
+    "Finland": "FIM",
+    "France": "EUR",  // France uses Euro
+    "Germany": "EUR", // Germany uses Euro
+    "Greece": "EUR",  // Greece uses Euro
+    "Hungary": "HUF",
+    "Iceland": "ISK",
+    "Ireland": "IEP",
+    "Italy": "ITL",
+    "Japan": "JPY",
+    "Latvia": "LVL",
+    "Lithuania": "LTL",
+    "Luxembourg": "LUF",
+    "Malta": "MTL",
+    "Mexico": "MXN",
+    "Netherlands": "NLG",
+    "Norway": "NOK",
+    "Peru": "PEN",
+    "Poland": "PLN",
+    "Portugal": "PTE",
+    "Romania": "ROL",
+    "Slovakia": "SKK",
+    "Slovenia": "SIT",
+    "Spain": "ESP",
+    "Sweden": "SEK",
+    "Switzerland": "CHF",
+    "Thailand": "THB",
+    "United Kingdom": "GBP",
+    "USA": "USD",
+    "Uruguay": "UYU",
+    "Venezuela": "VEF"
+  };
 
   const fetchConventions = async (convention_id) => {
     setLoading(true);
     try {
-        const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+      const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
+      });
 
-        const data = await response.json();
-        setConvention(data);
-        // console.log(data);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setConvention(data);
+      console.log(data);
     } catch (error) {
-        console.error('Error fetching conventions data:', error);
+      console.error('Error fetching conventions data:', error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-  
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -82,23 +141,23 @@ const CreateGame = () => {
   };
 
   // Handle file change for individual image uploads
-  
+
   // const handleFileChange = async (index, event) => {
   //   const file = event.target.files[0];
-  
+
   //   if (file) {
   //     // Check if the file size exceeds 10 MB (10 * 1024 * 1024 bytes)
   //     if (file.size > 10 * 1024 * 1024) {
   //       toastr.warning("Your image is greater than 10 MB.");
   //       return; // Exit if the file is too large
   //     }
-  
+
   //     try {
   //       // No compression, just save the original file
   //       const newImagePreviews = [...imagePreviews];
   //       newImagePreviews[index] = URL.createObjectURL(file);
   //       setImagePreviews(newImagePreviews);
-  
+
   //       // Update formData with the original image file
   //       setFormData((prevData) => {
   //         const updatedImages = [...prevData.game_images];
@@ -111,22 +170,22 @@ const CreateGame = () => {
   //     }
   //   }
   // };
-  
-  
-  
+
+
+
 
   // OLD
   const handleFileChange = async (index, event) => {
 
     const file = event.target.files[0];
-  
+
     if (file) {
       // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
       if (file.size > 20 * 1024 * 1024) {
         toastr.warning("Your image is greater than 20 MB.");
         return; // Exit if the file is too large
       }
-  
+
       try {
         // Compress the image
         const options = {
@@ -136,19 +195,19 @@ const CreateGame = () => {
           fileType: 'image/jpeg', // Convert to JPEG
         };
         const compressedBlob = await imageCompression(file, options);
-  
+
         // Create a new File object from the compressed blob, preserving the original file name and type
         const compressedFile = new File([compressedBlob], file.name, {
           type: file.type, // Preserve the original file type (mime type)
           lastModified: Date.now(), // Optional: Set the last modified time to now
         });
 
-  
+
         // Update the image preview at the specified index
         const newImagePreviews = [...imagePreviews];
         newImagePreviews[index] = URL.createObjectURL(compressedFile);
         setImagePreviews(newImagePreviews);
-  
+
         // Update formData with the new compressed image file
         setFormData((prevData) => {
           const updatedImages = [...prevData.game_images];
@@ -161,8 +220,8 @@ const CreateGame = () => {
       }
     }
   };
-  
-  
+
+
 
 
   // Handle adding a new image section
@@ -195,14 +254,95 @@ const CreateGame = () => {
     switch (currency) {
       case "USD":
         return "$";
+      case "ARS":
+        return "$";
+      case "AUD":
+        return "A$";
       case "EUR":
         return "€";
       case "GBP":
         return "£";
-      default:
+      case "BRL":
+        return "R$";
+      case "BGN":
+        return "лв";
+      case "CAD":
+        return "C$";
+      case "CLP":
         return "$";
+      case "COP":
+        return "$";
+      case "HRK":
+        return "kn";
+      case "CYP":
+        return "£";
+      case "CZK":
+        return "Kč";
+      case "DKK":
+        return "kr";
+      case "EEK":
+        return "kr";
+      case "FIM":
+        return "mk";
+      case "FRF":
+        return "₣";
+      case "DEM":
+        return "DM";
+      case "GRD":
+        return "₯";
+      case "HUF":
+        return "Ft";
+      case "ISK":
+        return "kr";
+      case "IEP":
+        return "£";
+      case "ITL":
+        return "₤";
+      case "JPY":
+        return "¥";
+      case "LVL":
+        return "Ls";
+      case "LTL":
+        return "Lt";
+      case "LUF":
+        return "₣";
+      case "MTL":
+        return "₤";
+      case "MXN":
+        return "$";
+      case "NLG":
+        return "ƒ";
+      case "NOK":
+        return "kr";
+      case "PEN":
+        return "S/.";
+      case "PLN":
+        return "zł";
+      case "PTE":
+        return "₣";
+      case "ROL":
+        return "lei";
+      case "SKK":
+        return "Sk";
+      case "SIT":
+        return "€";
+      case "ESP":
+        return "₧";
+      case "SEK":
+        return "kr";
+      case "CHF":
+        return "₣";
+      case "THB":
+        return "฿";
+      case "UYU":
+        return "$U";
+      case "VEF":
+        return "Bs";
+      default:
+        return "$"; // Fallback for unsupported currencies
     }
   };
+
 
   const validateForm = () => {
     const errors = {};
@@ -237,7 +377,7 @@ const CreateGame = () => {
     formDataToSend.append('name', formData.name);
     formDataToSend.append('price', formData.price);
     formDataToSend.append('currency', formData.currency);
-    formDataToSend.append('currency_tag', formData.currency_tag);  
+    formDataToSend.append('currency_tag', formData.currency_tag);
     formDataToSend.append('condition', formData.condition);
     formDataToSend.append('desc', formData.desc);
 
@@ -316,7 +456,7 @@ const CreateGame = () => {
         <a href="/profile" className="text-white">Account</a>
         <BsFillCaretDownFill className="text-lightOrange -rotate-90" />
         <a href="/user/convention" className="text-white">Your conventions</a>
-        
+
       </div>
 
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">
@@ -326,7 +466,7 @@ const CreateGame = () => {
         >
           <div className="flex justify-center items-center">
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
-            <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
+              <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
             </div>
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
               <FaList className="text-white" />
@@ -353,9 +493,9 @@ const CreateGame = () => {
           <div className="flex justify-center items-center md:flex-row flex-col mt-2 gap-x-4 pb-2">
             {/* Price Input with Dynamic Currency Symbol */}
             <div className="flex justify-between relative rounded-md w-[100%]">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
                 {/* Dynamic currency symbol based on selected currency */}
-                <span className="text-gray-500 text-white">
+                <span className=" text-white">
                   {getCurrencySymbol(formData.currency)}
                 </span>
               </div>
@@ -378,9 +518,51 @@ const CreateGame = () => {
                     onChange={handleChange}  // Update currency on change
                     className="h-full appearance-none rounded-md py-0 pl-2 pr-8 text-white outline-none bg-darkBlue"
                   >
-                    <option selected value="USD">USD</option>
+                    <option value="USD">USD</option>
+                    <option value="ARS">ARS</option>
+                    <option value="AUD">AUD</option>
                     <option value="EUR">EUR</option>
                     <option value="GBP">GBP</option>
+                    <option value="BRL">BRL</option>
+                    <option value="BGN">BGN</option>
+                    <option value="CAD">CAD</option>
+                    <option value="CLP">CLP</option>
+                    <option value="COP">COP</option>
+                    <option value="HRK">HRK</option>
+                    <option value="CYP">CYP</option>
+                    <option value="CZK">CZK</option>
+                    <option value="DKK">DKK</option>
+                    <option value="EEK">EEK</option>
+                    <option value="FIM">FIM</option>
+                    <option value="FRF">FRF</option>
+                    <option value="DEM">DEM</option>
+                    <option value="GRD">GRD</option>
+                    <option value="HUF">HUF</option>
+                    <option value="ISK">ISK</option>
+                    <option value="IEP">IEP</option>
+                    <option value="ITL">ITL</option>
+                    <option value="JPY">JPY</option>
+                    <option value="LVL">LVL</option>
+                    <option value="LTL">LTL</option>
+                    <option value="LUF">LUF</option>
+                    <option value="MTL">MTL</option>
+                    <option value="MXN">MXN</option>
+                    <option value="NLG">NLG</option>
+                    <option value="NOK">NOK</option>
+                    <option value="PEN">PEN</option>
+                    <option value="PLN">PLN</option>
+                    <option value="PTE">PTE</option>
+                    <option value="ROL">ROL</option>
+                    <option value="SKK">SKK</option>
+                    <option value="SIT">SIT</option>
+                    <option value="ESP">ESP</option>
+                    <option value="SEK">SEK</option>
+                    <option value="CHF">CHF</option>
+                    <option value="THB">THB</option>
+                    <option value="GBP">GBP</option>
+                    <option value="USD">USD</option>
+                    <option value="UYU">UYU</option>
+                    <option value="VEF">VEF</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <img
@@ -391,6 +573,7 @@ const CreateGame = () => {
                   </div>
                 </div>
               </div>
+
             </div>
             {/* Display validation error */}
             {formErrors.price && <p className="text-red">{formErrors.price}</p>}
@@ -468,22 +651,21 @@ const CreateGame = () => {
           </div>
 
           <div className="flex justify-center items-center mt-4">
-          <button
-          type="submit"
-          className={`w-[12rem] h-[3rem] rounded-md text-white ${
-            isLoading ? 'bg-gray-500' : 'bg-lightOrange'
-          }`}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex justify-center items-center gap-2">
-              <FaSpinner className="animate-spin" />
-              Processing...
-            </div>
-          ) : (
-            'List Game'
-          )}
-        </button>
+            <button
+              type="submit"
+              className={`w-[12rem] h-[3rem] rounded-md text-white ${isLoading ? 'bg-gray-500' : 'bg-lightOrange'
+                }`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex justify-center items-center gap-2">
+                  <FaSpinner className="animate-spin" />
+                  Processing...
+                </div>
+              ) : (
+                'List Game'
+              )}
+            </button>
           </div>
         </form>
       </div>

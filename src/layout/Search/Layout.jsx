@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
+import FaceImage from '../../assets/profile.jpeg'
 import ConventionImage from '../../assets/convention.jpeg'
 import { FaLocationDot, FaMessage } from 'react-icons/fa6'
 import { FaCalendarAlt, FaUser } from 'react-icons/fa'

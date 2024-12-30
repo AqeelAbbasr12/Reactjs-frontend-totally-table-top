@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import Left from '../../components/Left'
 import { FaLocationDot } from 'react-icons/fa6'
+import Swal from 'sweetalert2';
+import { IoMdFlag } from 'react-icons/io';
 import { FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa'
 import ConventionImage from '../../assets/traditional.png'
 import { fetchWithAuth } from '../../services/apiService';
@@ -16,6 +18,9 @@ const FindATable = () => {
     const [loading, setLoading] = useState();
     const [events, setEvents] = useState([]);
     const [selectedConvention, setSelectedConvention] = useState(null);
+   
+    const [popupStates, setPopupStates] = useState({}); 
+    const [activeEventId, setActiveEventId] = useState(null); 
     const [conventions, setConventions] = useState([]);
 
     useEffect(() => {
@@ -24,6 +29,14 @@ const FindATable = () => {
     }, []);
 
 
+     // Handle Popup Visibility
+     const handleMouseEnter = (eventId) => {
+        setPopupStates((prev) => ({ ...prev, [eventId]: true })); // Show popup for specific event
+    };
+
+    const handleMouseLeave = (eventId) => {
+        setPopupStates((prev) => ({ ...prev, [eventId]: false })); // Hide popup for specific event
+    };
 
     const fetchFindTable = async () => {
         setLoading(true); // Show loading spinner while fetching
@@ -118,6 +131,62 @@ const FindATable = () => {
         return `${weekday}, ${day}${suffix}, ${month}, ${year}`;
     };
 
+    const handleReportTable = async (eventId) => {
+        setActiveEventId(eventId); // Track the active event being reported
+
+        Swal.fire({
+            title: 'Report Table',
+            text: 'Please enter the reason for reporting this table:',
+            html: `
+                <textarea 
+                    id="report-reason" 
+                    placeholder="Enter your reason here..."
+                    style="margin: 0; padding: 10px; width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Submit Report',
+            preConfirm: () => {
+                const reason = document.getElementById('report-reason').value;
+                if (!reason.trim()) {
+                    Swal.showValidationMessage('Reason is required!');
+                }
+                return reason.trim();
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const reason = result.value;
+
+                try {
+                    const response = await fetchWithAuth(`/user/report`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                        },
+                        body: JSON.stringify({
+                            reported_event_id: eventId, // Use eventId from the clicked row
+                            type: 'event',
+                            reason: reason,
+                        }),
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        Swal.fire('Reported!', 'Thank you for your feedback.', 'success');
+                    } else {
+                        Swal.fire('Error!', 'There was an issue reporting the event. Please try again later.', 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error!', 'There was an issue reporting the event. Please try again later.', 'error');
+                }
+            }
+        });
+    };
+
+
 
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-darkBlue'>
@@ -160,69 +229,92 @@ const FindATable = () => {
                     </div>
 
                     <div className='mt-6'>
-                    <div>
-  {events
-    .filter((event) => 
-      !selectedConvention || event.convention_id === selectedConvention
-    )
-    .map((event) => (
-      <div
-        key={event.id}
-        className="w-full sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
-      >
-        {/* Event Details */}
-        <div className="w-full sm:w-auto">
-          <h1 className="text-lg font-semibold text-white break-all">
-            {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
-            <span className="text-lightOrange">Space ({event.event_space})</span>
-          </h1>
+                        <div>
+                            {events
+                                .filter((event) =>
+                                    !selectedConvention || event.convention_id === selectedConvention
+                                )
+                                .map((event) => (
+                                    <div
+                                        key={event.id}
+                                        className="w-full sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                                    >
+                                        {/* Event Details */}
+                                        <div className="w-full sm:w-auto">
+                                        <h1 key={event.id} className="text-lg font-semibold text-white break-all flex items-center gap-2">
+                    {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
+                    <span className="text-lightOrange">Space ({event.event_space})</span>
 
-          <div className="flex flex-wrap items-center gap-4 mt-4">
-            <div className="flex items-center gap-x-2">
-              <FaCalendarAlt className="text-lightOrange" />
-              <p className="text-white">
-                {event.event_time} {formatDate(event.event_date)}
-              </p>
-            </div>
-            <div className="flex items-center gap-x-2">
-              <FaLocationDot className="text-lightOrange" />
-              <p className="text-white">{event.event_location}</p>
-            </div>
-          </div>
+                    {/* Flag Icon with Hover Popup */}
+                    <div
+                        className="relative"
+                        onMouseEnter={() => handleMouseEnter(event.id)}
+                        onMouseLeave={() => handleMouseLeave(event.id)}
+                    >
+                        <IoMdFlag
+                            size={24}
+                            color="#F77F00"
+                            className="cursor-pointer"
+                            onClick={() => handleReportTable(event.id)} // Unique ID passed
+                        />
 
-          {/* Invitations */}
-          <div className="flex items-center mt-4">
-            {event.invitations.map((invitation) => (
-              <img
-                key={invitation.invite_receiver_image}
-                src={invitation.invite_receiver_image}
-                className="w-[2rem] h-[2rem] rounded-full object-cover"
-                alt="Invitation"
-              />
-            ))}
-          </div>
+                        {/* Hover Popup (Unique for each row) */}
+                        {popupStates[event.id] && (
+                            <div className="absolute bottom-[120%] left-0 transform translate-x-0 w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
+                                <p className="text-black text-center">Report a Table</p>
+                            </div>
+                        )}
+                    </div>
+                </h1>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
-            <Button
-              onClickFunc={() => handleSubmit(event.id)}
-              title={"+"}
-              className="w-[2rem] h-[2rem] rounded-full border border-lightOrange text-white"
-            />
-          </div>
-        </div>
 
-        {/* Event Image */}
-        <div className="sm:mt-0 mt-4 w-full sm:w-auto">
-          <img
-            src={event.event_image || ConventionImage}
-            alt=""
-            className="h-[10rem] w-full sm:w-auto object-cover"
-          />
-        </div>
-      </div>
-    ))}
-</div>
+
+                                            <div className="flex flex-wrap items-center gap-4 mt-4">
+                                                <div className="flex items-center gap-x-2">
+                                                    <FaCalendarAlt className="text-lightOrange" />
+                                                    <p className="text-white">
+                                                        {event.event_time} {formatDate(event.event_date)}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-x-2">
+                                                    <FaLocationDot className="text-lightOrange" />
+                                                    <p className="text-white">{event.event_location}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Invitations */}
+                                            <div className="flex items-center mt-4">
+                                                {event.invitations.map((invitation) => (
+                                                    <img
+                                                        key={invitation.invite_receiver_image}
+                                                        src={invitation.invite_receiver_image}
+                                                        className="w-[2rem] h-[2rem] rounded-full object-cover"
+                                                        alt="Invitation"
+                                                    />
+                                                ))}
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
+                                                <Button
+                                                    onClickFunc={() => handleSubmit(event.id)}
+                                                    title={"+"}
+                                                    className="w-[2rem] h-[2rem] rounded-full border border-lightOrange text-white"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Event Image */}
+                                        <div className="sm:mt-0 mt-4 w-full sm:w-auto">
+                                            <img
+                                                src={event.event_image || ConventionImage}
+                                                alt=""
+                                                className="h-[10rem] w-full sm:w-auto object-cover"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
 
                     </div>
 

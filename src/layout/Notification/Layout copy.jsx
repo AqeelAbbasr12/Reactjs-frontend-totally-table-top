@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import FaceImage from '../../assets/face.avif';
+import FaceImage from '../../assets/profile.jpeg';
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

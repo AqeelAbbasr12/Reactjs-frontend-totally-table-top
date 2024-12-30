@@ -355,7 +355,7 @@ const EditGame = () => {
 
     } catch (error) {
       // console.error('Error creating accommodation:', error);
-      toastr.error('Failed to create accommodation.');
+      toastr.error('Failed to update game.');
     } finally {
       setIsLoading(false); // Set loading to false when submission is complete
     }

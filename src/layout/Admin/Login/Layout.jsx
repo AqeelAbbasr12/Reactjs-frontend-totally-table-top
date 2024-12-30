@@ -5,6 +5,7 @@ import Input from '../../../components/Input';
 import logoImage from '../../../assets/image.png';
 import Icon from '../../../assets/Icon-check-circle.svg';
 import toastr from 'toastr';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Make sure to use REACT_APP_ prefix in .env file and access it as shown below
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -15,6 +16,9 @@ const Layout = () => {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const [errors, setErrors] = useState({});
   
   const data = [
@@ -112,15 +116,27 @@ const Layout = () => {
               />
               {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
               
-              <Input 
-                placeholder={"Password"} 
-                name={"password"} 
-                type={"password"} 
-                className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.password ? 'border-red' : ''}`} 
-                value={formData.password} 
-                onChange={handleChange} 
-              />
+              <div className="relative">
+                {/* Password Field */}
+                <Input
+                  placeholder={"Password"}
+                  name={"password"}
+                  type={showPassword ? "text" : "password"}
+                  className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.password ? "border-red" : ""
+                    }`}
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                {/* Eye Icon */}
+                <span
+                  className="absolute top-[50%] right-3 transform -translate-y-[50%] cursor-pointer text-white"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+                {/* Error Message */}
               {errors.password && <p className='text-red'>{errors.password.join(', ')}</p>}
+              </div>
               
               {errors.form && <p className='text-red'>{errors.form}</p>}
               

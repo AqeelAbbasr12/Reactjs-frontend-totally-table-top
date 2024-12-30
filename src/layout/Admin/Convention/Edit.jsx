@@ -195,7 +195,7 @@ function Edit() {
         try {
             // Call API to delete the event image
             const response = await fetch(`${API_BASE_URL}/admin/delete_convention_image/${convention_id}`, {
-                method: 'DELETE', 
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -316,7 +316,7 @@ function Edit() {
 
             if (!response.ok) {
                 const result = await response.json();
-                // console.log("Error response:", result); // Log the error response
+                console.log("Error response:", result); // Log the error response
                 if (result.errors) {
                     setFormErrors(result.errors);
                 }
@@ -426,7 +426,7 @@ function Edit() {
                                     type='submit'
                                     className='w-full h-full lg:w-[197px] lg:h-[73px] text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3'
                                 >
-                                    Save
+                                    Update
                                 </button>
                             </div>
                         </div>
@@ -506,33 +506,25 @@ function Edit() {
 
 
                                 {/* State Dropdown */}
-                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                <div className="my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]">
                                     <select
                                         name="state"
-                                        className='w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none'
+                                        className="w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none"
                                         onChange={handleChange}
                                         value={formData.state} // Set the value based on formData.state to persist selected option
                                     >
-                                        <option value="" disabled>Select a Country</option>
-
-                                        {/* North America */}
-                                        <option value="Canada">Canada</option>
-                                        <option value="Mexico">Mexico</option>
-                                        <option value="USA">USA</option>
-
-                                        {/* South America */}
+                                        <option value="" disabled>
+                                            Select a Country
+                                        </option>
                                         <option value="Argentina">Argentina</option>
-                                        <option value="Brazil">Brazil</option>
-                                        <option value="Chile">Chile</option>
-                                        <option value="Colombia">Colombia</option>
-                                        <option value="Peru">Peru</option>
-                                        <option value="Uruguay">Uruguay</option>
-                                        <option value="Venezuela">Venezuela</option>
-
-                                        {/* Europe */}
+                                        <option value="Australia">Australia</option>
                                         <option value="Austria">Austria</option>
                                         <option value="Belgium">Belgium</option>
+                                        <option value="Brazil">Brazil</option>
                                         <option value="Bulgaria">Bulgaria</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="Colombia">Colombia</option>
                                         <option value="Croatia">Croatia</option>
                                         <option value="Cyprus">Cyprus</option>
                                         <option value="Czech Republic">Czech Republic</option>
@@ -546,12 +538,15 @@ function Edit() {
                                         <option value="Iceland">Iceland</option>
                                         <option value="Ireland">Ireland</option>
                                         <option value="Italy">Italy</option>
+                                        <option value="Japan">Japan</option>
                                         <option value="Latvia">Latvia</option>
                                         <option value="Lithuania">Lithuania</option>
                                         <option value="Luxembourg">Luxembourg</option>
                                         <option value="Malta">Malta</option>
+                                        <option value="Mexico">Mexico</option>
                                         <option value="Netherlands">Netherlands</option>
                                         <option value="Norway">Norway</option>
+                                        <option value="Peru">Peru</option>
                                         <option value="Poland">Poland</option>
                                         <option value="Portugal">Portugal</option>
                                         <option value="Romania">Romania</option>
@@ -560,14 +555,14 @@ function Edit() {
                                         <option value="Spain">Spain</option>
                                         <option value="Sweden">Sweden</option>
                                         <option value="Switzerland">Switzerland</option>
-                                        <option value="United Kingdom">United Kingdom</option>
-
-                                        {/* Asia and Oceania */}
-                                        <option value="Australia">Australia</option>
-                                        <option value="Japan">Japan</option>
                                         <option value="Thailand">Thailand</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="USA">USA</option>
+                                        <option value="Venezuela">Venezuela</option>
                                     </select>
                                 </div>
+
 
                                 {formErrors.state && (
                                     <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">

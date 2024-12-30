@@ -3,10 +3,12 @@ import Navbar from '../../components/Navbar';
 import MessageComponent from '../../components/MessageComponent';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import FaceImage from '../../assets/face.avif';
+import FaceImage from '../../assets/profile.jpeg';
 import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 import { useParams } from 'react-router-dom';
+import { IoMdFlag } from 'react-icons/io';
+import Swal from 'sweetalert2';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -15,11 +17,13 @@ const Layout = () => {
     const nav = useNavigate();
     const [friends, setFriends] = useState([]);
     const [users, setUsers] = useState([]);
+    const [showPopup, setShowPopup] = useState(false);
     const [currentUser, setcurrentUser] = useState([]);
     const [loading, setLoading] = useState(true);
     const { receiver_id, game_id } = useParams();
     const [messages, setMessages] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
+    const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [replyContent, setReplyContent] = useState('');
     const currentUserId = localStorage.getItem('current_user_id'); // Ensure this ID is stored in local storage
     const messageEndRef = useRef(null);
@@ -128,7 +132,7 @@ const Layout = () => {
             });
 
             const data = await response.json();
-            // console.log(data);
+            console.log(data);
             if (!response.ok) {
                 toastr.error(data.errors || 'Failed to fetch messages');
                 throw new Error('Network response was not ok');
@@ -142,6 +146,73 @@ const Layout = () => {
             setLoading(false); // Hide loading spinner
         }
     };
+
+
+    async function handleReportClick(messageId) {
+        Swal.fire({
+            title: 'Report Message',
+            text: 'Please enter the reason for reporting this message:',
+            html: `
+                <textarea 
+                    id="report-reason" 
+                    placeholder="Enter your reason here..."
+                    style="margin: 0; padding: 10px; width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Submit Report',
+            preConfirm: () => {
+                // Fetch the value of the textarea
+                const reason = document.getElementById('report-reason').value;
+                if (!reason.trim()) {
+                    Swal.showValidationMessage('Reason is required!');
+                }
+                return reason.trim();
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const reason = result.value;
+                try {
+                    // Call the API
+                    const response = await fetchWithAuth(`/user/report`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify({
+                            reported_message_id: messageId, // The ID of the reported message
+                            type: 'message', // The type of report
+                            reason: reason // The reason provided by the user
+                        })
+                    });
+
+                    // Check if the response is successful
+                    const data = await response.json();
+                    if (response.ok) {
+                        console.log('API Response:', data);
+                        Swal.fire('Reported!', 'Thank you for your feedback.', 'success');
+                    } else {
+                        // Display validation errors if the API response indicates failure
+                        if (data.errors && data.errors.general) {
+                            const errorMessage = data.errors.general.join(' ');
+                            Swal.fire('Error!', errorMessage, 'error');
+                        } else {
+                            Swal.fire('Error!', 'There was an issue reporting the message. Please try again later.', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error reporting the message:', error);
+                    Swal.fire('Error!', 'There was an issue reporting the message. Please try again later.', 'error');
+                }
+            }
+        });
+    }
+
+
+
 
     const updateMessagesStatus = async (receiverId) => {
         setLoading(true);
@@ -273,24 +344,24 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 }
             });
-    
+
             const data = await response.json();
-           
+
             if (!response.ok) {
                 toastr.error(data.errors || 'Failed to fetch messages');
                 throw new Error('Network response was not ok');
             }
-    
-    
-           // Construct the pre-written message using 'data' directly
-        if (data && data.name && data.convention_name) {
-            const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
-            // console.log(preWrittenMessage);
-            setReplyContent(preWrittenMessage)
-            
-        } else {
-            console.error('Invalid game data:', data);
-        }
+
+
+            // Construct the pre-written message using 'data' directly
+            if (data && data.name && data.convention_name) {
+                const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
+                // console.log(preWrittenMessage);
+                // setReplyContent(preWrittenMessage)
+
+            } else {
+                console.error('Invalid game data:', data);
+            }
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -298,7 +369,7 @@ const Layout = () => {
             setLoading(false); // Hide loading spinner
         }
     };
-    
+
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-[#0d2539]'>
             {loading && (
@@ -409,6 +480,32 @@ const Layout = () => {
                                                             alt="Receiver"
                                                             className="w-[2rem] h-[2rem] rounded-full object-cover"
                                                         />
+                                                        {/* Flag Icon Section */}
+                                                        <div className="mt-4 flex gap-x-2 items-center">
+                                                            {/* Check if the message is NOT from an admin */}
+                                                            {message.is_admin !== 1 && (
+                                                                <div
+                                                                    className="relative"
+                                                                    onMouseEnter={() => setShowPopup(message.id)}
+                                                                    onMouseLeave={() => setShowPopup(null)}
+                                                                >
+                                                                    <IoMdFlag
+                                                                        size={34}
+                                                                        color="#F77F00"
+                                                                        className="cursor-pointer"
+                                                                        onClick={() => handleReportClick(message.id)}
+                                                                    />
+
+                                                                    {/* Hover Pop-up Card for each message */}
+                                                                    {showPopup === message.id && (
+                                                                        <div className="absolute bottom-[120%] -left-20 transform -translate-x-[18.333333%] w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
+                                                                            <p className="text-black text-center">Report Message</p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+
                                                     </>
                                                 )}
                                             </div>
@@ -427,7 +524,7 @@ const Layout = () => {
                                         <textarea
                                             type="text"
                                             className='w-full bg-darkBlue h-[10rem] rounded-md outline-none text-white resize-none p-3'
-                                            placeholder='Write a reply'
+                                            placeholder='Write Something…'
                                             value={replyContent}
                                             onChange={(e) => setReplyContent(e.target.value)}
                                         />
@@ -443,7 +540,7 @@ const Layout = () => {
                                 </div>
                             )}
                         </div>
-                    
+
                     </div>
                 </div>
             </div>

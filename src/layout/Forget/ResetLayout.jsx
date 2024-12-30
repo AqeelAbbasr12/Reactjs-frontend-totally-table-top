@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Navbar from '../../components/Navbar'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -10,6 +11,10 @@ const ResetLayout = () => {
     const [email, setEmail] = useState('');
     const [formData, setFormData] = useState({ password: '' });
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const togglePasswordVisibility = () => setShowPassword(!showPassword);
+    const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
     const nav = useNavigate();
 
     useEffect(() => {
@@ -18,7 +23,7 @@ const ResetLayout = () => {
         if (storedEmail) {
             setEmail(storedEmail); // Set the email in state
         } else {
-            nav("/forget"); 
+            nav("/forget");
         }
     }, [nav]);
 
@@ -29,7 +34,7 @@ const ResetLayout = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
-    
+
         // Basic validation
         if (!formData.password || !formData.create_password) {
             setErrors({ ...errors, form: "Please fill out all fields." });
@@ -39,7 +44,7 @@ const ResetLayout = () => {
             setErrors({ ...errors, create_password: "Passwords do not match." });
             return;
         }
-    
+
         try {
             // Make the API call
             const response = await fetch(`${API_BASE_URL}/auth/update-forget-password`, {
@@ -50,9 +55,9 @@ const ResetLayout = () => {
                 },
                 body: JSON.stringify({ ...formData, email }), // Include email from local state or props
             });
-    
+
             const result = await response.json();
-    
+
             if (result.status === true) {
                 toastr.success(result.message); // Show success notification
                 localStorage.removeItem('resetEmail'); // Clear reset email
@@ -65,7 +70,7 @@ const ResetLayout = () => {
             setErrors({ form: "An error occurred. Please try again." });
         }
     };
-    
+
     return (
         <div className='w-screen h-screen flex flex-col'>
             <Navbar />
@@ -75,33 +80,48 @@ const ResetLayout = () => {
                     <h1 className='text-white text-lg font-semibold text-center'>Create a new password?</h1>
                     <p className='text-white mt-3'>Thanks for verifying your Email. Create a new password below</p>
                     <form onSubmit={handleSubmit}>
-    <Input 
-        placeholder={"Create Password"} 
-        name={"password"} 
-        type={"password"} 
-        className={`w-[100%] mt-3 h-[2.3rem] px-3 rounded-md bg-darkBlue text-white ${errors.password ? 'border-red' : ''}`} 
-        value={formData.password} 
-        onChange={handleChange} 
-    />
-    {errors.password && <p className='text-red'>{errors.password}</p>}
+                    <div className="relative">
+                        <Input
+                            placeholder={"Create Password"}
+                            name={"password"}
+                            type={showPassword ? "text" : "password"}
+                            className={`w-[100%] mt-3 h-[2.3rem] px-3 rounded-md bg-darkBlue text-white ${errors.password ? 'border-red' : ''}`}
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                        <span
+                            className="absolute top-[50%] right-3 transform -translate-y-[50%] cursor-pointer text-white"
+                            onClick={togglePasswordVisibility}
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                        {errors.password && <p className='text-red'>{errors.password}</p>}
+                        </div>
+                        <div className="relative">
+                        <Input
+                            placeholder={"Confirm Password"}
+                            name={"create_password"}
+                            type={showConfirmPassword ? "text" : "password"}
+                            className={`w-[100%] mt-3 h-[2.3rem] px-3 rounded-md bg-darkBlue text-white ${errors.create_password ? 'border-red' : ''}`}
+                            value={formData.create_password}
+                            onChange={handleChange}
+                        />
+                         <span
+                            className="absolute top-[50%] right-3 transform -translate-y-[50%] cursor-pointer text-white"
+                            onClick={toggleConfirmPasswordVisibility}
+                        >
+                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                        {errors.create_password && <p className='text-red'>{errors.create_password}</p>}
+                        </div>
 
-    <Input 
-        placeholder={"Confirm Password"} 
-        name={"create_password"} 
-        type={"password"} 
-        className={`w-[100%] mt-3 h-[2.3rem] px-3 rounded-md bg-darkBlue text-white ${errors.create_password ? 'border-red' : ''}`} 
-        value={formData.create_password} 
-        onChange={handleChange} 
-    />
-    {errors.create_password && <p className='text-red'>{errors.create_password}</p>}
-
-    {errors.form && <p className='text-red'>{errors.form}</p>}
-    <Button 
-        type="submit" 
-        title={"Set new password & login"} 
-        className={"mt-3 bg-lightOrange text-white rounded-md h-[2.3rem] w-full"} 
-    />
-</form>
+                        {errors.form && <p className='text-red'>{errors.form}</p>}
+                        <Button
+                            type="submit"
+                            title={"Set new password & login"}
+                            className={"mt-3 bg-lightOrange text-white rounded-md h-[2.3rem] w-full"}
+                        />
+                    </form>
 
 
                 </div>

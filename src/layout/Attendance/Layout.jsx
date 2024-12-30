@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
+import FaceImage from '../../assets/profile.jpeg'
 import ConventionImage from '../../assets/traditional.png'
 import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'

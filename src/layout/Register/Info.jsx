@@ -9,7 +9,7 @@ import Connect from '../../assets/root.svg'
 import Agenda from '../../assets/agenda.svg'
 import Share from '../../assets/share.svg'
 import Clock from '../../assets/clock.svg'
-import FaceImage from '../../assets/face.avif'
+import FaceImage from '../../assets/profile.jpeg'
 import { FaChevronDown } from 'react-icons/fa'
 import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
@@ -65,7 +65,7 @@ const Info = () => {
             </header>
 
             <div ref={sectionRef} className='bg-[#0d2539] w-[100%] p-[1rem] md:p-[2rem]'>
-                <h1 className='text-3xl font-semibold text-white text-center mb-[2rem]'>What you can do with an account ?</h1>
+                <h1 className='text-3xl font-semibold text-white text-center mb-[2rem]'>What can you do with an account ?</h1>
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[4rem] justify-center items-center py-10 px-[8rem]'>
                     {
                         data.map((i, index) => (

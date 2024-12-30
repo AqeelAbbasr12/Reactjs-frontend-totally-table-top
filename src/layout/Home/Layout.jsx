@@ -8,6 +8,7 @@ import featureImage from '../../assets/traditional.png'
 
 import announceImage from '../../assets/announce.svg'
 
+import Swal from "sweetalert2";
 import circel1Image from '../../assets/circel1.svg'
 import circel2Image from '../../assets/circel2.svg'
 import circel3Image from '../../assets/circel3.svg'
@@ -19,54 +20,101 @@ const Layout = () => {
 
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [hasVisitedSales, setHasVisitedSales] = useState(false);
   const [announcements, setAnnouncements] = useState([]);
+  const [userData, setUserData] = useState(null);
   const nav = useNavigate()
 
 
   useEffect(() => {
+    // Fetch profile and announcements
     fetchProfile();
     fetchAnnouncements();
+
+    // Load hasVisitedSales from localStorage
+    const visitedSales = localStorage.getItem("hasVisitedSales");
+    if (visitedSales) {
+      setHasVisitedSales(JSON.parse(visitedSales));
+    }
   }, []);
 
+  // Update the current step based on user data and sales visit
+  useEffect(() => {
+    if (!userData) return;
+
+    if (userData.is_visited_sale_game === '1') {
+      setCurrentStep(5); // Sales visited - move to Step 5
+    } else if (userData.total_friends_for_step > 0) {
+      setCurrentStep(4); // Friends step
+    } else if (userData.total_attendance > 0) {
+      setCurrentStep(3); // Attendance step
+    } else if (userData.bio && userData.location && userData.profile_picture) {
+      setCurrentStep(2); // Profile setup step
+    } else {
+      setCurrentStep(1); // Default step
+    }
+  }, [userData, hasVisitedSales]);
+
+  const handleSalesVisit = async () => {
+    try {
+        // Prepare data for API request
+        const requestBody = {
+            is_visited_sale_game: true, // Update the required variable
+        };
+
+        // Call the API to update the profile
+        const response = await fetchWithAuth("/user/update-game-visit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+            },
+            body: JSON.stringify(requestBody), // Send the updated variable
+        });
+
+        // Handle API response
+        const data = await response.json();
+        if (response.ok) {
+            // If API call is successful
+            console.log("Profile updated successfully:", data);
+            // Set the current step and navigate
+            nav("/sales"); // Navigate to sales page
+        } else {
+            // Handle API errors
+            console.error("Error updating profile:", data);
+            Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+        }
+    } catch (error) {
+        // Handle network errors
+        console.error("Network error:", error);
+        Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+    }
+};
+
+  const onhandleView = (id) => {
+    navigate(`/single/announcement/${id}`); // Use the id to navigate to the specific edit page
+  };
 
   const fetchProfile = async () => {
     setLoading(true);
     try {
       const response = await fetchWithAuth(`/user/get`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
-
-
-      // Check profile properties to determine step visibility
-      if (data.bio && data.location && data.profile_picture) {
-        setCurrentStep(2); // Move to step 2 if all properties exist
-      }
-      // Attendance
-      if (data.total_attendance > 0) {
-        setCurrentStep(3); // Move to step 2 if all properties exist
-      }
-      // Friends
-      if (data.total_friends_for_step > 0) {
-        setCurrentStep(4); // Move to step 4 if all properties exist
-      }
-
-      if (data.total_games > 0) {
-        setCurrentStep(5); // Move to step 5 if at least one game exists for the current user
-      }
-
+      console.log(data);
+      setUserData(data); // Store user data for step logic
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      setLoading(false); // Set loading to false even if there's an error
+      console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
     }
@@ -99,11 +147,11 @@ const Layout = () => {
 
   const renderAnnouncementLogo = (announcement) => {
     switch (announcement.type) {
-      case 'Expo':
-        return <img src={announcement.promo_logo || annoucementImage } alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Feature':
+      case 'Adverts':
+        return <img src={announcement.promo_logo || annoucementImage} alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
+      case 'Announcement':
         return <img src={announcement.feature_logo || featureImage} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Advert':
+      case 'Picture':
         return <img src={announcement.advert_logo || annoucementImage} alt="Advert Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
       default:
         return null;
@@ -128,7 +176,7 @@ const Layout = () => {
         <div className='flex-1 rounded-md px-2 mb-2'>
           <h1 className='text-white text-2xl font-semibold'>Welcome</h1>
           {currentStep === 1 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center p-5'>
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
               <div className='flex'>
                 <img src={circel1Image} alt="" />
                 <div className='ml-5 mt-3'>
@@ -142,7 +190,7 @@ const Layout = () => {
             </div>
           )}
           {currentStep === 2 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center p-5'>
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
               <div className='flex'>
                 <img src={circel2Image} alt="" />
                 <div className='ml-5 mt-3'>
@@ -156,7 +204,7 @@ const Layout = () => {
             </div>
           )}
           {currentStep === 3 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center p-5'>
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
               <div className='flex'>
                 <img src={circel3Image} alt="" />
                 <div className='ml-5 mt-3'>
@@ -170,7 +218,7 @@ const Layout = () => {
             </div>
           )}
           {currentStep === 4 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center p-5'>
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
               <div className='flex'>
                 <img src={circel4Image} alt="" />
                 <div className='ml-5 mt-3'>
@@ -179,7 +227,13 @@ const Layout = () => {
                 </div>
               </div>
               <div className='flex items-center gap-x-4'>
-                <Button onClickFunc={() => nav("/user/convention")} title={"Games for sale"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                <Button
+                  onClickFunc={handleSalesVisit}
+                  title={"Games for sale"}
+                  className={
+                    "w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"
+                  }
+                />
               </div>
             </div>
           )}
@@ -202,9 +256,9 @@ const Layout = () => {
             {/* Expo Announcements */}
             <div className='flex items-center gap-x-[1rem] my-[1rem]'>
               <img src={announceImage} alt="" />
-              <p className='text-white'>Expo Announcements</p>
+              {/* <p className='text-white'>Expo Announcements</p> */}
             </div>
-            {announcements.filter(a => a.type === 'Expo').map((announcement) => (
+            {announcements.filter(a => a.type === 'Adverts').map((announcement) => (
               <div key={announcement.id} className="mb-3">
                 <Link to={`/single/announcement/${announcement.id}`}>
                   {renderAnnouncementLogo(announcement)}
@@ -212,40 +266,95 @@ const Layout = () => {
               </div>
             ))}
 
-            {/* Feature Announcements */}
-            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
-              <img src={announceImage} alt="" />
-              <p className='text-white'>Feature Announcements</p>
-            </div>
-            {announcements.filter(a => a.type === 'Feature').map((announcement) => (
-            <Link
-              key={announcement.id}
-              to={`/single/announcement/${announcement.id}`}
-              className="block bg-darkBlue p-4 rounded-[1.37rem] mb-3 border border-white transition-transform transform hover:scale-105"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-center md:items-center">
-                {/* Name */}
-                <h1 className="text-white text-2xl font-semibold text-center md:text-left">
-                  {announcement.name}
-                </h1>
-
-                {/* Divider (hidden on mobile) */}
-                <div className="hidden md:block w-[1px] h-8 bg-white mx-4"></div>
-
-                {/* Logo (below name on mobile) */}
-                <div className="mt-4 md:mt-0 flex-shrink-0">
-                  {renderAnnouncementLogo(announcement)}
-                </div>
+            <div className="my-4">
+              {/* Feature Announcements Header */}
+              <div className="flex items-center gap-x-[1rem] my-[1rem]">
+                <img src={announceImage} alt="" />
               </div>
-            </Link>
-          ))}
+
+              {/* Announcements Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full table-auto">
+                  <tbody>
+                    {announcements
+                      .filter((a) => a.type === 'Announcement') // Filter by type 'Feature'
+                      .map((announcement, index) => (
+                        <Link
+                          key={announcement.id}
+                          to={`/single/announcement/${announcement.id}`}
+                          className="block w-full"
+                        >
+                          <tr
+                            className={`w-full flex flex-wrap items-center py-5 px-4 sm:px-8 ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'
+                              }`}
+                          >
+                            {/* Image and Name */}
+                            <td className="flex items-center gap-x-4 sm:gap-x-10 w-full sm:w-1/3 mb-3 sm:mb-0">
+                              {/* Image */}
+                              <img
+                                src={
+                                  announcement.expo_logo && announcement.expo_logo !== null
+                                    ? announcement.expo_logo
+                                    : announcement.feature_logo && announcement.feature_logo !== null
+                                      ? announcement.feature_logo
+                                      : announcement.advert_logo && announcement.advert_logo !== null
+                                        ? announcement.advert_logo
+                                        : ConventionImage
+                                }
+                                className="w-10 h-10 sm:w-16 sm:h-16 rounded-full object-cover"
+                                alt="Convention Logo"
+                              />
+
+                              {/* Name */}
+                              <div className="flex flex-col justify-center">
+                                <span className="font-mulish text-white text-sm sm:text-md leading-6 sm:leading-7">
+                                  {announcement.name}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Date */}
+                            <td className="text-center w-full sm:w-1/3 mb-3 sm:mb-0">
+                              <span className="font-mulish text-white text-xs sm:text-sm leading-5">
+                                {announcement.created_at}
+                              </span>
+                            </td>
+
+                            {/* Status Buttons */}
+                            <td className="flex justify-center sm:justify-end items-center gap-x-2 sm:gap-x-5 w-full sm:w-1/3">
+                              {/* Feature Status */}
+                              {announcement.feature === '1' && (
+                                <button className="bg-[#F3C15F] text-black px-2 py-1 rounded text-xs sm:text-sm">
+                                  Featured
+                                </button>
+                              )}
+
+                              {/* View Button */}
+                              <span
+                                className="cursor-pointer font-mulish text-white text-sm sm:text-lg"
+                                onClick={() => onhandleView(announcement.id)}
+                              >
+                                View
+                              </span>
+                            </td>
+                          </tr>
+                        </Link>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+
+
 
             {/* Advert Announcements */}
             <div className='flex items-center gap-x-[1rem] my-[1rem]'>
               <img src={announceImage} alt="" />
-              <p className='text-white'>Advert Announcements</p>
+              {/* <p className='text-white'>Advert Announcements</p> */}
             </div>
-            {announcements.filter(a => a.type === 'Advert').map((announcement) => (
+            {announcements.filter(a => a.type === 'Picture').map((announcement) => (
               <div key={announcement.id} className="mb-3">
                 <Link to={`/single/announcement/${announcement.id}`}>
                   {renderAnnouncementLogo(announcement)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import img1 from '../../assets/logo.png';
 import { CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
@@ -6,12 +6,14 @@ import { TbLogout } from "react-icons/tb";
 import { CiLogin } from "react-icons/ci";
 import { IoIosLogIn } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Navbar() {
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const items = [
     {
@@ -25,7 +27,7 @@ function Navbar() {
     },
     {
       id: 3,
-      name: "Announcements",
+      name: "Adverts",
       path: "/admin/announcement"
     },
     {
@@ -33,41 +35,84 @@ function Navbar() {
       name: "Sponsers",
       path: "/admin/sponser"
     },
+    {
+      id: 5,
+      name: "Reports",
+      path: "/admin/report"
+    },
+
+    {
+      id: 6,
+      name: "Users",
+      path: "/admin/users"
+    },
+    {
+      id: 7,
+      name: "Messages",
+      path: "/admin/messages"
+    },
   ]
   const [isOpen, setIsOpen] = useState(false);
   const toggler = () => {
     setIsOpen(!isOpen);
   }
-  
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/user/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-            },
-            body: JSON.stringify({}),
-        });
+      const response = await fetch(`${API_BASE_URL}/user/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({}),
+      });
 
-        if (!response.ok) {
-            throw new Error('Failed to log out');
-        }
+      if (!response.ok) {
+        throw new Error('Failed to log out');
+      }
 
-        // Remove authToken from localStorage
-        localStorage.removeItem('authToken');
+      // Remove authToken from localStorage
+      localStorage.removeItem('authToken');
 
-        // Show success message
-        toastr.success('Log out successfully');
+      // Show success message
+      toastr.success('Log out successfully');
 
-        // Navigate to the home page
-        navigate('/admin-login');
+      // Navigate to the home page
+      navigate('/admin-login');
     } catch (error) {
-        // console.error('Error during logout:', error);
-        toastr.error('Error logging out');
+      // console.error('Error during logout:', error);
+      toastr.error('Error logging out');
     }
-};
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/get`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setUser(data);
+    } catch (error) {
+      // console.error('Error fetching user data:', error);
+    }
+  };
+
+
 
   return (
     <div className={`bg-[#C53A33] font-mulish w-full fixed z-50`}>
@@ -81,15 +126,23 @@ function Navbar() {
           </div>
         </div>
         <div className='md:flex md:justify-between items-center w-full'>
-          <ul className='hidden md:flex md:gap-[12px] lg:gap-[52px] text-white'>
-            {
-              items.map((item, index) => (
-                <li key={index} className="text-xl xl:text-28 xl:leading-35 cursor-pointer" onClick={() => navigate(item.path)}>
-                  {item.name}
-                </li>
-              ))
-            }
+          <ul className="hidden md:flex md:gap-[12px] lg:gap-[52px] text-white">
+            {items.map((item, index) => (
+              <li key={index} className="relative text-xl xl:text-28 xl:leading-35 cursor-pointer" onClick={() => navigate(item.path)}>
+                {/* Check if the current item is the "Message" item and show the count */}
+                {item.name === "Messages" && user && user.message_count > 0 ? (
+                  <span className="absolute -left-8  bg-green-500 text-white text-xs font-bold w-[1.6rem] h-[1.6rem] rounded-full flex justify-center items-center mr-2">
+                    {user.message_count}
+                  </span>
+                ) : null}
+
+                {item.name}
+              </li>
+            ))}
           </ul>
+
+
+
           <div className="hidden logout md:flex items-center text-white text-xl xl:text-28 xl:leading-35 gap-1 cursor-pointer" onClick={handleLogout}>
             Logout
             <IoIosLogIn className='text-white w-[27px] h-[27px]' />
@@ -114,6 +167,7 @@ function Navbar() {
                 </li>
               ))
             }
+
             <li className='flex items-center gap-1 cursor-pointer' onClick={handleLogout}>Logout
               <IoIosLogIn className='text-white w-[27px] h-[27px]' />
             </li>

@@ -411,32 +411,25 @@ function Create() {
                                 )}
 
                                 {/* State Dropdown */}
-                                <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
+                                <div className="my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]">
                                     <select
                                         name="state"
-                                        className='w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none'
+                                        className="w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none"
                                         onChange={handleChange}
+                                        defaultValue=""
                                     >
-                                        <option value="" disabled selected>Select a Country</option>
-
-                                        {/* North America */}
-                                        <option value="Canada">Canada</option>
-                                        <option value="Mexico">Mexico</option>
-                                        <option value="USA">USA</option>
-
-                                        {/* South America */}
+                                        <option value="" disabled>
+                                            Select a Country
+                                        </option>
                                         <option value="Argentina">Argentina</option>
-                                        <option value="Brazil">Brazil</option>
-                                        <option value="Chile">Chile</option>
-                                        <option value="Colombia">Colombia</option>
-                                        <option value="Peru">Peru</option>
-                                        <option value="Uruguay">Uruguay</option>
-                                        <option value="Venezuela">Venezuela</option>
-
-                                        {/* Europe */}
+                                        <option value="Australia">Australia</option>
                                         <option value="Austria">Austria</option>
                                         <option value="Belgium">Belgium</option>
+                                        <option value="Brazil">Brazil</option>
                                         <option value="Bulgaria">Bulgaria</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="Colombia">Colombia</option>
                                         <option value="Croatia">Croatia</option>
                                         <option value="Cyprus">Cyprus</option>
                                         <option value="Czech Republic">Czech Republic</option>
@@ -450,12 +443,15 @@ function Create() {
                                         <option value="Iceland">Iceland</option>
                                         <option value="Ireland">Ireland</option>
                                         <option value="Italy">Italy</option>
+                                        <option value="Japan">Japan</option>
                                         <option value="Latvia">Latvia</option>
                                         <option value="Lithuania">Lithuania</option>
                                         <option value="Luxembourg">Luxembourg</option>
                                         <option value="Malta">Malta</option>
+                                        <option value="Mexico">Mexico</option>
                                         <option value="Netherlands">Netherlands</option>
                                         <option value="Norway">Norway</option>
+                                        <option value="Peru">Peru</option>
                                         <option value="Poland">Poland</option>
                                         <option value="Portugal">Portugal</option>
                                         <option value="Romania">Romania</option>
@@ -464,14 +460,14 @@ function Create() {
                                         <option value="Spain">Spain</option>
                                         <option value="Sweden">Sweden</option>
                                         <option value="Switzerland">Switzerland</option>
-                                        <option value="United Kingdom">United Kingdom</option>
-
-                                        {/* Asia and Oceania */}
-                                        <option value="Australia">Australia</option>
-                                        <option value="Japan">Japan</option>
                                         <option value="Thailand">Thailand</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="USA">USA</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="Venezuela">Venezuela</option>
                                     </select>
                                 </div>
+
 
                                 {formErrors.state && (
                                     <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">

@@ -40,6 +40,7 @@ const Terms = () => {
                     <p className='text-white mb-2 w-[100%] md:w-[80%]'>When you create an account on our Site, you agree to the following: </p>
                     <p className='text-white mb-2 w-[100%] md:w-[80%]'>1. You are solely responsible for your account and the security and privacy of your account, including passwords or sensitive information attached to that account; and </p>
                     <p className='text-white mb-2 w-[100%] md:w-[80%]'>2. All personal information you provide to us through your account is up to date, accurate, and truthful and that you will update your personal information if it changes. </p>
+                    <p className='text-white mb-2 w-[100%] md:w-[80%]'>3. We do not accept any business accounts and you agree to not operate as a business from our user accounts. </p>
                     <p className='text-white mb-2 w-[100%] md:w-[80%]'>We reserve the right to suspend or terminate your account if you are using our Site illegally or if you violate these Terms and Conditions.</p>
 
                     <h1 className='text-[1.2rem] font-semibold text-white mb-4'>Third Party Goods and Services</h1>

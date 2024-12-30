@@ -39,13 +39,17 @@ const Layout = () => {
     }
   };
 
+  const onhandleView = (id) => {
+    navigate(`/single/announcement/${id}`); // Use the id to navigate to the specific edit page
+  };
+
   const renderAnnouncementLogo = (announcement) => {
     switch (announcement.type) {
-      case 'Expo':
+      case 'Adverts':
         return <img src={announcement.promo_logo} alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Feature':
+      case 'Announcement':
         return <img src={announcement.feature_logo} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Advert':
+      case 'Picture':
         return <img src={announcement.advert_logo} alt="Advert Announcement" className="w-[100%] lg:w-[190%] h-[15rem] rounded-md cursor-pointer" />;
       default:
         return null;
@@ -69,9 +73,9 @@ const Layout = () => {
           {/* Expo Announcements */}
           <div className='flex items-center gap-x-[1rem] my-[1rem]'>
             <img src={announceImage} alt="" />
-            <p className='text-white'>Expo Announcements</p>
+            {/* <p className='text-white'>Expo Announcements</p> */}
           </div>
-          {announcements.filter(a => a.type === 'Expo').map((announcement) => (
+          {announcements.filter(a => a.type === 'Adverts').map((announcement) => (
             <div key={announcement.id} className="mb-3">
               <Link to={`/single/announcement/${announcement.id}`}>
                 {renderAnnouncementLogo(announcement)}
@@ -80,32 +84,84 @@ const Layout = () => {
           ))}
 
           {/* Feature Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
-            <img src={announceImage} alt="" />
-            <p className='text-white'>Feature Announcements</p>
-          </div>
-          {announcements.filter(a => a.type === 'Feature').map((announcement) => (
-            <Link
-              key={announcement.id}
-              to={`/single/announcement/${announcement.id}`}
-              className="block bg-darkBlue p-4 rounded-[1.37rem] mb-3 border border-white transition-transform transform hover:scale-105"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-center md:items-center">
-                {/* Name */}
-                <h1 className="text-white text-2xl font-semibold text-center md:text-left">
-                  {announcement.name}
-                </h1>
-
-                {/* Divider (hidden on mobile) */}
-                <div className="hidden md:block w-[1px] h-8 bg-white mx-4"></div>
-
-                {/* Logo (below name on mobile) */}
-                <div className="mt-4 md:mt-0 flex-shrink-0">
-                  {renderAnnouncementLogo(announcement)}
-                </div>
+          <div className="my-4">
+              {/* Feature Announcements Header */}
+              <div className="flex items-center gap-x-[1rem] my-[1rem]">
+                <img src={announceImage} alt="" />
               </div>
-            </Link>
-          ))}
+
+              {/* Announcements Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full table-auto">
+                  <tbody>
+                    {announcements
+                      .filter((a) => a.type === 'Announcement') // Filter by type 'Feature'
+                      .map((announcement, index) => (
+                        <Link
+                          key={announcement.id}
+                          to={`/single/announcement/${announcement.id}`}
+                          className="block w-full"
+                        >
+                          <tr
+                            className={`w-full flex flex-wrap items-center py-5 px-4 sm:px-8 ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'
+                              }`}
+                          >
+                            {/* Image and Name */}
+                            <td className="flex items-center gap-x-4 sm:gap-x-10 w-full sm:w-1/3 mb-3 sm:mb-0">
+                              {/* Image */}
+                              <img
+                                src={
+                                  announcement.expo_logo && announcement.expo_logo !== null
+                                    ? announcement.expo_logo
+                                    : announcement.feature_logo && announcement.feature_logo !== null
+                                      ? announcement.feature_logo
+                                      : announcement.advert_logo && announcement.advert_logo !== null
+                                        ? announcement.advert_logo
+                                        : ConventionImage
+                                }
+                                className="w-10 h-10 sm:w-16 sm:h-16 rounded-full object-cover"
+                                alt="Convention Logo"
+                              />
+
+                              {/* Name */}
+                              <div className="flex flex-col justify-center">
+                                <span className="font-mulish text-white text-sm sm:text-md leading-6 sm:leading-7">
+                                  {announcement.name}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Date */}
+                            <td className="text-center w-full sm:w-1/3 mb-3 sm:mb-0">
+                              <span className="font-mulish text-white text-xs sm:text-sm leading-5">
+                                {announcement.created_at}
+                              </span>
+                            </td>
+
+                            {/* Status Buttons */}
+                            <td className="flex justify-center sm:justify-end items-center gap-x-2 sm:gap-x-5 w-full sm:w-1/3">
+                              {/* Feature Status */}
+                              {announcement.feature === '1' && (
+                                <button className="bg-[#F3C15F] text-black px-2 py-1 rounded text-xs sm:text-sm">
+                                  Featured
+                                </button>
+                              )}
+
+                              {/* View Button */}
+                              <span
+                                className="cursor-pointer font-mulish text-white text-sm sm:text-lg"
+                                onClick={() => onhandleView(announcement.id)}
+                              >
+                                View
+                              </span>
+                            </td>
+                          </tr>
+                        </Link>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
 
 
@@ -114,9 +170,9 @@ const Layout = () => {
           {/* Advert Announcements */}
           <div className='flex items-center gap-x-[1rem] my-[1rem]'>
             <img src={announceImage} alt="" />
-            <p className='text-white'>Advert Announcements</p>
+            {/* <p className='text-white'>Advert Announcements</p> */}
           </div>
-          {announcements.filter(a => a.type === 'Advert').map((announcement) => (
+          {announcements.filter(a => a.type === 'Picture').map((announcement) => (
             <div key={announcement.id} className="mb-3">
               <Link to={`/single/announcement/${announcement.id}`}>
                 {renderAnnouncementLogo(announcement)}

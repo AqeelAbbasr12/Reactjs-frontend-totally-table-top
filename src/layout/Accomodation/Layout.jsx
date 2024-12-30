@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
+import FaceImage from '../../assets/profile.jpeg'
 import ConventionImage from '../../assets/convention.jpeg'
 import { FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa'
 import { useNavigate, useParams } from 'react-router-dom'

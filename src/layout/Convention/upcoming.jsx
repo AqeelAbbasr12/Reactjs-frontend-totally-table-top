@@ -20,6 +20,7 @@ const upcoming = () => {
   const [AccommodationItem, setAccommodation] = useState([]);
   const [EventItem, setEvent] = useState([]);
   const [GameItem, setGame] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
 
 
@@ -30,25 +31,19 @@ const upcoming = () => {
     fetchAccommodation();
     fetchEvent();
     fetchGame();
+    fetchAnnouncements();
   }, []);
 
   const countries = [
-    // North America
-    { label: "Canada", value: "Canada" },
-    { label: "Mexico", value: "Mexico" },
-    { label: "USA", value: "USA" },
-    // South America
     { label: "Argentina", value: "Argentina" },
-    { label: "Brazil", value: "Brazil" },
-    { label: "Chile", value: "Chile" },
-    { label: "Colombia", value: "Colombia" },
-    { label: "Peru", value: "Peru" },
-    { label: "Uruguay", value: "Uruguay" },
-    { label: "Venezuela", value: "Venezuela" },
-    // Europe
+    { label: "Australia", value: "Australia" },
     { label: "Austria", value: "Austria" },
     { label: "Belgium", value: "Belgium" },
+    { label: "Brazil", value: "Brazil" },
     { label: "Bulgaria", value: "Bulgaria" },
+    { label: "Canada", value: "Canada" },
+    { label: "Chile", value: "Chile" },
+    { label: "Colombia", value: "Colombia" },
     { label: "Croatia", value: "Croatia" },
     { label: "Cyprus", value: "Cyprus" },
     { label: "Czech Republic", value: "Czech Republic" },
@@ -62,12 +57,15 @@ const upcoming = () => {
     { label: "Iceland", value: "Iceland" },
     { label: "Ireland", value: "Ireland" },
     { label: "Italy", value: "Italy" },
+    { label: "Japan", value: "Japan" },
     { label: "Latvia", value: "Latvia" },
     { label: "Lithuania", value: "Lithuania" },
     { label: "Luxembourg", value: "Luxembourg" },
     { label: "Malta", value: "Malta" },
+    { label: "Mexico", value: "Mexico" },
     { label: "Netherlands", value: "Netherlands" },
     { label: "Norway", value: "Norway" },
+    { label: "Peru", value: "Peru" },
     { label: "Poland", value: "Poland" },
     { label: "Portugal", value: "Portugal" },
     { label: "Romania", value: "Romania" },
@@ -76,12 +74,13 @@ const upcoming = () => {
     { label: "Spain", value: "Spain" },
     { label: "Sweden", value: "Sweden" },
     { label: "Switzerland", value: "Switzerland" },
-    { label: "United Kingdom", value: "United Kingdom" },
-    // Asia and Oceania
-    { label: "Australia", value: "Australia" },
-    { label: "Japan", value: "Japan" },
     { label: "Thailand", value: "Thailand" },
+    { label: "United Kingdom", value: "United Kingdom" },
+    { label: "Uruguay", value: "Uruguay" },
+    { label: "USA", value: "USA" },
+    { label: "Venezuela", value: "Venezuela" }
   ];
+  
 
 
 
@@ -237,6 +236,45 @@ const upcoming = () => {
       setGame([]);
     }
   };
+
+  const fetchAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWithAuth(`/user/announcement`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      
+      // Filter and sort the data
+      const pictureAnnouncements = data.filter(
+        (item) => item.type === 'Picture' && item.position_of_picture
+      );
+
+      const sortedAnnouncements = pictureAnnouncements.sort((a, b) => {
+        const positions = {
+          '1st_position': 1,
+          '2nd_position': 2,
+          '3rd_position': 3,
+        };
+        return positions[a.position_of_picture] - positions[b.position_of_picture];
+      });
+
+      setAnnouncements(sortedAnnouncements);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto bg-darkBlue'>
       {loading && (
@@ -253,6 +291,22 @@ const upcoming = () => {
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 md:mt-0 mt-4 w-[100%]'>
 
+        {/* Show loading spinner */}
+        {loading ? (
+            <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
+              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
+            </div>
+          ) : null}
+          {/* Render 1st position at the top */}
+          {announcements[0] && announcements[0].position_of_picture === '1st_position' && (
+            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+              <img
+                src={announcements[0].advert_logo}
+                alt={announcements[0].name}
+                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+              />
+            </div>
+          )}
           <div className='flex justify-between items-center flex-col md:flex-row gap-y-2'>
 
             <h1 className='text-white text-2xl font-semibold'>Upcoming Conventions</h1>
@@ -392,6 +446,18 @@ const upcoming = () => {
               <h1 className='text-lg text-center font-semibold mt-3 mb-5 text-white'>
                 No Upcoming Convention
               </h1>
+            </div>
+          )}
+
+
+          {/* 3rd Position Advert Logo */}
+          {announcements.length > 0 && announcements.find(a => a.position_of_picture === '3rd_position') && (
+            <div className='mt-6 flex justify-center'>
+              <img
+                src={announcements.find(a => a.position_of_picture === '3rd_position').advert_logo}
+                alt="3rd Position Ad"
+                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+              />
             </div>
           )}
 

@@ -37,28 +37,31 @@ function Edit() {
         expo_logo: null,        // Convention logo (initially null for file)
         promo_logo: null,        // Convention logo (initially null for file)
         advert_logo: null,        // Convention logo (initially null for file)
-        feature: 0   ,
+        feature: 0,
         feature_logo: [],        // Convention logo (initially null for file)
-        feature_logo_id: []      // Feature flag (initially set to 0)
+        feature_logo_id: [],      // Feature flag (initially set to 0)
+        country: '',
+        position_of_announcement: '',
+        position_of_picture: ''
     });
 
     const Announcement_Format = [
         {
             id: 1,
             image: expo,
-            name: "Expo",
+            name: "Adverts",
             path: "/expo"
         },
         {
             id: 2,
             image: feature,
-            name: "Feature",
+            name: "Announcement",
             path: "/feature"
         },
         {
             id: 3,
             image: advert,
-            name: "Advert",
+            name: "Picture",
             path: "/advert"
         },
     ]
@@ -137,39 +140,39 @@ function Edit() {
                 toastr.warning('Image size exceeds 20 MB, cannot compress this image.');
                 return;
             }
-    
+
             const options = {
                 maxSizeMB: 1,
                 maxWidthOrHeight: 800,
                 useWebWorker: true,
                 fileType: file.type,
             };
-    
+
             try {
                 let compressedFile = file;
                 if (fileSizeInMB > 1) {
                     compressedFile = await imageCompression(file, options);
                 }
-    
+
                 const newFile = new File([compressedFile], file.name, {
                     type: file.type,
                     lastModified: Date.now(),
                 });
-    
+
                 setFormData((prevData) => {
                     const updatedFeatureLogos = [...(prevData.feature_logo || [])];
                     const updatedFeatureLogoIds = [...(prevData.feature_logo_id || [])];
-    
+
                     updatedFeatureLogos[index] = newFile; // Update the file at the specific index
                     updatedFeatureLogoIds[index] = null; // Set ID to null because it's a new file
-    
+
                     return {
                         ...prevData,
                         feature_logo: updatedFeatureLogos,
                         feature_logo_id: updatedFeatureLogoIds,
                     };
                 });
-    
+
                 setImagePreview((prevPreview) => {
                     const updatedPreviews = [...prevPreview];
                     updatedPreviews[index] = URL.createObjectURL(compressedFile); // Update the specific index
@@ -180,8 +183,8 @@ function Edit() {
             }
         }
     };
-    
-    
+
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -249,8 +252,11 @@ function Edit() {
                 call_to_action: data.call_to_action,      // Convention location
                 type: data,      // Convention location 
                 feature: data.feature,
+                country: data.country,
+                position_of_announcement: data.position_of_announcement,
+                position_of_picture: data.position_of_picture,
                 expo_logo: data.expo_logo || null,   // Expo logo
-                 // Feature logo
+                // Feature logo
                 advert_logo: data.advert_logo || null,   // Advert logo     // Feature flag (initially set to 0)
                 promo_logo: data.promo_logo || null,
 
@@ -311,6 +317,9 @@ function Edit() {
         formDataToSend.append('call_to_action', formData.call_to_action); // Convention call to action
         formDataToSend.append('type', activeTab); // Convention type
         formDataToSend.append('feature', formData.feature || 0); // Feature flag
+        formDataToSend.append('country', formData.country); // Feature flag
+        formDataToSend.append('position_of_announcement', formData.position_of_announcement); // Feature flag
+        formDataToSend.append('position_of_picture', formData.position_of_picture); // Feature flag
 
 
         // Append logos if they exist
@@ -325,13 +334,13 @@ function Edit() {
         }
 
 
-        
+
         if (Array.isArray(formData.feature_logo)) {
             formData.feature_logo.forEach((file, index) => {
                 if (file instanceof File) {
                     // Append the file to FormData
                     formDataToSend.append(`feature_logo[${index}]`, file);
-    
+
                     // Append the corresponding ID (null for new files if no ID is available)
                     formDataToSend.append(`feature_logo_id[${index}]`, formData.feature_logo_id[index] || null);
                 }
@@ -342,7 +351,7 @@ function Edit() {
             formDataToSend.append('advert_logo', formData.advert_logo);
         }
         // Log form data for debugging
-        // console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries()));
+        console.log("Submitting form data:", Object.fromEntries(formDataToSend.entries()));
 
 
         try {
@@ -370,7 +379,6 @@ function Edit() {
             toastr.success('Announcement created successfully!');
 
             // Clear form fields, image preview, and form errors
-            // Clear form fields, image preview, and form errors
             setFormData({
                 name: '',          // Convention name
                 description: '',   // Convention description
@@ -382,7 +390,10 @@ function Edit() {
                 promo_logo: null,        // Convention logo (initially null for file)
                 feature_logo: null,        // Convention logo (initially null for file)
                 advert_logo: null,        // Convention logo (initially null for file)
-                feature: 0    // Initialize feature if needed, adjust according to your logic
+                feature: 0,  // Initialize feature if needed, adjust according to your logic
+                country: '',
+                position_of_announcement: '',
+                position_of_picture: ''
             });
             setImagePreview(null);
             setFormErrors({});
@@ -394,7 +405,7 @@ function Edit() {
             toastr.error('Failed to create convention.');
         } finally {
             setIsLoading(false);
-          }
+        }
     };
 
     const handleDeleteExpoLogo = async () => {
@@ -469,47 +480,47 @@ function Edit() {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
-    
+
             // Check if the response is ok
             if (!response.ok) {
                 const result = await response.json();
                 toastr.error(result.message);
                 throw new Error('Failed to delete the image');
             }
-    
+
             const result = await response.json();
             // Display success message
             toastr.success(result.message);
-    
+
             // Update state to remove the image and its ID
             setFormData((prev) => {
                 const updatedFeatureLogos = Array.isArray(prev.feature_logo) ? [...prev.feature_logo] : []; // Ensure feature_logo is an array
                 const updatedFeatureLogoIds = Array.isArray(prev.feature_logo_id) ? [...prev.feature_logo_id] : []; // Ensure feature_logo_id is an array
-    
+
                 // Remove the image and ID from the respective arrays
                 updatedFeatureLogos.splice(index, 1);  // Remove image from array
                 updatedFeatureLogoIds.splice(index, 1); // Remove ID from array
-    
+
                 return {
                     ...prev,
                     feature_logo: updatedFeatureLogos,    // Update feature_logo array
                     feature_logo_id: updatedFeatureLogoIds, // Update feature_logo_id array
                 };
             });
-    
+
             // Update the image previews to remove the deleted image
             setImagePreview((prevPreviews) => {
                 const updatedPreviews = [...prevPreviews]; // Copy the image preview array
                 updatedPreviews.splice(index, 1); // Remove the specific preview image
                 return updatedPreviews; // Return updated previews without the deleted one
             });
-    
+
         } catch (error) {
             console.error('Error deleting image:', error);
         }
     };
-    
-    
+
+
     const handleDeleteAdvertLogo = async () => {
         try {
             // Call API to delete the event image
@@ -554,7 +565,7 @@ function Edit() {
                     <div className="grid grid-cols-1 2xl:grid-cols-2 items-center justify-between gap-x-10">
                         {/* Title */}
                         <p className='text-[29px] sm:text-3xl md:text-6xl leading-35 md:leading-[108px] font-palanquin-dark'>
-                            Update Announcement
+                            Update advert
                         </p>
 
                         {/* Sort by + Status Label + Dropdown + Save Button */}
@@ -612,15 +623,14 @@ function Edit() {
                             <div className='w-full lg:w-[197px]'>
                                 <button
                                     type="submit"
-                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${
-                                        isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
-                                    }`}
+                                    className={`flex justify-center items-center gap-2 text-[26px] leading-[47px] rounded-md text-white px-5 py-3 ${isLoading ? 'bg-lightOrange' : 'bg-lightOrange'
+                                        }`}
                                     disabled={isLoading}
-                                    >
+                                >
                                     {isLoading ? (
                                         <div className="flex justify-center items-center gap-2 text-[26px] leading-[47px] bg-[#F77F00] px-5 py-3">
-                                        <FaSpinner className="animate-spin" />
-                                        Saving...
+                                            <FaSpinner className="animate-spin" />
+                                            Saving...
                                         </div>
                                     ) : (
                                         'Save'
@@ -663,12 +673,12 @@ function Edit() {
 
                                 </div>
                                 {
-                                    activeTab === 'Expo' && (
+                                    activeTab === 'Adverts' && (
                                         <div className="w-full bg-[#102F47] mt-10">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Expo Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
                                                             {/* mt-[37px] */}
                                                             {formErrors.name && (
@@ -728,7 +738,7 @@ function Edit() {
                                                                                 accept="image/png, image/jpeg"
                                                                             />
                                                                             <label htmlFor="expoLogoInput" className="w-[12rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer">
-                                                                                Upload Expo Logo
+                                                                                Upload Adverts Logo
                                                                             </label>
                                                                         </div>
                                                                         {formErrors.logo && (
@@ -790,12 +800,12 @@ function Edit() {
                                     )
                                 }
                                 {
-                                    activeTab === 'Feature' && (
+                                    activeTab === 'Announcement' && (
                                         <div className="w-full bg-[#102F47] mt-10 ">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Feature Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Announcement Details</span>
                                                         <div className=' mt-[37px] mb-[52px] pb-10'>
 
                                                             <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
@@ -811,35 +821,50 @@ function Edit() {
                                                                 style={{ minHeight: '150px' }}
                                                             />
                                                             <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
+                                                            <select
+                                                                name="position_of_announcement"
+                                                                className="w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none"
+                                                                onChange={handleChange}
+                                                                value={formData.position_of_announcement || ''}
+
+                                                            >
+                                                                <option value="" disabled>
+                                                                    Select Position
+                                                                </option>
+                                                                <option value="1st_position">1st Position</option>
+                                                                <option value="2nd_position">2nd Position</option>
+                                                                <option value="3rd_position">3rd Position</option>
+
+                                                            </select>
                                                             <div className="flex flex-col items-center">
-                                                            <div className="flex flex-wrap justify-center">
-                                                                {imagePreview.map((preview, index) => (
-                                                                    <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
-                                                                        <img
-                                                                            src={preview || ConventionImage} // Use default image if preview not available
-                                                                            alt={`Feature Logo ${index + 1}`}
-                                                                            className="w-[10rem] h-[10rem] rounded-full object-cover"
-                                                                        />
-                                                                        <input
-                                                                            type="file"
-                                                                            id={`featureLogoInput${index}`}
-                                                                            className="hidden"
-                                                                            onChange={(e) => handleFileChangeFeature(index, e)}
-                                                                            accept="image/png, image/jpeg"
-                                                                        />
-                                                                        <label
-                                                                            htmlFor={`featureLogoInput${index}`}
-                                                                            className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
-                                                                        >
-                                                                            Upload Logo
-                                                                        </label>
-                                                                        <FaTrash
-                                                                            onClick={() => handleDeleteFeatureLogo(formData.feature_logo_id[index], index)} 
-                                                                            className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
-                                                                            size={20}
-                                                                        />
-                                                                    </div>
-                                                                ))}
+                                                                <div className="flex flex-wrap justify-center">
+                                                                    {imagePreview.map((preview, index) => (
+                                                                        <div key={index} className="flex flex-col items-center relative mb-4 mx-2">
+                                                                            <img
+                                                                                src={preview || ConventionImage} // Use default image if preview not available
+                                                                                alt={`Feature Logo ${index + 1}`}
+                                                                                className="w-[10rem] h-[10rem] rounded-full object-cover"
+                                                                            />
+                                                                            <input
+                                                                                type="file"
+                                                                                id={`featureLogoInput${index}`}
+                                                                                className="hidden"
+                                                                                onChange={(e) => handleFileChangeFeature(index, e)}
+                                                                                accept="image/png, image/jpeg"
+                                                                            />
+                                                                            <label
+                                                                                htmlFor={`featureLogoInput${index}`}
+                                                                                className="w-[8rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
+                                                                            >
+                                                                                Upload Logo
+                                                                            </label>
+                                                                            <FaTrash
+                                                                                onClick={() => handleDeleteFeatureLogo(formData.feature_logo_id[index], index)}
+                                                                                className="absolute top-2 right-[4.5rem] text-red cursor-pointer hover:text-lightOrange"
+                                                                                size={20}
+                                                                            />
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
                                                                 <FaPlus
                                                                     onClick={handleAddLogo}
@@ -857,16 +882,94 @@ function Edit() {
                                     )
                                 }
                                 {
-                                    activeTab === 'Advert' && (
+                                    activeTab === 'Picture' && (
                                         <div className="w-full bg-[#102F47] mt-10">
                                             <div className="">
                                                 <div className=" text-white">
                                                     <div className='bg-[#0D2539] px-[39px] pt-[26px]'>
-                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Advert Details</span>
+                                                        <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Picture Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
 
                                                             <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
                                                             <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
+                                                            <div className="mt-4">
+                                                                <select
+                                                                    name="position_of_picture"
+                                                                    className="w-full text-white h-12 sm:h-[4.8rem] bg-[#102F47] rounded-md p-3 focus:outline-none"
+                                                                    onChange={handleChange}
+                                                                    value={formData.position_of_picture || ''}
+                                                                >
+                                                                    <option value="" disabled>
+                                                                        Select Position
+                                                                    </option>
+                                                                    <option value="1st_position">1st Position</option>
+                                                                    <option value="2nd_position">2nd Position</option>
+                                                                    <option value="3rd_position">3rd Position</option>
+
+                                                                </select>
+                                                            </div>
+                                                            <div className="mt-4">
+                                                                <select
+                                                                    name="country"
+                                                                    className="w-full text-white h-12 sm:h-[4.8rem] bg-[#102F47] rounded-md p-3 focus:outline-none"
+                                                                    onChange={handleChange}
+                                                                    value={formData.country}
+                                                                    defaultValue=""
+                                                                >
+                                                                    <option value="" disabled>
+                                                                        Select a Country
+                                                                    </option>
+                                                                    <option value="Argentina">Argentina</option>
+                                                                    <option value="Australia">Australia</option>
+                                                                    <option value="Austria">Austria</option>
+                                                                    <option value="Belgium">Belgium</option>
+                                                                    <option value="Brazil">Brazil</option>
+                                                                    <option value="Bulgaria">Bulgaria</option>
+                                                                    <option value="Canada">Canada</option>
+                                                                    <option value="Chile">Chile</option>
+                                                                    <option value="Colombia">Colombia</option>
+                                                                    <option value="Croatia">Croatia</option>
+                                                                    <option value="Cyprus">Cyprus</option>
+                                                                    <option value="Czech Republic">Czech Republic</option>
+                                                                    <option value="Denmark">Denmark</option>
+                                                                    <option value="Estonia">Estonia</option>
+                                                                    <option value="Finland">Finland</option>
+                                                                    <option value="France">France</option>
+                                                                    <option value="Germany">Germany</option>
+                                                                    <option value="Greece">Greece</option>
+                                                                    <option value="Hungary">Hungary</option>
+                                                                    <option value="Iceland">Iceland</option>
+                                                                    <option value="Ireland">Ireland</option>
+                                                                    <option value="Italy">Italy</option>
+                                                                    <option value="Japan">Japan</option>
+                                                                    <option value="Latvia">Latvia</option>
+                                                                    <option value="Lithuania">Lithuania</option>
+                                                                    <option value="Luxembourg">Luxembourg</option>
+                                                                    <option value="Malta">Malta</option>
+                                                                    <option value="Mexico">Mexico</option>
+                                                                    <option value="Netherlands">Netherlands</option>
+                                                                    <option value="Norway">Norway</option>
+                                                                    <option value="Peru">Peru</option>
+                                                                    <option value="Poland">Poland</option>
+                                                                    <option value="Portugal">Portugal</option>
+                                                                    <option value="Romania">Romania</option>
+                                                                    <option value="Slovakia">Slovakia</option>
+                                                                    <option value="Slovenia">Slovenia</option>
+                                                                    <option value="Spain">Spain</option>
+                                                                    <option value="Sweden">Sweden</option>
+                                                                    <option value="Switzerland">Switzerland</option>
+                                                                    <option value="Thailand">Thailand</option>
+                                                                    <option value="United Kingdom">United Kingdom</option>
+                                                                    <option value="USA">USA</option>
+                                                                    <option value="Uruguay">Uruguay</option>
+                                                                    <option value="Venezuela">Venezuela</option>
+                                                                </select>
+                                                            </div>
+                                                            {formErrors.state && (
+                                                                <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                                    {formErrors.state}
+                                                                </p>
+                                                            )}
                                                             <div className='flex flex-col items-center md:items-start pb-10'>
 
                                                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>

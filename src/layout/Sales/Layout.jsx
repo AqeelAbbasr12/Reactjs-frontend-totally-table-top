@@ -143,27 +143,45 @@ const Layout = () => {
                                 </div>
                                 :
                                 <div className='flex-1 md:order-1 order-2'>
-                                    {
-                                        filteredGames.map((game) => (
-                                            <div onClick={() => nav(`/game/single/${game.id}`)} key={game.id} className='rounded-md bg-[#0D2539] cursor-pointer flex gap-x-5 items-left mb-2 p-3'>
-                                                <img src={game.game_image || ConventionImage} alt="" className='w-[3rem] h-[3rem] object-cover' />
-                                                <div>
-                                                    <p className='py-2 mx-2 text-white text-sm'>{game.game_name} <span className="py-2 mx-2 text-white font-bold">Sold By: {game.user_name} </span></p>
-                                                    <div className='flex gap-x-2 items-center mx-2'>
-                                                        <p className='text-white'>{game.game_currency_symbol}{game.game_price}</p>
-                                                        <div className='w-[1px] h-[1rem] bg-white'></div>
-                                                        <p className='text-white'>{game.game_condition}</p>
-                                                    </div>
+                                    {filteredGames.map((game) => (
+                                        <div
+                                            onClick={() => nav(`/game/single/${game.id}`)}
+                                            key={game.id}
+                                            className='rounded-md bg-[#0D2539] cursor-pointer flex gap-x-5 items-left mb-2 p-3'
+                                        >
+                                            <img
+                                                src={game.game_image || ConventionImage}
+                                                alt=""
+                                                className='w-[3rem] h-[3rem] object-cover'
+                                            />
+                                            <div>
+                                                <p className='py-2 mx-2 text-white text-sm'>
+                                                    {game.game_name}
+                                                    <span className="py-2 mx-2 text-white font-bold">
+                                                        Sold By: {game.user_name}
+                                                        {game.game_status === "sold" && (
+                                                            <span className="text-red font-bold ml-2">(SOLD)</span>
+                                                        )}
+                                                    </span>
+                                                </p>
+                                                <div className='flex gap-x-2 items-center mx-2'>
+                                                    <p className='text-white'>
+                                                        {game.game_currency_symbol}
+                                                        {game.game_price}
+                                                    </p>
+                                                    <div className='w-[1px] h-[1rem] bg-white'></div>
+                                                    <p className='text-white'>{game.game_condition}</p>
                                                 </div>
                                             </div>
-                                        ))
-                                    }
+                                        </div>
+                                    ))}
                                 </div>
+
                         ) : (
                             <div className='w-[100%] h-[52.5vh] mt-4 bg-[#0d2539] rounded-md flex justify-center items-center flex-col'>
                                 <img className='justify-center' src={ImageCross} alt="" />
                                 <h1 className='text-lg text-center font-semibold mt-3 mb-5 text-white'>No games available</h1>
-                               
+
 
                             </div>
                         )

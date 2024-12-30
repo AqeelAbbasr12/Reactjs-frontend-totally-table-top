@@ -5,6 +5,7 @@ import Input from '../../components/Input';
 import logoImage from '../../assets/image.png';
 import Icon from '../../assets/Icon-check-circle.svg';
 import toastr from 'toastr';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Make sure to use REACT_APP_ prefix in .env file and access it as shown below
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -15,8 +16,11 @@ const Layout = () => {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const [errors, setErrors] = useState({});
-  
+
   const data = [
     "Sell your games before arriving at conventions",
     "Create, find and schedule games to play",
@@ -50,9 +54,9 @@ const Layout = () => {
         localStorage.setItem('authToken', result.token);
         localStorage.setItem('current_user_id', result.user_id);
         // Navigate to the home page or handle successful login
-        toastr.success('success','Log in successfully');
+        toastr.success('success', 'Log in successfully');
         nav("/home");
-        
+
       } else {
         // Handle validation errors
         if (result.errors) {
@@ -102,41 +106,53 @@ const Layout = () => {
         <div className='md:w-[40%] w-[100%] md:block flex justify-center items-center flex-col'>
           <div className='w-[80%] md:w-[100%] bg-[#0d2539] px-[2rem] py-[2rem] rounded-md'>
             <form onSubmit={handleSubmit}>
-              <Input 
-                placeholder={"Email Address"} 
-                name={"email"} 
-                type={"text"} 
-                className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.email ? 'border-red' : ''}`} 
-                value={formData.email} 
-                onChange={handleChange} 
+              <Input
+                placeholder={"Email Address"}
+                name={"email"}
+                type={"text"}
+                className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.email ? 'border-red' : ''}`}
+                value={formData.email}
+                onChange={handleChange}
               />
               {errors.email && <p className='text-red'>{errors.email.join(', ')}</p>}
-              
-              <Input 
-                placeholder={"Password"} 
-                name={"password"} 
-                type={"password"} 
-                className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.password ? 'border-red' : ''}`} 
-                value={formData.password} 
-                onChange={handleChange} 
-              />
+
+              <div className="relative">
+                {/* Password Field */}
+                <Input
+                  placeholder={"Password"}
+                  name={"password"}
+                  type={showPassword ? "text" : "password"}
+                  className={`w-[100%] h-[2.3rem] px-3 rounded-md text-white bg-darkBlue mb-3 outline-none ${errors.password ? "border-red" : ""
+                    }`}
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                {/* Eye Icon */}
+                <span
+                  className="absolute top-[50%] right-3 transform -translate-y-[50%] cursor-pointer text-white"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+                {/* Error Message */}
               {errors.password && <p className='text-red'>{errors.password.join(', ')}</p>}
-              
+              </div>
+
               {errors.form && <p className='text-red'>{errors.form}</p>}
-              
-              <Button 
+
+              <Button
                 type="submit"
-                title={"Login"} 
-                className={"w-[100%] h-[2.3rem] rounded-md text-white bg-lightOrange"} 
+                title={"Login"}
+                className={"w-[100%] h-[2.3rem] rounded-md text-white bg-lightOrange"}
               />
               <p onClick={() => nav("/forget")} className='text-white text-center mt-3 cursor-pointer'>Lost your password?</p>
             </form>
           </div>
           <div className='w-[80%] md:w-[100%] px-[2rem] py-[2rem] rounded-md'>
-            <Button 
-              onClickFunc={() => nav("/register-form")} 
-              title={"Create An Account"} 
-              className={"w-[100%] h-[2.3rem] rounded-md text-white bg-transparent border border-white mt-3"} 
+            <Button
+              onClickFunc={() => nav("/register-form")}
+              title={"Create An Account"}
+              className={"w-[100%] h-[2.3rem] rounded-md text-white bg-transparent border border-white mt-3"}
             />
           </div>
         </div>

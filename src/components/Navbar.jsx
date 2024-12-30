@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom'
 import { FaBell } from 'react-icons/fa'
 import { BiSolidMessage } from 'react-icons/bi'
-import FaceImage from '../assets/face.avif'
+import FaceImage from '../assets/profile.jpeg'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import logoImage from '../assets/logo.png'
 import toastr from 'toastr';
@@ -242,7 +242,8 @@ const Navbar = ({ type }) => {
                                                                     <div className='flex items-center gap-x-4'>
                                                                         <div className='flex items-center'>
                                                                             <img
-                                                                                src={FaceImage}
+                                                                                src={convention.logo || FaceImage}
+                                                                                
                                                                                 alt=""
                                                                                 className='w-[3rem] h-[3rem] rounded-full object-cover'
                                                                             />
@@ -309,7 +310,7 @@ const Navbar = ({ type }) => {
                                     <p className='text-white'>{user ? user.username : 'Loading...'}</p>
                                     <BsFillCaretDownFill className='text-white' />
                                 </div>
-                                <img onClick={() => setshowMenu(!showMenu)} src={user?.profile_picture || FaceImage}  alt="" className='w-[2rem] h-[2rem] rounded-full object-cover' />
+                                <img onClick={() => setshowMenu(!showMenu)} src={user?.profile_picture || FaceImage} alt="" className='w-[2rem] h-[2rem] rounded-full object-cover' />
                                 {
                                     showMenu && (
                                         <div className=' absolute left-0 top-[3.4rem] w-full h-[fit] p-2 rounded-md bg-[#0d2539] z-50'>

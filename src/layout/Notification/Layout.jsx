@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import FaceImage from '../../assets/face.avif';
+import FaceImage from '../../assets/profile.jpeg';
 import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 

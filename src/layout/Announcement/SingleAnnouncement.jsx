@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/face.avif'
 import ConventionImage from '../../assets/convention.jpeg'
-import { FaCalendarAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
-import Button from '../../components/Button'
-import { FaLocationDot } from 'react-icons/fa6'
 import { fetchWithAuth } from "../../services/apiService";
 
 
@@ -136,14 +132,14 @@ const SingleAnnouncement = () => {
 
                  <img 
                     src={
-                        announcement.type === 'Expo' ? announcement.promo_logo :
-                          announcement.type === 'Feature' ? announcement.first_image :
-                            announcement.type === 'Advert' ? announcement.advert_logo :
+                        announcement.type === 'Advert' ? announcement.promo_logo :
+                          announcement.type === 'Announcement' ? announcement.first_image :
+                            announcement.type === 'Picture' ? announcement.advert_logo :
                               ConventionImage // fallback to ConventionImage if no logos are available
                       }
                     alt="" className='w-full md:w-[54rem]' />
 
-                    <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Feature Images</h2>
+                    {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Feature Images</h2> */}
                     <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 m-2'>
                         {announcement.feature_logos && announcement.feature_logos.slice(1).map((image, index) => ( // Splice the first image
                             <div key={index} className='relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer'>
@@ -159,12 +155,6 @@ const SingleAnnouncement = () => {
 
                 </div>
             </div>
-
-
-
-           
-
-
 
         </div>
     )

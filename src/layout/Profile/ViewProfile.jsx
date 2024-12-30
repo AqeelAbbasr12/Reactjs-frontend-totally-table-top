@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar'
 import { FaCaretDown, FaRegStar } from 'react-icons/fa'
-// import FaceImage from '../../assets/face.avif'
-import FaceImage from "../../assets/Icon-user-circle.png";
+import FaceImage from '../../assets/profile.jpeg'
 import Button from '../../components/Button'
 import { FaMessage } from 'react-icons/fa6'
 import { IoIosAlert } from 'react-icons/io'
