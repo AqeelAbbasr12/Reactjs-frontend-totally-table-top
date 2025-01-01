@@ -71,9 +71,9 @@ const Layout = () => {
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2'>
           {/* Expo Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+          {/* <div className='flex items-center gap-x-[1rem] my-[1rem]'>
             <img src={announceImage} alt="" />
-            {/* <p className='text-white'>Expo Announcements</p> */}
+            <p className='text-white'>Expo Announcements</p>
           </div>
           {announcements.filter(a => a.type === 'Adverts').map((announcement) => (
             <div key={announcement.id} className="mb-3">
@@ -81,7 +81,7 @@ const Layout = () => {
                 {renderAnnouncementLogo(announcement)}
               </Link>
             </div>
-          ))}
+          ))} */}
 
           {/* Feature Announcements */}
           <div className="my-4">
@@ -168,9 +168,8 @@ const Layout = () => {
 
 
           {/* Advert Announcements */}
-          <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+          {/* <div className='flex items-center gap-x-[1rem] my-[1rem]'>
             <img src={announceImage} alt="" />
-            {/* <p className='text-white'>Advert Announcements</p> */}
           </div>
           {announcements.filter(a => a.type === 'Picture').map((announcement) => (
             <div key={announcement.id} className="mb-3">
@@ -178,7 +177,7 @@ const Layout = () => {
                 {renderAnnouncementLogo(announcement)}
               </Link>
             </div>
-          ))}
+          ))} */}
 
           {/* Example of a New Feature notification */}
           {/* <div className='bg-lime-50 w-[100%] lg:w-[80%] rounded-md p-5 my-4 flex justify-between items-center'>

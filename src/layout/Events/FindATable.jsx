@@ -18,9 +18,9 @@ const FindATable = () => {
     const [loading, setLoading] = useState();
     const [events, setEvents] = useState([]);
     const [selectedConvention, setSelectedConvention] = useState(null);
-   
-    const [popupStates, setPopupStates] = useState({}); 
-    const [activeEventId, setActiveEventId] = useState(null); 
+
+    const [popupStates, setPopupStates] = useState({});
+    const [activeEventId, setActiveEventId] = useState(null);
     const [conventions, setConventions] = useState([]);
 
     useEffect(() => {
@@ -29,8 +29,8 @@ const FindATable = () => {
     }, []);
 
 
-     // Handle Popup Visibility
-     const handleMouseEnter = (eventId) => {
+    // Handle Popup Visibility
+    const handleMouseEnter = (eventId) => {
         setPopupStates((prev) => ({ ...prev, [eventId]: true })); // Show popup for specific event
     };
 
@@ -55,7 +55,7 @@ const FindATable = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            console.log(data);
+            console.log('invitations', data);
             setEvents(data);
         } catch (error) {
             console.error('Error fetching Events data:', error);
@@ -241,31 +241,31 @@ const FindATable = () => {
                                     >
                                         {/* Event Details */}
                                         <div className="w-full sm:w-auto">
-                                        <h1 key={event.id} className="text-lg font-semibold text-white break-all flex items-center gap-2">
-                    {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
-                    <span className="text-lightOrange">Space ({event.event_space})</span>
+                                            <h1 key={event.id} className="text-lg font-semibold text-white break-all flex items-center gap-2">
+                                                {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
+                                                <span className="text-lightOrange">Space ({event.event_space})</span>
 
-                    {/* Flag Icon with Hover Popup */}
-                    <div
-                        className="relative"
-                        onMouseEnter={() => handleMouseEnter(event.id)}
-                        onMouseLeave={() => handleMouseLeave(event.id)}
-                    >
-                        <IoMdFlag
-                            size={24}
-                            color="#F77F00"
-                            className="cursor-pointer"
-                            onClick={() => handleReportTable(event.id)} // Unique ID passed
-                        />
+                                                {/* Flag Icon with Hover Popup */}
+                                                <div
+                                                    className="relative"
+                                                    onMouseEnter={() => handleMouseEnter(event.id)}
+                                                    onMouseLeave={() => handleMouseLeave(event.id)}
+                                                >
+                                                    <IoMdFlag
+                                                        size={24}
+                                                        color="#F77F00"
+                                                        className="cursor-pointer"
+                                                        onClick={() => handleReportTable(event.id)} // Unique ID passed
+                                                    />
 
-                        {/* Hover Popup (Unique for each row) */}
-                        {popupStates[event.id] && (
-                            <div className="absolute bottom-[120%] left-0 transform translate-x-0 w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
-                                <p className="text-black text-center">Report a Table</p>
-                            </div>
-                        )}
-                    </div>
-                </h1>
+                                                    {/* Hover Popup (Unique for each row) */}
+                                                    {popupStates[event.id] && (
+                                                        <div className="absolute bottom-[120%] left-0 transform translate-x-0 w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
+                                                            <p className="text-black text-center">Report a Table</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </h1>
 
 
 
@@ -285,14 +285,15 @@ const FindATable = () => {
                                             {/* Invitations */}
                                             <div className="flex items-center mt-4">
                                                 {event.invitations.map((invitation) => (
-                                                    <img
-                                                        key={invitation.invite_receiver_image}
-                                                        src={invitation.invite_receiver_image}
-                                                        className="w-[2rem] h-[2rem] rounded-full object-cover"
-                                                        alt="Invitation"
-                                                    />
+                                                    <p
+                                                        key={invitation.invite_receiver_name} // Use invite_receiver_name as the key
+                                                        className="text-lightOrange text-xl font-medium mr-2"
+                                                    >
+                                                        {invitation.invite_receiver_name} {/* Display username */}
+                                                    </p>
                                                 ))}
                                             </div>
+
 
                                             {/* Action Buttons */}
                                             <div className="flex flex-wrap items-center gap-3 mt-4 w-full">

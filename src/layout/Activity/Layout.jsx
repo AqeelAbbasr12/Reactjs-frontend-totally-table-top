@@ -204,44 +204,64 @@ const Layout = () => {
 
 
                                             case 'post_creation':
-                                                return (
-                                                    <>
-                                                      {(
-                                                        feedItem.post.post_privacy === 'friends_only' &&
-                                                        feedItem.is_friend === 'true'
-                                                      ) || feedItem.post.post_privacy === 'anyone' ? (
+                                              return (
+                                                <>
+                                                    {(
+                                                        (feedItem.post.post_privacy === 'friends_only' && feedItem.is_friend === 'true') || 
+                                                        feedItem.post.post_privacy === 'anyone'
+                                                    ) ? (
                                                         <>
-                                                          <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
-                                                            <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
-                                                              <div className='flex items-center gap-x-3'>
-                                                                <img
-                                                                  src={feedItem.post.profile_picture || FaceImage}
-                                                                  alt=""
-                                                                  className='w-[3rem] h-[3rem] rounded-full object-cover'
-                                                                />
-                                                                <div>
-                                                                  <p className='text-white'>
-                                                                    <span className='text-lightOrange'>{feedItem.post.user_name}</span> posted an update:
-                                                                  </p>
+                                                            <div className='w-[100%] bg-[#0d2539] py-3 px-4 mt-0 rounded-md mb-2'>
+                                                                {/* Header Section */}
+                                                                <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
+                                                                    <div className='flex items-center gap-x-3'>
+                                                                        <img
+                                                                            src={feedItem.post.profile_picture || FaceImage}
+                                                                            alt="Profile"
+                                                                            className='w-[3rem] h-[3rem] rounded-full object-cover'
+                                                                        />
+                                                                        <div>
+                                                                            <p className='text-white'>
+                                                                                <span className='text-lightOrange'>{feedItem.post.user_name}</span> posted an update:
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p className='text-white mt-2 md:mt-0'>
+                                                                        {formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}
+                                                                    </p>
                                                                 </div>
-                                                              </div>
-                                                              <p className='text-white mt-2 md:mt-0'>
-                                                                {formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}
-                                                              </p>
+                                            
+                                                                {/* Content Section */}
+                                                                <div className="flex flex-col-reverse md:flex-row-reverse items-start md:gap-x-4 mt-3">
+                                                                    {/* Post Image */}
+                                                                    {feedItem.post.image && (
+                                                                        <img
+                                                                            src={feedItem.post.image}
+                                                                            alt="Post"
+                                                                            className='rounded-md object-cover w-full h-auto md:w-[13rem] md:h-[10rem] mt-3 md:mt-0'
+                                                                        />
+                                                                    )}
+                                            
+                                                                    {/* Post Content */}
+                                                                    <p className='text-white break-words whitespace-pre-wrap max-w-full flex-1 mt-3 md:mt-0'>
+                                                                        {formatDescription(feedItem.post.content)}
+                                                                    </p>
+                                                                </div>
+                                            
+                                                                {/* Icons Section */}
+                                                                <div className='flex items-center gap-x-4 mt-4'>
+                                                                    <div className='flex items-center gap-x-2'>
+                                                                        <FaMessage className='text-white' />
+                                                                        <p className='text-white'>0</p>
+                                                                    </div>
+                                                                    <FaRegStar className='text-white' />
+                                                                </div>
                                                             </div>
-                                                            <p className='text-white mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.post.content)}</p>
-                                                            <div className='flex items-center gap-x-4 mt-4'>
-                                                              <div className='flex items-center gap-x-2'>
-                                                                <FaMessage className='text-white' />
-                                                                <p className='text-white'>0</p>
-                                                              </div>
-                                                              <FaRegStar className='text-white' />
-                                                            </div>
-                                                          </div>
                                                         </>
-                                                      ) : null}
-                                                    </>
-                                                  );
+                                                    ) : null}
+                                                </>
+                                            );
+                                            
                                                   
 
 

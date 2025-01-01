@@ -22,6 +22,7 @@ const Layout = () => {
     const [loading, setLoading] = useState(true);
     const { receiver_id, game_id } = useParams();
     const [messages, setMessages] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [replyContent, setReplyContent] = useState('');
@@ -370,6 +371,9 @@ const Layout = () => {
         }
     };
 
+    const filteredFriends = friends.filter(friend =>
+        friend.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-[#0d2539]'>
             {loading && (
@@ -391,7 +395,17 @@ const Layout = () => {
 
                     <div className='flex items-start gap-x-6 mt-4 md:flex-row flex-col'>
                         <div className='min-w-full md:mb-0 mb-3 md:min-w-[13rem] p-2 bg-[#0d2539] rounded-md'>
-                            {friends.map((friend, index) => (
+                            {/* Search Bar */}
+                            <div className='flex items-center mb-4'>
+                                <input
+                                    type="text"
+                                    placeholder="Search users..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full p-2 rounded-md text-white bg-[#0d2539] border border-gray-500 outline-none"
+                                />
+                            </div>
+                            {filteredFriends.map((friend, index) => (
                                 <div
                                     key={index}
                                     className={`flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer 

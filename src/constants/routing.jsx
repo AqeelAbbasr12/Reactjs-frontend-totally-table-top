@@ -75,6 +75,7 @@ import ViewUserPage from '../pages/Admin/ViewUserPage';
 import AdminSingleGamePage from '../pages/Admin/AdminSingleGamePage';
 import AdminMessagesPage from '../pages/Admin/AdminMessagePage';
 import AdminSingleEventPage from '../pages/Admin/AdminSingleEventPage';
+import ViewAccomodationPage from '../pages/ViewAccomodationPage';
 
 export const routing = [
   { id: 1, link: "/", element: <LoginPage />, public: true },
@@ -127,6 +128,7 @@ export const routing = [
   { id: 42, link: "/viewprofile/:user_id?", element: <ViewProfilePage />, protected: true },
   { id: 43, link: "/conventionAttendance/:convention_id", element: <ConventionAttendancePage />, protected: true },
   { id: 44, link: "/edit/accommodation/:accommodation_id/convention/:convention_id", element: <EditAccomodationPage />, protected: true },
+  { id: 44, link: "/view/accommodation/:accommodation_id/convention/:convention_id", element: <ViewAccomodationPage />, protected: true },
   { id: 45, link: "/edit/event/:event_id/convention/:convention_id", element: <EditEventPage />, protected: true },
   { id: 46, link: "/edit/game/:game_id/convention/:convention_id", element: <EditGamePage />, protected: true },
   { id: 15, link: "/single/announcement/:announcement_id", element: <SingleAnnouncementPage />, protected: true },

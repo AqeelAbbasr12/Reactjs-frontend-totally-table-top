@@ -258,8 +258,8 @@ const CreateAccommodation = () => {
                 <a href='/user/convention' className='text-white'>Your conventions</a>
             </div>
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3 flex justify-center md:items-center'>
-                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[48rem] bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
+            <div className='md:px-[2rem] px-[1rem] bg-darkBlue w-[100vw] pt-3 flex justify-center md:items-center'>
+                <form onSubmit={handleSubmit} className='sm:w-[50%] w-[100%] h-[48rem] mb-8 bg-[#0d2539] px-3 py-5 rounded-md mt-6'>
                     <div className='flex justify-center items-center'>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' /></div>
                         <div className='w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center'><FaList className='text-white' /></div>

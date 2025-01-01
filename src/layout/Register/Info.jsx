@@ -74,7 +74,7 @@ const Info = () => {
                                     <img src={i.image} alt="" />
                                 </div>
                                 <h1 className='mt-2 text-white text-3xl'>{i.heading}</h1>
-                                <p className='mt-2 text-white w-[20rem]'>{i.desc}</p>
+                                <p className='mt-2 text-white w-[20rem] h-[100px]'>{i.desc}</p>
                             </div>
                         ))
                     }

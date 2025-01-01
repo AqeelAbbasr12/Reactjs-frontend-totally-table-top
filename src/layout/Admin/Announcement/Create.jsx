@@ -704,6 +704,7 @@ function Create() {
                                                                 <option value="Iceland">Iceland</option>
                                                                 <option value="Ireland">Ireland</option>
                                                                 <option value="Italy">Italy</option>
+                                                                <option value="India">India</option>
                                                                 <option value="Japan">Japan</option>
                                                                 <option value="Latvia">Latvia</option>
                                                                 <option value="Lithuania">Lithuania</option>
@@ -721,6 +722,7 @@ function Create() {
                                                                 <option value="Spain">Spain</option>
                                                                 <option value="Sweden">Sweden</option>
                                                                 <option value="Switzerland">Switzerland</option>
+                                                                <option value="South Korea">South Korea</option>
                                                                 <option value="Thailand">Thailand</option>
                                                                 <option value="United Kingdom">United Kingdom</option>
                                                                 <option value="USA">USA</option>

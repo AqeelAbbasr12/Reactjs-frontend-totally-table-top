@@ -216,7 +216,7 @@ const handleTouchEnd = async (e) => {
             }
         } catch (error) {
             // console.error('Error submitting form:', error);
-            toastr.error('An error occurred while saving the agenda');
+            toastr.error('No information to save.');
         }
     };
 

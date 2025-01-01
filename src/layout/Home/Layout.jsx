@@ -42,8 +42,11 @@ const Layout = () => {
   useEffect(() => {
     if (!userData) return;
 
+
     if (userData.is_visited_sale_game === '1') {
       setCurrentStep(5); // Sales visited - move to Step 5
+    }else if (userData.is_steps_complete === '1') {
+      setCurrentStep(6); // Friends step
     } else if (userData.total_friends_for_step > 0) {
       setCurrentStep(4); // Friends step
     } else if (userData.total_attendance > 0) {
@@ -53,43 +56,80 @@ const Layout = () => {
     } else {
       setCurrentStep(1); // Default step
     }
+
   }, [userData, hasVisitedSales]);
 
   const handleSalesVisit = async () => {
     try {
-        // Prepare data for API request
-        const requestBody = {
-            is_visited_sale_game: true, // Update the required variable
-        };
+      // Prepare data for API request
+      const requestBody = {
+        is_visited_sale_game: true, // Update the required variable
+      };
 
-        // Call the API to update the profile
-        const response = await fetchWithAuth("/user/update-game-visit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
-            },
-            body: JSON.stringify(requestBody), // Send the updated variable
-        });
+      // Call the API to update the profile
+      const response = await fetchWithAuth("/user/update-game-visit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+        },
+        body: JSON.stringify(requestBody), // Send the updated variable
+      });
 
-        // Handle API response
-        const data = await response.json();
-        if (response.ok) {
-            // If API call is successful
-            console.log("Profile updated successfully:", data);
-            // Set the current step and navigate
-            nav("/sales"); // Navigate to sales page
-        } else {
-            // Handle API errors
-            console.error("Error updating profile:", data);
-            Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
-        }
+      // Handle API response
+      const data = await response.json();
+      if (response.ok) {
+        // If API call is successful
+        console.log("Profile updated successfully:", data);
+        // Set the current step and navigate
+        nav("/sales"); // Navigate to sales page
+      } else {
+        // Handle API errors
+        console.error("Error updating profile:", data);
+        Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+      }
     } catch (error) {
-        // Handle network errors
-        console.error("Network error:", error);
-        Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+      // Handle network errors
+      console.error("Network error:", error);
+      Swal.fire("Error!", "Something went wrong. Please try again.", "error");
     }
-};
+  };
+
+  const handleStepComplete = async () => {
+    try {
+      // Prepare data for API request
+      const requestBody = {
+        is_steps_complete: true, // Update the required variable
+      };
+
+      // Call the API to update the profile
+      const response = await fetchWithAuth("/user/steps-completed", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+        },
+        body: JSON.stringify(requestBody), // Send the updated variable
+      });
+
+      // Handle API response
+      const data = await response.json();
+      if (response.ok) {
+        // If API call is successful
+        console.log("Profile updated successfully:", data);
+        // Set the current step and navigate
+        setCurrentStep(6);
+      } else {
+        // Handle API errors
+        console.error("Error updating profile:", data);
+        Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+      }
+    } catch (error) {
+      // Handle network errors
+      console.error("Network error:", error);
+      Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+    }
+  };
 
   const onhandleView = (id) => {
     navigate(`/single/announcement/${id}`); // Use the id to navigate to the specific edit page
@@ -145,18 +185,7 @@ const Layout = () => {
   };
 
 
-  const renderAnnouncementLogo = (announcement) => {
-    switch (announcement.type) {
-      case 'Adverts':
-        return <img src={announcement.promo_logo || annoucementImage} alt="Expo Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Announcement':
-        return <img src={announcement.feature_logo || featureImage} alt="Feature Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      case 'Picture':
-        return <img src={announcement.advert_logo || annoucementImage} alt="Advert Announcement" className="w-[100%] lg:w-[100%] h-[15rem] rounded-md cursor-pointer" />;
-      default:
-        return null;
-    }
-  };
+
 
 
   return (
@@ -175,88 +204,95 @@ const Layout = () => {
         {/* RIGHT  */}
         <div className='flex-1 rounded-md px-2 mb-2'>
           <h1 className='text-white text-2xl font-semibold'>Welcome</h1>
-          {currentStep === 1 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
-              <div className='flex'>
-                <img src={circel1Image} alt="" />
-                <div className='ml-5 mt-3'>
-                  <p className='text-gray-400'>Step 1 of 4</p>
-                  <p className='text-white my-2'>Complete your profile to get started</p>
+          {userData?.is_steps_complete !== '1' && (
+            <>
+              {currentStep === 1 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel1Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 1 of 4</p>
+                      <p className='text-white my-2'>Complete your profile to get started</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/profile")} title={"Complete Profile"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
                 </div>
-              </div>
-              <div className='flex items-center gap-x-4'>
-                <Button onClickFunc={() => nav("/profile")} title={"Complete Profile"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
-              </div>
-            </div>
-          )}
-          {currentStep === 2 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
-              <div className='flex'>
-                <img src={circel2Image} alt="" />
-                <div className='ml-5 mt-3'>
-                  <p className='text-gray-400'>Step 2 of 4</p>
-                  <p className='text-white my-2'>Find conventions to attend</p>
+              )}
+              {currentStep === 2 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel2Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 2 of 4</p>
+                      <p className='text-white my-2'>Find conventions to attend</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/upcoming-convention")} title={"All conventions"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
                 </div>
-              </div>
-              <div className='flex items-center gap-x-4'>
-                <Button onClickFunc={() => nav("/upcoming-convention")} title={"All conventions"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
-              </div>
-            </div>
-          )}
-          {currentStep === 3 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
-              <div className='flex'>
-                <img src={circel3Image} alt="" />
-                <div className='ml-5 mt-3'>
-                  <p className='text-gray-400'>Step 3 of 4</p>
-                  <p className='text-white my-2'>Find and connect with friends</p>
+              )}
+              {currentStep === 3 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel3Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 3 of 4</p>
+                      <p className='text-white my-2'>Find and connect with friends</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/findfriends")} title={"Find friends"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
                 </div>
-              </div>
-              <div className='flex items-center gap-x-4'>
-                <Button onClickFunc={() => nav("/findfriends")} title={"Find friends"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
-              </div>
-            </div>
-          )}
-          {currentStep === 4 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
-              <div className='flex'>
-                <img src={circel4Image} alt="" />
-                <div className='ml-5 mt-3'>
-                  <p className='text-gray-400'>Step 4 of 4</p>
-                  <p className='text-white my-2'>Take a look at available games</p>
+              )}
+              {currentStep === 4 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel4Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 4 of 4</p>
+                      <p className='text-white my-2'>Take a look at available games</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={handleSalesVisit} title={"Games for sale"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
                 </div>
-              </div>
-              <div className='flex items-center gap-x-4'>
-                <Button
-                  onClickFunc={handleSalesVisit}
-                  title={"Games for sale"}
-                  className={
-                    "w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"
-                  }
-                />
-              </div>
-            </div>
+              )}
+            </>
           )}
-          {currentStep === 5 && (
-            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center'>
 
+          {currentStep === 5 && userData?.is_steps_complete !== '1' && (
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center'>
               <div className='ml-5 mt-3'>
                 <p className='text-white'>Setup complete</p>
                 <p className='text-white my-2'>You’ve completed the setup, enjoy your account!</p>
               </div>
-
               <div className='flex items-center gap-x-4'>
-                {/* <Button title={"Hide message"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} /> */}
+                <Button
+                  onClickFunc={handleStepComplete}  // This will trigger handleStepComplete when clicked
+                  title={"Mark as Complete"}  // Button label
+                  className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} // Button styles
+                />
               </div>
             </div>
           )}
 
+          {currentStep === 6 && (
+            // Display nothing or a message indicating the process is complete.
+            <div className="hidden"></div> // Or you can use another way to indicate completion if necessary
+          )}
+
+
 
           <div className='flex-1 rounded-md px-2 mb-2'>
             {/* Expo Announcements */}
-            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            {/* <div className='flex items-center gap-x-[1rem] my-[1rem]'>
               <img src={announceImage} alt="" />
-              {/* <p className='text-white'>Expo Announcements</p> */}
+              <p className='text-white'>Expo Announcements</p>
             </div>
             {announcements.filter(a => a.type === 'Adverts').map((announcement) => (
               <div key={announcement.id} className="mb-3">
@@ -264,7 +300,7 @@ const Layout = () => {
                   {renderAnnouncementLogo(announcement)}
                 </Link>
               </div>
-            ))}
+            ))} */}
 
             <div className="my-4">
               {/* Feature Announcements Header */}
@@ -350,9 +386,8 @@ const Layout = () => {
 
 
             {/* Advert Announcements */}
-            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            {/* <div className='flex items-center gap-x-[1rem] my-[1rem]'>
               <img src={announceImage} alt="" />
-              {/* <p className='text-white'>Advert Announcements</p> */}
             </div>
             {announcements.filter(a => a.type === 'Picture').map((announcement) => (
               <div key={announcement.id} className="mb-3">
@@ -360,7 +395,7 @@ const Layout = () => {
                   {renderAnnouncementLogo(announcement)}
                 </Link>
               </div>
-            ))}
+            ))} */}
 
           </div>
         </div>

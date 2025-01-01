@@ -157,7 +157,7 @@ const Layout = () => {
                         accommodations.map((accommodation) => (
                             <div
                                 key={accommodation.id}
-                                className="w-full sm:h-[10rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                                className="w-full h-[100%] sm:h-[12rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
                             >
                                 <div className="w-full sm:w-auto">
                                     <h1 className="text-lg font-semibold text-white truncate">{accommodation.location_name}</h1>
@@ -187,6 +187,14 @@ const Layout = () => {
                                             onClickFunc={() => handleDelete(accommodation.id)}
                                             title={"Delete"}
                                             className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
+                                        />
+
+                                        <Button
+                                            onClickFunc={() => {
+                                                nav(`/view/accommodation/${accommodation.id}/convention/${convention_id}`);
+                                            }}
+                                            title={"View"}
+                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
                                         />
                                     </div>
                                 </div>

@@ -170,7 +170,7 @@ const Layout = () => {
                 <div className='flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4'>
                     <div className='sm:flex justify-between items-center'>
                         <h1 className='text-white text-2xl font-semibold'>Settings</h1>
-                        <Button onClickFunc={() => nav("/ownFeed")} title={"Save all changes"} className={'w-[11rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} />
+                        <Button onClickFunc={() => nav("/ownFeed")} title={"Own Feed"} className={'w-[11rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'} />
                     </div>
 
                     <div className='w-[100%] h-[fit] mt-4 rounded-md'>

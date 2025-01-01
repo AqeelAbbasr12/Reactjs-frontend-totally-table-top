@@ -293,18 +293,43 @@ const OwnFeed = () => {
                                     case 'post_creation':
                                         return (
                                             <>
+                                                {/* Header Section */}
                                                 <div className='flex flex-col md:flex-row justify-between items-start md:items-center'>
                                                     <div className='flex items-center gap-x-3'>
-                                                        <img src={user.profile_picture || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
+                                                        <img 
+                                                            src={user.profile_picture || FaceImage} 
+                                                            alt="Profile" 
+                                                            className='w-[3rem] h-[3rem] rounded-full object-cover' 
+                                                        />
                                                         <div>
                                                             <p className='text-white'>
                                                                 <span className='text-lightOrange'>You </span> posted an update:
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <p className='text-white mt-2 md:mt-0'>{formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}</p>
+                                                    <p className='text-white mt-2 md:mt-0'>
+                                                        {formatDistanceToNow(parseISO(feedItem.created_at), { addSuffix: true })}
+                                                    </p>
                                                 </div>
-                                                <p className='text-white mt-2 md:mt-3 break-words whitespace-pre-wrap max-w-full'>{formatDescription(feedItem.post.content)}</p>
+                                        
+                                                {/* Content Section */}
+                                                <div className="flex flex-col-reverse md:flex-row-reverse items-start md:gap-x-4 mt-3">
+                                                    {/* Post Image */}
+                                                    {feedItem.post.image && (
+                                                        <img 
+                                                            src={feedItem.post.image} 
+                                                            alt="Post" 
+                                                            className='rounded-md object-cover w-full h-auto md:w-[13rem] md:h-[10rem] mt-3 md:mt-0' // Responsive width and height
+                                                        />
+                                                    )}
+                                        
+                                                    {/* Post Content */}
+                                                    <p className='text-white break-words whitespace-pre-wrap max-w-full flex-1 mt-3 md:mt-0'>
+                                                        {formatDescription(feedItem.post.content)}
+                                                    </p>
+                                                </div>
+                                        
+                                                {/* Icons Section */}
                                                 <div className='flex items-center gap-x-4 mt-2 md:mt-4'>
                                                     <div className='flex items-center gap-x-2'>
                                                         <FaMessage className='text-white' />
@@ -314,6 +339,8 @@ const OwnFeed = () => {
                                                 </div>
                                             </>
                                         );
+                                        
+                                        
 
 
                                     case 'convention_accommodation':

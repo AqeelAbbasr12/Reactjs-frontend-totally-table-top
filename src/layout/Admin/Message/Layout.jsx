@@ -17,13 +17,13 @@ const Layout = () => {
     const nav = useNavigate();
     const [friends, setFriends] = useState([]);
     const [users, setUsers] = useState([]);
-    const [showPopup, setShowPopup] = useState(false);
     const [currentUser, setcurrentUser] = useState([]);
     const [loading, setLoading] = useState(true);
     const { receiver_id, game_id } = useParams();
     const [messages, setMessages] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
-    const [selectedMessageId, setSelectedMessageId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
     const [replyContent, setReplyContent] = useState('');
     const currentUserId = localStorage.getItem('current_user_id'); // Ensure this ID is stored in local storage
     const messageEndRef = useRef(null);
@@ -147,72 +147,10 @@ const Layout = () => {
         }
     };
 
-    
-    async function handleReportClick(messageId) {
-        Swal.fire({
-            title: 'Report Message',
-            text: 'Please enter the reason for reporting this message:',
-            html: `
-                <textarea 
-                    id="report-reason" 
-                    placeholder="Enter your reason here..."
-                    style="margin: 0; padding: 10px; width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Submit Report',
-            preConfirm: () => {
-                // Fetch the value of the textarea
-                const reason = document.getElementById('report-reason').value;
-                if (!reason.trim()) {
-                    Swal.showValidationMessage('Reason is required!');
-                }
-                return reason.trim();
-            },
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const reason = result.value;
-                try {
-                    // Call the API
-                    const response = await fetchWithAuth(`/user/report`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                        },
-                        body: JSON.stringify({
-                            reported_message_id: messageId, // The ID of the reported message
-                            type: 'message', // The type of report
-                            reason: reason // The reason provided by the user
-                        })
-                    });
-        
-                    // Check if the response is successful
-                    const data = await response.json();
-                    if (response.ok) {
-                        console.log('API Response:', data);
-                        Swal.fire('Reported!', 'Thank you for your feedback.', 'success');
-                    } else {
-                        // Display validation errors if the API response indicates failure
-                        if (data.errors && data.errors.general) {
-                            const errorMessage = data.errors.general.join(' ');
-                            Swal.fire('Error!', errorMessage, 'error');
-                        } else {
-                            Swal.fire('Error!', 'There was an issue reporting the message. Please try again later.', 'error');
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error reporting the message:', error);
-                    Swal.fire('Error!', 'There was an issue reporting the message. Please try again later.', 'error');
-                }
-            }
-        });
-    }
-    
-    
-    
+
+
+
+
 
     const updateMessagesStatus = async (receiverId) => {
         setLoading(true);
@@ -372,6 +310,11 @@ const Layout = () => {
         }
     };
 
+    const filteredFriends = friends.filter(friend =>
+        friend.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-[#0d2539]'>
             {loading && (
@@ -393,7 +336,17 @@ const Layout = () => {
 
                     <div className='flex items-start gap-x-6 mt-4 md:flex-row flex-col'>
                         <div className='min-w-full md:mb-0 mb-3 md:min-w-[13rem] p-2 bg-[#0d2539] rounded-md'>
-                            {friends.map((friend, index) => (
+                            {/* Search Bar */}
+                            <div className='flex items-center mb-4'>
+                                <input
+                                    type="text"
+                                    placeholder="Search users..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full p-2 rounded-md text-white bg-[#0d2539] border border-gray-500 outline-none"
+                                />
+                            </div>
+                            {filteredFriends.map((friend, index) => (
                                 <div
                                     key={index}
                                     className={`flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer 
@@ -482,7 +435,7 @@ const Layout = () => {
                                                             alt="Receiver"
                                                             className="w-[2rem] h-[2rem] rounded-full object-cover"
                                                         />
-                                                        
+
                                                     </>
                                                 )}
                                             </div>

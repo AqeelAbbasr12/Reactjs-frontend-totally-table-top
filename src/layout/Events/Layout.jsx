@@ -162,7 +162,7 @@ const Layout = () => {
                     {events.map((event) => (
                         <div
                             key={event.id}
-                            className="w-full sm:h-[13rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
+                            className="w-full sm:h-[12rem] bg-[#0d2539] p-3 rounded-md flex justify-between items-start relative sm:flex-row flex-col mt-4"
                         >
                             <div className="w-full sm:w-auto">
                                 <h1 className="text-lg font-semibold text-white break-all">

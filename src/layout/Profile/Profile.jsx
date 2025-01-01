@@ -510,6 +510,7 @@ const Profile = () => {
                     <option value="Iceland">Iceland</option>
                     <option value="Ireland">Ireland</option>
                     <option value="Italy">Italy</option>
+                    <option value="India">India</option>
                     <option value="Japan">Japan</option>
                     <option value="Latvia">Latvia</option>
                     <option value="Lithuania">Lithuania</option>
@@ -527,6 +528,7 @@ const Profile = () => {
                     <option value="Spain">Spain</option>
                     <option value="Sweden">Sweden</option>
                     <option value="Switzerland">Switzerland</option>
+                    <option value="South Korea">South Korea</option>
                     <option value="Thailand">Thailand</option>
                     <option value="United Kingdom">United Kingdom</option>
                     <option value="USA">USA</option>
@@ -709,7 +711,7 @@ const Profile = () => {
           {/* 3rd Form  */}
           <form className="w-[100%] mt-4 bg-[#0d2539] rounded-md p-6" onSubmit={handlePost}>
             <h1 className="text-white font-semibold mt-3">
-              Share updates and let everyone know what's happening!
+              Share updates and let anyone or friends know what's happening!
             </h1>
             <div className="w-[100%] bg-[#0d2539] py-5 mt-0 rounded-md mb-2">
               <div className="flex flex-col md:flex-row gap-4">

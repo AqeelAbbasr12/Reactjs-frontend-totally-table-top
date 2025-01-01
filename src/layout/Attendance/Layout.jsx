@@ -317,8 +317,8 @@ const Layout = () => {
 
                     {attendance && attendance.length > 0 ? (
                         <p className='text-white mt-2'>
-                            Marked as attending on{' '}
-                            {attendance.map((record, index) => (
+                            Marked attending{' '}
+                            {/* {attendance.map((record, index) => (
                                 <span key={index}>
                                     {record.attendance_date}
                                     {index < attendance.length - 1 && (
@@ -326,7 +326,7 @@ const Layout = () => {
                                     )}
                                     {index === attendance.length - 1 && attendance.length > 1}
                                 </span>
-                            ))}
+                            ))} */}
                         </p>
                     ) : (
                         <p className='text-white mt-2'>

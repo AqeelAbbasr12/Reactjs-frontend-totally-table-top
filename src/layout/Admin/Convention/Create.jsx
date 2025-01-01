@@ -164,15 +164,7 @@ function Create() {
             errors.website = 'Please enter a valid URL';
         }
 
-        if (formData.fb_url && !urlPattern.test(formData.fb_url)) {
-            toastr.error('Please enter a valid URL');
-            errors.fb_url = 'Please enter a valid URL';
-        }
-
-        if (formData.ig_url && !urlPattern.test(formData.ig_url)) {
-            toastr.error('Please enter a valid URL');
-            errors.ig_url = 'Please enter a valid URL';
-        }
+     
 
 
         if (!formData.dates || formData.dates.length === 0 || !formData.dates.some(date => date)) {
@@ -198,8 +190,6 @@ function Create() {
         formDataToSend.append('location', formData.location); // Changed from location_address to location
         formDataToSend.append('website', formData.website); // Changed from location_website to website
         formDataToSend.append('state', formData.state); // Changed from location_website to website
-        formDataToSend.append('fb_url', formData.fb_url); // Changed from location_website to website
-        formDataToSend.append('ig_url', formData.ig_url); // Changed from location_website to website
 
         // Since the original fields didn't have 'from_date' and 'to_date', you may want to send the dates as a single array
         formDataToSend.append('date', formData.dates); // Send date array as a JSON string
@@ -443,6 +433,7 @@ function Create() {
                                         <option value="Iceland">Iceland</option>
                                         <option value="Ireland">Ireland</option>
                                         <option value="Italy">Italy</option>
+                                        <option value="India">India</option>
                                         <option value="Japan">Japan</option>
                                         <option value="Latvia">Latvia</option>
                                         <option value="Lithuania">Lithuania</option>
@@ -460,6 +451,7 @@ function Create() {
                                         <option value="Spain">Spain</option>
                                         <option value="Sweden">Sweden</option>
                                         <option value="Switzerland">Switzerland</option>
+                                        <option value="South Korea">South Korea</option>
                                         <option value="Thailand">Thailand</option>
                                         <option value="United Kingdom">United Kingdom</option>
                                         <option value="USA">USA</option>

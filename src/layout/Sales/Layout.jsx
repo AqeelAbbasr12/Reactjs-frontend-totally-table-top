@@ -58,7 +58,7 @@ const Layout = () => {
     const fetchConventions = async () => {
         setLoading(true);
         try {
-            const response = await fetchWithAuth(`/user/convention`, {
+            const response = await fetchWithAuth(`/user/convention_filter`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,6 +67,7 @@ const Layout = () => {
             });
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
+            console.log('conventions', data);
             setConventions(data);
         } catch (error) {
             console.error('Error fetching conventions:', error);
