@@ -56,10 +56,10 @@ const SingleConvention = () => {
 
     const formatDescription = (desc) => {
         if (!desc) return null; // Handle case where desc is undefined or null
-    
+
         // Split the description by double newlines to separate paragraphs
         const paragraphs = desc.split(/\n\s*\n/);
-    
+
         return paragraphs.map((paragraph, index) => (
             <p key={index} className="text-white mt-3">
                 {/* For each paragraph, split it by single newlines and map each line to <span> */}
@@ -72,8 +72,8 @@ const SingleConvention = () => {
             </p>
         ));
     };
-    
-    
+
+
 
     // Get the current user ID from local storage
     const currentUserId = parseInt(localStorage.getItem('current_user_id'));
@@ -111,20 +111,39 @@ const SingleConvention = () => {
                     </div>
 
                     <p className='text-white mt-3'>{formatDescription(upcoming.convention_description)}</p>
-                    
-                     {/* Social media icons */}
-                        <div className='flex items-center gap-x-4 mt-4'>
-                            {upcoming.fb_url && (
-                                <a href={upcoming.fb_url} target="_blank" rel="noopener noreferrer">
-                                    <FaFacebook className="text-lightOrange hover:text-white" size={24} />
+
+                    <div className="flex items-center gap-x-4 mt-4">
+                        <p className="text-white">
+                            Website:{" "}
+                            {upcoming.website ? (
+                                <a
+                                    href={upcoming.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-lightOrange"
+                                >
+                                    {upcoming.website}
                                 </a>
+                            ) : (
+                               null
                             )}
-                            {upcoming.ig_url && (
-                                <a href={upcoming.ig_url} target="_blank" rel="noopener noreferrer">
-                                    <FaInstagram className="text-lightOrange hover:text-white" size={24} />
-                                </a>
-                            )}
-                        </div>
+                        </p>
+                    </div>
+
+
+                    {/* Social media icons */}
+                    <div className='flex items-center gap-x-4 mt-4'>
+                        {upcoming.fb_url && (
+                            <a href={upcoming.fb_url} target="_blank" rel="noopener noreferrer">
+                                <FaFacebook className="text-lightOrange hover:text-white" size={24} />
+                            </a>
+                        )}
+                        {upcoming.ig_url && (
+                            <a href={upcoming.ig_url} target="_blank" rel="noopener noreferrer">
+                                <FaInstagram className="text-lightOrange hover:text-white" size={24} />
+                            </a>
+                        )}
+                    </div>
                 </div>
 
                 {/* Right Section */}
@@ -150,7 +169,7 @@ const SingleConvention = () => {
                         />
                     </div>
 
-                    </div>
+                </div>
 
 
 

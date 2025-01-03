@@ -142,15 +142,12 @@ function Create() {
             errors.description = 'Convention Description is required';
         }
 
-        if (!formData.location) {
-            toastr.error('Convention Location is required');
-            errors.location = 'Convention Location is required';
-        }
+        // if (!formData.location) {
+        //     toastr.error('Convention Location is required');
+        //     errors.location = 'Convention Location is required';
+        // }
 
-        if (!formData.website) {
-            toastr.error('Convention Website is required');
-            errors.website = 'Convention Website is required';
-        }
+       
 
         if (!formData.state) {
             toastr.error('Convention State is required');
