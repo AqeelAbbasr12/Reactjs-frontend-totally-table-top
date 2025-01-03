@@ -55,6 +55,7 @@ import UserAnnouncementsPage from '../pages/UserAnnouncementsPage';
 import SingleAnnouncementPage from '../pages/SingleAnnouncementPage';
 import ContactUsPage from '../pages/ContactUsPage';
 import FeedbackPage from '../pages/FeedbackPage';
+import SoldPage from '../pages/SoldPage';
 // Admin
 
 import AdminLoginPage from '../pages/Admin/LoginPage';
@@ -76,6 +77,7 @@ import AdminSingleGamePage from '../pages/Admin/AdminSingleGamePage';
 import AdminMessagesPage from '../pages/Admin/AdminMessagePage';
 import AdminSingleEventPage from '../pages/Admin/AdminSingleEventPage';
 import ViewAccomodationPage from '../pages/ViewAccomodationPage';
+
 
 export const routing = [
   { id: 1, link: "/", element: <LoginPage />, public: true },
@@ -113,6 +115,7 @@ export const routing = [
   { id: 28, link: "/findfriends", element: <FindFriendPage />, protected: true },
   { id: 29, link: "/notification", element: <NotificationPage />, protected: true },
   { id: 30, link: "/sales", element: <SalesPage />, protected: true },
+  { id: 30, link: "/sold", element: <SoldPage />, protected: true },
   { id: 31, link: "/feed/:friendId?", element: <FeedPage />, protected: true },
   { id: 32, link: "/profile", element: <ProfilePage />, protected: true },
   { id: 33, link: "/ownFeed", element: <OwnFeedPage />, protected: true },

@@ -470,7 +470,7 @@ function Create() {
                                                             <Input holder="Name…" name="name" onChange={handleChange} />
 
 
-                                                            <Input holder="Title....." name="title" onChange={handleChange} />
+                                                            <Input holder="Publisher name" name="title" onChange={handleChange} />
 
                                                             <textarea
                                                                 name="description"
@@ -569,7 +569,7 @@ function Create() {
                                                                 </p>
                                                             )}
                                                             <Input holder="Name…" name="name" onChange={handleChange} />
-                                                            <Input holder="Title....." name="title" onChange={handleChange} />
+                                                            <Input holder="Publisher name" name="title" onChange={handleChange} />
 
                                                             <textarea
                                                                 name="description"

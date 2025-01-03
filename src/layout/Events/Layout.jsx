@@ -7,6 +7,7 @@ import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
 import { FaLocationDot } from 'react-icons/fa6'
 import { fetchWithAuth } from "../../services/apiService";
+import Swal from 'sweetalert2'; 
 import toastr from 'toastr';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -91,14 +92,25 @@ const Layout = () => {
     };
 
     const handleDelete = async (id) => {
-        // Show confirmation dialog
-        const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
-
-        if (!confirmed) {
-            return; // Exit the function if the user cancels
+        // Show confirmation dialog using Swal
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to undo this action!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        });
+    
+        // Exit if the user cancels
+        if (!result.isConfirmed) {
+            return;
         }
-
+    
         try {
+            // API call to delete the event
             const response = await fetch(`${API_BASE_URL}/user/convention_event/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -106,20 +118,21 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
-
+    
             if (response.ok) {
-                // Show success message
-                toastr.success('Event deleted successfully!');
-                fetchEvents(convention_id); // Refresh the events list
+                // Show success message using Swal
+                Swal.fire('Deleted!', 'The event has been deleted successfully.', 'success');
+                fetchEvents(convention_id); // Refresh events list
             } else {
-                console.error('Failed to delete event', response.statusText);
-                // Optionally show an error message
+                // Show error message using Swal
+                Swal.fire('Error!', 'Failed to delete the event. Please try again later.', 'error');
             }
         } catch (error) {
-            console.error('Error deleting event:', error);
-            // Optionally show an error message
+            // Handle any errors and show error alert
+            Swal.fire('Error!', 'An error occurred while deleting the event.', 'error');
         }
     };
+    
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>

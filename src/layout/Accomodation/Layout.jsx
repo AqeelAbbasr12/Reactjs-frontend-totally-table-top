@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
+import Swal from 'sweetalert2'; 
 import toastr from 'toastr';
 import { fetchWithAuth } from '../../services/apiService';
 
@@ -90,34 +91,47 @@ const Layout = () => {
     };
 
     const handleDelete = async (id) => {
-
+        // Show confirmation dialog using Swal
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to undo this action!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        });
+    
+        // Exit if the user cancels
+        if (!result.isConfirmed) {
+            return;
+        }
+    
         try {
+            // API call to delete the accommodation
             const response = await fetch(`${API_BASE_URL}/user/convention_accommodation/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                    // Add other headers if necessary, such as Authorization
                 },
             });
-
+    
             if (response.ok) {
-                // Optionally show a success message
-                toastr.success('Accommodation deleted successfully!');
-
-                fetchAccommodation(convention_id);
-
-                // Change to the desired route
+                // Show success message
+                Swal.fire('Deleted!', 'Accommodation has been deleted successfully.', 'success');
+                fetchAccommodation(convention_id); // Refresh accommodation list
             } else {
-                // console.error('Failed to delete accommodation', response.statusText);
-                // Optionally show an error message
+                // Show error message
+                Swal.fire('Error!', 'Failed to delete the accommodation. Please try again later.', 'error');
             }
         } catch (error) {
-            // console.error('Error deleting accommodation:', error);
-            // Optionally show an error message
+            // Handle any errors and show error alert
+            Swal.fire('Error!', 'An error occurred while deleting the accommodation.', 'error');
         }
-
-    }
+    };
+    
 
     return (
         <div className='flex flex-col w-[100vw] h-[100vh] overflow-y-auto'>

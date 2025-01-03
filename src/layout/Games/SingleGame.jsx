@@ -160,8 +160,29 @@ const SingleGame = () => {
 
                 {/* Left Section */}
                 <div className='flex-1'>
-                    <h1 className='text-white text-3xl font-semibold'>{game.game_name}</h1>
+                    <h1 className='text-white text-3xl font-semibold'>{game.game_name} </h1>
+                    <div className='flex gap-x-2 mt-2 items-center'>
+
+                        <p className='text-white font-semibold'>
+                            Original Price
+                            <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                {game.game_currency_symbol}{game.game_price}
+                            </span>
+                        </p>
+
+                        <div className='w-[1px] h-[1rem]  bg-white'></div>
+                        <p className='text-white font-semibold'>{game.game_condition}</p>
+                        <div className='w-[1px] h-[1rem] bg-white'></div>
+                        <p className='text-red font-semibold'>
+                            Sold Price
+                            <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                {game.game_currency_symbol}{game.sold_price}
+                            </span>
+                        </p>
+
+                    </div>
                     <p className='text-white mt-2'>{formatGameDate(game.game_created_at)} Game</p>
+
                     <p className='text-white mt-3'>{formatDescription(game.game_desc)}</p>
 
                     <div className='flex items-center gap-x-4 mt-4'>

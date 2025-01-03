@@ -96,28 +96,38 @@ const Left = () => {
         <div className='w-[100%] h-[1px] bg-lightGray mt-4 mb-4'></div>
         <Link className='block mb-2 text-white cursor-pointer'><i>Quick Links</i></Link>
         <Link className='block mb-2 text-white cursor-pointer' to={"/upcoming-convention"}>Upcoming conventions</Link>
-        <Link className='block mb-2 text-white cursor-pointer' to={"/sales"}>Game for sale</Link>
+        <Link className='block mb-2 text-white cursor-pointer' to={"/sales"}>Games for sale</Link>
+        <Link className='block mb-2 text-white cursor-pointer' to={"/sold"}>Sold Games</Link>
         <Link className='block mb-2 text-white cursor-pointer' to={"/find_a_table"}>Find a Table</Link>
       </div>
 
       {/* 2nd Position Advertisement */}
       <div className="flex justify-center">
-        {loading ? (
-          <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
-        ) : (
-          announcements.find(item => item.position_of_picture === '2nd_position') && (
-            <img
-              src={
-                announcements.find(item => item.position_of_picture === '2nd_position').advert_logo
-              }
-              alt={
-                announcements.find(item => item.position_of_picture === '2nd_position').name
-              }
-              className='w-[15rem] h-[20rem] rounded-md'
-            />
-          )
-        )}
-      </div>
+  {loading ? (
+    <div 
+      className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"
+    ></div>
+  ) : (
+    // Find the announcement with 2nd position
+    announcements.find(item => item.position_of_picture === '2nd_position') && (
+      <img
+        src={
+          announcements.find(item => item.position_of_picture === '2nd_position').advert_logo
+        }
+        alt={
+          announcements.find(item => item.position_of_picture === '2nd_position').name
+        }
+        className='w-[15rem] h-[20rem] rounded-md cursor-pointer'
+        // Open URL when image is clicked
+        onClick={() => {
+          const announcement = announcements.find(item => item.position_of_picture === '2nd_position');
+          window.open(announcement.url, '_blank'); // Open URL in a new tab
+        }}
+      />
+    )
+  )}
+</div>
+
     </div>
   );
   

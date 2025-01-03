@@ -686,28 +686,28 @@ function Edit() {
                                                                     {formErrors.name}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
+                                                            <Input holder="name…" name="name" onChange={handleChange} value={formData.name} />
 
 
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} value={formData.title} />
+                                                            <Input holder="Publisher name" name="title" onChange={handleChange} value={formData.title} />
 
                                                             <textarea
                                                                 name="description"
                                                                 className='w-full text-white mb-5 bg-[#102F47] p-4 focus:outline-none resize-none text-sm leading-3 sm:text-xl sm:leading-7 md:text-2xl md:leading-10 lg:text-28 lg:leading-35 tracking-[0.56px]'
-                                                                placeholder='Announcement description…'
+                                                                placeholder='Description…'
                                                                 rows="5"
                                                                 value={formData.description}
                                                                 onChange={handleChange}
                                                                 style={{ minHeight: '150px' }}
                                                             />
-                                                            <Input holder="Announcement call to action text…" name="call_to_action" onChange={handleChange} value={formData.call_to_action} />
+                                                            <Input holder="call to action text…" name="call_to_action" onChange={handleChange} value={formData.call_to_action} />
 
                                                             {formErrors.url && (
                                                                 <p className="text-red text-sm sm:text-base mt-1 ml-2">
                                                                     {formErrors.url}
                                                                 </p>
                                                             )}
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
+                                                            <Input holder="URL…" name="url" onChange={handleChange} value={formData.url} />
                                                             <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-y-5 pb-10'>
                                                                 <div className=' flex flex-col items-center xl:items-start'>
                                                                     <div className='my-[18px] md:my-[38px] w-11/12 bg-[#0D2539] mx-auto flex items-center justify-center lg:justify-start'>
@@ -808,19 +808,19 @@ function Edit() {
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Announcement Details</span>
                                                         <div className=' mt-[37px] mb-[52px] pb-10'>
 
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
-                                                            <Input holder="Announcement Title....." name="title" onChange={handleChange} value={formData.title} />
+                                                            <Input holder="name…" name="name" onChange={handleChange} value={formData.name} />
+                                                            <Input holder="Publisher name....." name="title" onChange={handleChange} value={formData.title} />
 
                                                             <textarea
-                                                                name="description"
+                                                                name="Description"
                                                                 className='w-full text-white mb-5 bg-[#102F47] p-4 focus:outline-none resize-none text-sm leading-3 sm:text-xl sm:leading-7 md:text-2xl md:leading-10 lg:text-28 lg:leading-35 tracking-[0.56px]'
-                                                                placeholder='Announcement description…'
+                                                                placeholder='Description…'
                                                                 rows="5"
                                                                 value={formData.description}
                                                                 onChange={handleChange}
                                                                 style={{ minHeight: '150px' }}
                                                             />
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
+                                                            <Input holder="URL…" name="url" onChange={handleChange} value={formData.url} />
                                                             <select
                                                                 name="position_of_announcement"
                                                                 className="w-full text-white bg-[#102F47] p-[1.5rem] focus:outline-none"
@@ -890,8 +890,8 @@ function Edit() {
                                                         <span className='text-2xl md:text-35 md:leading-63 font-palanquin-dark'>Picture Details</span>
                                                         <div className=' mt-[37px] mb-[52px]'>
 
-                                                            <Input holder="Announcement name…" name="name" onChange={handleChange} value={formData.name} />
-                                                            <Input holder="Announcement URL…" name="url" onChange={handleChange} value={formData.url} />
+                                                            <Input holder="Name…" name="name" onChange={handleChange} value={formData.name} />
+                                                            <Input holder="URL…" name="url" onChange={handleChange} value={formData.url} />
                                                             <div className="mt-4">
                                                                 <select
                                                                     name="position_of_picture"

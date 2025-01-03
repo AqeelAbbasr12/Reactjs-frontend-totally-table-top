@@ -190,6 +190,8 @@ function Create() {
         formDataToSend.append('location', formData.location); // Changed from location_address to location
         formDataToSend.append('website', formData.website); // Changed from location_website to website
         formDataToSend.append('state', formData.state); // Changed from location_website to website
+        formDataToSend.append('fb_url', formData.fb_url); // Changed from location_website to website
+        formDataToSend.append('ig_url', formData.ig_url); // Changed from location_website to website
 
         // Since the original fields didn't have 'from_date' and 'to_date', you may want to send the dates as a single array
         formDataToSend.append('date', formData.dates); // Send date array as a JSON string

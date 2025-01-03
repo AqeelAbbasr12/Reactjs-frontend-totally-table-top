@@ -56,14 +56,24 @@ const SingleConvention = () => {
 
     const formatDescription = (desc) => {
         if (!desc) return null; // Handle case where desc is undefined or null
-
-        return desc.split(/[\r\n]+/).map((line, index) => (
-            <React.Fragment key={index}>
-                {line}
-                <br />
-            </React.Fragment>
+    
+        // Split the description by double newlines to separate paragraphs
+        const paragraphs = desc.split(/\n\s*\n/);
+    
+        return paragraphs.map((paragraph, index) => (
+            <p key={index} className="text-white mt-3">
+                {/* For each paragraph, split it by single newlines and map each line to <span> */}
+                {paragraph.split(/\n/).map((line, lineIndex) => (
+                    <React.Fragment key={lineIndex}>
+                        {line}
+                        <br />
+                    </React.Fragment>
+                ))}
+            </p>
         ));
     };
+    
+    
 
     // Get the current user ID from local storage
     const currentUserId = parseInt(localStorage.getItem('current_user_id'));

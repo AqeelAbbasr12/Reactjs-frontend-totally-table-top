@@ -24,6 +24,8 @@ const Layout = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedConvention, setSelectedConvention] = useState(null);
     const [selectedConditions, setSelectedConditions] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(""); // New State for Country
+
     const dummyList = ['Brand new', 'Excellent', 'Good', 'Fair', 'Below Average'];
 
     useEffect(() => {
@@ -33,12 +35,12 @@ const Layout = () => {
 
     useEffect(() => {
         applyFilters();
-    }, [games, searchQuery, selectedConvention, selectedConditions]);
+    }, [games, searchQuery, selectedConvention, selectedConditions, selectedCountry]);
 
     const fetchGames = async () => {
         setLoading(true);
         try {
-            const response = await fetchWithAuth(`/user/game_for_sale`, {
+            const response = await fetchWithAuth(`/user/sold_games`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,6 +49,7 @@ const Layout = () => {
             });
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
+            console.log('sold games', data);
             setGames(data);
         } catch (error) {
             console.error('Error fetching games:', error);
@@ -67,7 +70,7 @@ const Layout = () => {
             });
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
-            console.log('conventions', data);
+            console.log('filter', data);
             setConventions(data);
         } catch (error) {
             console.error('Error fetching conventions:', error);
@@ -78,28 +81,40 @@ const Layout = () => {
 
     const applyFilters = () => {
         let filtered = [...games];
-
+    
         // Search filter
         if (searchQuery) {
             filtered = filtered.filter(game =>
                 game.game_name.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
-
+    
+        // Country filter
+        if (selectedCountry) {
+    
+            filtered = filtered.filter(game => {
+                const convention = conventions.find(c => c.id === game.convention_id);
+                return convention && convention.convention_state === selectedCountry;
+            });
+        }
+    
         // Convention filter
         if (selectedConvention) {
             filtered = filtered.filter(game => game.convention_id === selectedConvention);
         }
-
+    
         // Condition filter
         if (selectedConditions.length > 0) {
             filtered = filtered.filter(game =>
                 selectedConditions.includes(game.game_condition)
             );
         }
-
+    
         setFilteredGames(filtered);
     };
+    
+    
+
 
     return (
         <div className='flex flex-col w-[100vw] min-h-[100vh] max-h-fit overflow-y-auto bg-darkBlue'>
@@ -111,7 +126,7 @@ const Layout = () => {
             <Navbar type={"verified"} />
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] pt-3 overflow-y-auto'>
                 <div className='flex justify-between items-center'>
-                    <h1 className='text-3xl font-semibold text-white'>Games for sale</h1>
+                    <h1 className='text-3xl font-semibold text-white'>Sold Games </h1>
                     <div className='flex gap-x-2 items-center'>
                         <p className='text-white'>{filteredGames.length} games for sale</p>
                         <div className='border border-lightOrange flex items-center w-[fit] justify-center h-[2rem]'>
@@ -138,6 +153,22 @@ const Layout = () => {
                                                     <div className='w-[1px] h-[1rem] bg-white'></div>
                                                     <p className='text-white'>{game.game_condition}</p>
                                                 </div>
+                                                <div className='flex gap-x-2 items-center mx-2'>
+                                                    <p className='text-white'>
+                                                        Sold By:
+                                                        <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                                            {game.user_name}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div className='flex gap-x-2 items-center mx-2'>
+                                                    <p className='text-red'>
+                                                        Sold Price
+                                                        <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                                            {game.game_currency_symbol}{game.sold_price}
+                                                        </span>
+                                                    </p>
+                                                </div>
                                             </div>
                                         ))
                                     }
@@ -163,6 +194,14 @@ const Layout = () => {
                                                         {game.game_status === "sold" && (
                                                             <span className="text-red font-bold ml-2">(SOLD)</span>
                                                         )}
+
+
+                                                    </span>
+                                                    <span className="py-2 mx-2 text-white font-bold">
+                                                        Country: {game.convention_state}
+
+
+
                                                     </span>
                                                 </p>
                                                 <div className='flex gap-x-2 items-center mx-2'>
@@ -172,7 +211,16 @@ const Layout = () => {
                                                     </p>
                                                     <div className='w-[1px] h-[1rem] bg-white'></div>
                                                     <p className='text-white'>{game.game_condition}</p>
+                                                    <div className='w-[1px] h-[1rem] bg-white'></div>
+                                                    <p className='text-red'>
+                                                        Sold Price
+                                                        <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                                            {game.game_currency_symbol}{game.sold_price}
+                                                        </span>
+                                                    </p>
+
                                                 </div>
+
                                             </div>
                                         </div>
                                     ))}
@@ -197,7 +245,7 @@ const Layout = () => {
                             className={"w-full h-[2.3rem] rounded-md px-2 bg-darkBlue outline-none text-white"}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-
+                        
                         <h1 className=' text-white font-semibold mt-2 mb-2'>Show By Convention</h1>
                         <select
                             className="w-full h-[2.3rem] bg-darkBlue text-white rounded-md"
@@ -210,6 +258,62 @@ const Layout = () => {
                                     {convention.convention_name}
                                 </option>
                             ))}
+                        </select>
+
+                        <h1 className='text-white font-semibold mt-2 mb-2'>Show By Country</h1>
+                        <select
+                            className="w-full h-[2.3rem] bg-darkBlue text-white rounded-md"
+                            onChange={(e) => setSelectedCountry(e.target.value)} // Set selected country
+                            value={selectedCountry || ""}
+                        >
+                            <option value="" disabled>Select a Country</option> {/* Placeholder */}
+                            <option value="">All Countries</option> {/* Default option for all countries */}
+                            <option value="Argentina">Argentina</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Austria">Austria</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="Bulgaria">Bulgaria</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Chile">Chile</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="Croatia">Croatia</option>
+                            <option value="Cyprus">Cyprus</option>
+                            <option value="Czech Republic">Czech Republic</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Estonia">Estonia</option>
+                            <option value="Finland">Finland</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Greece">Greece</option>
+                            <option value="Hungary">Hungary</option>
+                            <option value="Iceland">Iceland</option>
+                            <option value="Ireland">Ireland</option>
+                            <option value="Italy">Italy</option>
+                            <option value="India">India</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Latvia">Latvia</option>
+                            <option value="Lithuania">Lithuania</option>
+                            <option value="Luxembourg">Luxembourg</option>
+                            <option value="Malta">Malta</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Norway">Norway</option>
+                            <option value="Peru">Peru</option>
+                            <option value="Poland">Poland</option>
+                            <option value="Portugal">Portugal</option>
+                            <option value="Romania">Romania</option>
+                            <option value="Slovakia">Slovakia</option>
+                            <option value="Slovenia">Slovenia</option>
+                            <option value="Spain">Spain</option>
+                            <option value="Sweden">Sweden</option>
+                            <option value="Switzerland">Switzerland</option>
+                            <option value="South Korea">South Korea</option>
+                            <option value="Thailand">Thailand</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="USA">USA</option>
+                            <option value="Uruguay">Uruguay</option>
+                            <option value="Venezuela">Venezuela</option>
                         </select>
 
                         <h1 className=' text-white font-semibold mt-2 mb-2'>Condition</h1>

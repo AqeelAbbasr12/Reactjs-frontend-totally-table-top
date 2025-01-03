@@ -180,6 +180,7 @@ const Layout = () => {
 
       const data = await response.json();
 
+      console.log('announcement',data);
       // Filter and sort the data
       const pictureAnnouncements = data.filter(
         (item) => item.type === 'Picture' && item.position_of_picture
@@ -226,7 +227,10 @@ const Layout = () => {
           ) : null}
           {/* Render 1st position at the top */}
           {announcements[0] && announcements[0].position_of_picture === '1st_position' && (
-            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            <div 
+            className='flex items-center gap-x-[1rem] my-[1rem]'
+            onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            >
               <img
                 src={announcements[0].advert_logo}
                 alt={announcements[0].name}
@@ -321,7 +325,10 @@ const Layout = () => {
 
           {/* 3rd Position Advert Logo */}
           {announcements.length > 0 && announcements.find(a => a.position_of_picture === '3rd_position') && (
-            <div className='mt-6 flex justify-center'>
+            <div 
+            className='mt-6 flex justify-center'
+            onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            >
               <img
                 src={announcements.find(a => a.position_of_picture === '3rd_position').advert_logo}
                 alt="3rd Position Ad"

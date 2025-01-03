@@ -100,7 +100,7 @@ const NextAgenda = () => {
             </div>
 
 
-            <div className='md:px-[2rem] px-[1rem] bg-darkBlue w-[100vw] pt-3 flex justify-center items-center'>
+            <div className='md:px-[2rem] h-[86vh] px-[1rem] bg-darkBlue w-[100vw] pt-3 flex justify-center items-center'>
 
                 <div className='sm:w-[50%] w-[100%] bg-[#0d2539]  px-3 py-5 rounded-md mb-8 mt-6'>
                     <div className='flex justify-center items-center'>

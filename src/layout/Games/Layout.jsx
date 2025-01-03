@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../../components/Navbar'
-import FaceImage from '../../assets/profile.jpeg'
 import ConventionImage from '../../assets/traditional.png'
-import { FaCalendarAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
 import { useParams } from 'react-router-dom';
-import { FaLocationDot } from 'react-icons/fa6'
+import Swal from 'sweetalert2';
 import { fetchWithAuth } from "../../services/apiService";
 import toastr from 'toastr';
 
@@ -78,14 +76,25 @@ const Layout = () => {
     };
 
     const handleDelete = async (id) => {
-        // Show confirmation dialog
-        const confirmed = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
+        // Show confirmation dialog using Swal
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to undo this action!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        });
 
-        if (!confirmed) {
-            return; // Exit the function if the user cancels
+        // Exit if the user cancels
+        if (!result.isConfirmed) {
+            return;
         }
 
         try {
+            // Make API call to delete the event
             const response = await fetch(`${API_BASE_URL}/user/convention_game/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -95,29 +104,60 @@ const Layout = () => {
             });
 
             if (response.ok) {
-                // Show success message
-                toastr.success('Game deleted successfully!');
-                fetchGames(convention_id); // Refresh the events list
+                // Show success message using Swal
+                Swal.fire('Deleted!', 'The game has been deleted successfully.', 'success');
+                fetchGames(convention_id); // Refresh the game list
             } else {
-                // console.error('Failed to delete game', response.statusText);
-                // Optionally show an error message
+                // Show error message using Swal
+                Swal.fire('Error!', 'Failed to delete the game. Please try again later.', 'error');
             }
         } catch (error) {
-            // console.error('Error deleting game:', error);
-            // Optionally show an error message
+            // Handle errors
+            Swal.fire('Error!', 'An error occurred while deleting the game.', 'error');
         }
     };
 
 
-    const handleMarkAsSold = async (id) => {
-        // Show confirmation dialog
-        const confirmed = window.confirm("Are you sure you want to Mark this Game as Sold? This action cannot be undone.");
 
-        if (!confirmed) {
-            return; // Exit the function if the user cancels
+    const handleMarkAsSold = async (id) => {
+        // Show confirmation dialog using Swal
+        const { value: soldPrice } = await Swal.fire({
+            title: 'Mark Game as Sold',
+            input: 'text', // Use text input for better control
+            inputLabel: 'Enter Sold Price (Min: 1, Max: 1,00,0000)',
+            inputPlaceholder: 'Enter price...',
+            showCancelButton: true,
+            confirmButtonText: 'Mark as Sold',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                // Trim any spaces
+                value = value.trim();
+
+                // Check if value is a valid integer
+                if (!/^\d+$/.test(value)) {
+                    return 'Price must be a valid integer!';
+                }
+
+                // Convert value to a number
+                const price = parseInt(value, 10);
+
+                // Enforce min, max, and length validation
+                if (price < 1 || price > 1000000) {
+                    return 'Price must be between 1 and 1,00,0000!';
+                }
+                if (value.length > 5) {
+                    return 'Price is too large!';
+                }
+            }
+        });
+
+        // If user cancels the input
+        if (!soldPrice) {
+            return; // Exit the function
         }
 
         try {
+            // API call to mark the game as sold
             const response = await fetch(`${API_BASE_URL}/user/mark_game_as_sold/${id}`, {
                 method: 'POST',
                 headers: {
@@ -125,23 +165,27 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
                 body: JSON.stringify({
-                    status: 'sold' // Set the status to 'sold'
+                    status: 'sold',        // Set the status to 'sold'
+                    sold_price: soldPrice // Add sold_price field
                 })
             });
 
             if (response.ok) {
-                // Show success message
-                toastr.success('Game marked as sold successfully!');
+                // Show success message using Swal
+                Swal.fire('Success', 'Game marked as sold successfully!', 'success');
                 fetchGames(convention_id); // Refresh the game list
             } else {
-                // console.error('Failed to update game', response.statusText);
-                // Optionally show an error message
+                // Show error message if request fails
+                Swal.fire('Error', 'Failed to mark the game as sold. Please try again!', 'error');
             }
         } catch (error) {
-            // console.error('Error updating game:', error);
-            // Optionally show an error message
+            // Handle network or server error
+            Swal.fire('Error', 'An error occurred while updating the game.', 'error');
         }
     };
+
+
+
 
 
     return (
@@ -154,7 +198,7 @@ const Layout = () => {
             <Navbar type={"verified"} />
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
-            <a href="/profile" className='text-white'>
+                <a href="/profile" className='text-white'>
                     Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
@@ -206,6 +250,13 @@ const Layout = () => {
                                         </p>
                                         <div className="w-[1px] h-[1rem] bg-white"></div>
                                         <p className="text-white">{game.game_condition}</p>
+                                        <div className='w-[1px] h-[1rem] bg-white'></div>
+                                        <p className='text-red'>
+                                            Sold Price
+                                            <span className="ml-1"> {/* Adds a margin-left for spacing */}
+                                                {game.game_currency_symbol}{game.sold_price}
+                                            </span>
+                                        </p>
                                     </div>
 
                                     {/* Buttons Section */}
@@ -218,8 +269,8 @@ const Layout = () => {
                                             }
                                             title={game.game_status === "publish" ? "Mark as sold" : "Sold"}
                                             className={`w-full sm:w-[8rem] h-[2.3rem] rounded-md text-white ${game.game_status === "publish"
-                                                    ? "bg-lightOrange cursor-pointer"
-                                                    : "bg-red cursor-not-allowed"
+                                                ? "bg-lightOrange cursor-pointer"
+                                                : "bg-red cursor-not-allowed"
                                                 }`}
                                         />
                                         <Button
@@ -242,7 +293,7 @@ const Layout = () => {
                                     <img
                                         src={game.game_image}
                                         alt=""
-                                        className="h-[10rem] w-full sm:w-auto sm:absolute top-0 right-0 object-cover"
+                                        className="h-[10rem] w-full sm:w-auto sm:absolute top-[20px] right-[20px] object-cover"
                                     />
                                 </div>
                             </div>

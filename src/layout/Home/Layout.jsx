@@ -45,7 +45,7 @@ const Layout = () => {
 
     if (userData.is_visited_sale_game === '1') {
       setCurrentStep(5); // Sales visited - move to Step 5
-    }else if (userData.is_steps_complete === '1') {
+    } else if (userData.is_steps_complete === '1') {
       setCurrentStep(6); // Friends step
     } else if (userData.total_friends_for_step > 0) {
       setCurrentStep(4); // Friends step
@@ -132,7 +132,7 @@ const Layout = () => {
   };
 
   const onhandleView = (id) => {
-    navigate(`/single/announcement/${id}`); // Use the id to navigate to the specific edit page
+    nav(`/single/announcement/${id}`); // Use the id to navigate to the specific edit page
   };
 
   const fetchProfile = async () => {
@@ -177,6 +177,7 @@ const Layout = () => {
 
       const data = await response.json();
       setAnnouncements(data);
+      console.log('announcement', data);
     } catch (error) {
       console.error('Error fetching announcements:', error);
     } finally {
@@ -313,7 +314,7 @@ const Layout = () => {
                 <table className="w-full table-auto">
                   <tbody>
                     {announcements
-                      .filter((a) => a.type === 'Announcement') // Filter by type 'Feature'
+                      .filter((a) => a.type === 'Announcement') // Filter by type 'Announcement'
                       .map((announcement, index) => (
                         <Link
                           key={announcement.id}
@@ -321,11 +322,10 @@ const Layout = () => {
                           className="block w-full"
                         >
                           <tr
-                            className={`w-full flex flex-wrap items-center py-5 px-4 sm:px-8 ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'
-                              }`}
+                            className={`w-full flex flex-wrap items-center py-4 px-4 ${index % 2 === 0 ? 'bg-[#0D2539]' : 'bg-[#102F47]'}`}
                           >
                             {/* Image and Name */}
-                            <td className="flex items-center gap-x-4 sm:gap-x-10 w-full sm:w-1/3 mb-3 sm:mb-0">
+                            <td className="flex items-center gap-x-4 w-full sm:w-1/4 mb-3 sm:mb-0">
                               {/* Image */}
                               <img
                                 src={
@@ -337,37 +337,40 @@ const Layout = () => {
                                         ? announcement.advert_logo
                                         : ConventionImage
                                 }
-                                className="w-10 h-10 sm:w-16 sm:h-16 rounded-full object-cover"
+                                className="w-10 h-10 rounded-full object-cover"
                                 alt="Convention Logo"
                               />
 
                               {/* Name */}
                               <div className="flex flex-col justify-center">
-                                <span className="font-mulish text-white text-sm sm:text-md leading-6 sm:leading-7">
+                                <span className="font-mulish text-white text-sm leading-6">
                                   {announcement.name}
                                 </span>
                               </div>
                             </td>
 
+                            {/* Title */}
+                            <td className="py-4 px-4 text-center text-white font-mulish text-sm leading-5 w-full sm:w-1/4 whitespace-nowrap">
+                              {announcement.title}
+                            </td>
+
                             {/* Date */}
-                            <td className="text-center w-full sm:w-1/3 mb-3 sm:mb-0">
-                              <span className="font-mulish text-white text-xs sm:text-sm leading-5">
-                                {announcement.created_at}
-                              </span>
+                            <td className="text-center text-white font-mulish text-sm leading-5 w-full sm:w-1/4 mb-3 sm:mb-0">
+                              {announcement.created_at}
                             </td>
 
                             {/* Status Buttons */}
-                            <td className="flex justify-center sm:justify-end items-center gap-x-2 sm:gap-x-5 w-full sm:w-1/3">
+                            <td className="flex justify-center sm:justify-end items-center gap-x-2 w-full sm:w-1/4">
                               {/* Feature Status */}
                               {announcement.feature === '1' && (
-                                <button className="bg-[#F3C15F] text-black px-2 py-1 rounded text-xs sm:text-sm">
+                                <button className="bg-[#F3C15F] text-black px-2 py-1 rounded text-xs">
                                   Featured
                                 </button>
                               )}
 
                               {/* View Button */}
                               <span
-                                className="cursor-pointer font-mulish text-white text-sm sm:text-lg"
+                                className="cursor-pointer font-mulish text-white text-sm"
                                 onClick={() => onhandleView(announcement.id)}
                               >
                                 View
@@ -379,6 +382,7 @@ const Layout = () => {
                   </tbody>
                 </table>
               </div>
+
             </div>
 
 

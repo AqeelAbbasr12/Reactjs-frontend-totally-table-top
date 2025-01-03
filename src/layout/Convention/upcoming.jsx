@@ -22,6 +22,7 @@ const upcoming = () => {
   const [GameItem, setGame] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
 
 
@@ -80,22 +81,22 @@ const upcoming = () => {
     { label: "USA", value: "USA" },
     { label: "Venezuela", value: "Venezuela" }
   ];
-  
+
 
 
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-  
+
     // Filter conventions based on the selected country
     const filteredData = option === "All"
       ? conventions // Show all conventions if "All" is selected
       : conventions.filter(convention => convention.convention_state === option);
-  
+
     setFilteredConventions(filteredData);
   };
-  
+
 
 
   const toggleDropdown = () => {
@@ -136,6 +137,13 @@ const upcoming = () => {
     fetchAgendas(id);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Update search term
+  };
+
+  const filteredCountries = countries.filter((country) =>
+    country.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   // Fetch saved attendance data
   const fetchAttendanceData = async (id) => {
     try {
@@ -253,7 +261,7 @@ const upcoming = () => {
       }
 
       const data = await response.json();
-      
+
       // Filter and sort the data
       const pictureAnnouncements = data.filter(
         (item) => item.type === 'Picture' && item.position_of_picture
@@ -291,15 +299,18 @@ const upcoming = () => {
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 md:mt-0 mt-4 w-[100%]'>
 
-        {/* Show loading spinner */}
-        {loading ? (
+          {/* Show loading spinner */}
+          {loading ? (
             <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
               <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-lightOrange"></div>
             </div>
           ) : null}
           {/* Render 1st position at the top */}
           {announcements[0] && announcements[0].position_of_picture === '1st_position' && (
-            <div className='flex items-center gap-x-[1rem] my-[1rem]'>
+            <div
+              className='flex items-center gap-x-[1rem] my-[1rem]'
+              onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            >
               <img
                 src={announcements[0].advert_logo}
                 alt={announcements[0].name}
@@ -319,14 +330,26 @@ const upcoming = () => {
                 onClick={toggleDropdown}
               >
                 {selectedOption || "Select a country"}
-                <img src={drop} alt="" />
+                <img src={drop} alt="Dropdown icon" />
               </button>
 
               {isDropdownOpen && (
                 <div
                   className="absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50 max-h-64 overflow-y-auto"
-                  style={{ maxHeight: '300px' }} // Maximum height for the dropdown
+                  style={{ maxHeight: "300px" }} // Maximum height for the dropdown
                 >
+                  {/* Search Input */}
+                  <div className="p-2">
+                    <input
+                      type="text"
+                      className="w-full p-2 bg-darkBlue text-white rounded"
+                      placeholder="Search for a country..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+
+                  {/* Country List */}
                   <ul className="divide-y divide-gray-600">
                     <li
                       className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
@@ -334,7 +357,7 @@ const upcoming = () => {
                     >
                       All
                     </li>
-                    {countries.map((country) => (
+                    {filteredCountries.map((country) => (
                       <li
                         key={country.value}
                         className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
@@ -452,7 +475,10 @@ const upcoming = () => {
 
           {/* 3rd Position Advert Logo */}
           {announcements.length > 0 && announcements.find(a => a.position_of_picture === '3rd_position') && (
-            <div className='mt-6 flex justify-center'>
+            <div
+              className='mt-6 flex justify-center'
+              onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            >
               <img
                 src={announcements.find(a => a.position_of_picture === '3rd_position').advert_logo}
                 alt="3rd Position Ad"
