@@ -5,14 +5,20 @@ import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
+import toastr from 'toastr';
 import { fetchWithAuth } from "../../services/apiService";
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
 const SingleConvention = () => {
-    const data = [1, 2, 3, 4, 5]
     const { convention_id } = useParams();
     const nav = useNavigate()
+    const [showPasswordInput, setShowPasswordInput] = useState(false);
+    const [password, setPassword] = useState('');
+    
     const [upcoming, setUpcominh] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -21,6 +27,27 @@ const SingleConvention = () => {
     }, []);
 
 
+
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+
+    });
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prevState) => ({
+            ...prevState,
+            [field]: !prevState[field],
+        }));
+    };
+
+    const handleAttendanceClick = () => {
+        // Check if the convention is private and show the password input
+        if (upcoming.is_private === "1") {
+            toastr.warning('Private Convention Please Enter Password');
+            setShowPasswordInput(true); // Show password input if private
+        } else {
+            nav(`/convention/attendance/${convention_id}`); // If not private, navigate
+        }
+    };
 
     const fetchUpcominConvention = async () => {
         setLoading(true); // Show loading spinner while fetching
@@ -48,11 +75,6 @@ const SingleConvention = () => {
         }
     };
 
-    const formatGameDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { month: 'long', year: 'numeric' }; // Options for formatting
-        return date.toLocaleDateString('en-US', options); // Format the date
-    };
 
     const formatDescription = (desc) => {
         if (!desc) return null; // Handle case where desc is undefined or null
@@ -74,9 +96,77 @@ const SingleConvention = () => {
     };
 
 
+    const validateForm = () => {
+        const errors = {};
 
-    // Get the current user ID from local storage
-    const currentUserId = parseInt(localStorage.getItem('current_user_id'));
+        if (upcoming.is_private === "1" && !password) {
+            toastr.error('Password is required');
+            errors.password = 'Password is required';
+        }
+
+      
+        return Object.keys(errors).length === 0;
+    };
+
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault(); // Prevent default behavior
+    
+        // Validate the form
+        if (!validateForm()) {
+            return;
+        }
+    
+        const formDataToSend = new FormData();
+        formDataToSend.append('password', password); // Append password
+        formDataToSend.append('convention_id', upcoming.id); // Append convention_id
+    
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/convention_password`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                body: formDataToSend,
+            });
+    
+            // Handle non-200 responses
+            const result = await response.json(); // Parse the response JSON
+    
+            if (!response.ok) {
+                // Show dynamic error message from API response
+                toastr.error(result.message || 'Something went wrong.');
+                setPassword('');
+                return; // Exit function early
+            }
+    
+            if (response.ok) {
+                // Success case
+                toastr.success(result.message); // Show success message from API response
+    
+                // Store password in localStorage
+                localStorage.setItem('ConventionPassword', password);
+    
+                // Delay navigation by 2 seconds (2000 milliseconds)
+                setTimeout(() => {
+                    nav(`/convention/attendance/${convention_id}`);
+                }, 2000);
+    
+                setPassword('');
+            }
+    
+        } catch (error) {
+            // Catch block for network or parsing errors
+            console.error('Error submitting password:', error);
+    
+            // Handle the case when API response itself fails to parse
+            toastr.error('An error occurred. Please try again.');
+        }
+    };
+    
+
+
+
 
 
     return (
@@ -125,7 +215,7 @@ const SingleConvention = () => {
                                     {upcoming.website}
                                 </a>
                             ) : (
-                               null
+                                null
                             )}
                         </p>
                     </div>
@@ -159,15 +249,56 @@ const SingleConvention = () => {
                     </div>
 
                     {/* Centered Button */}
-                    <div className='flex justify-center my-4'>
+                    <div className='flex justify-center my-4 items-center'>
                         <Button
-                            onClickFunc={() => {
-                                nav(`/convention/attendance/${convention_id}`);
-                            }}
+                            onClickFunc={handleAttendanceClick} // Call the function when the button is clicked
                             title={"Confirm Your Attendance"}
                             className={`text-white bg-lightOrange w-[16rem] h-[2.3rem] rounded-md`}
                         />
+
+                        <div className='ml-4'>
+                            {upcoming.is_private === "1" ? (
+                                <button className='bg-red w-20 text-white px-2 py-1 rounded'>
+                                    Private
+                                </button>
+                            ) : (
+                                <button className='bg-[#4CAF50] w-20 text-white px-2 py-1 rounded'>
+                                    Public
+                                </button>
+                            )}
+                        </div>
                     </div>
+
+                    {/* Conditionally show the password input if the convention is private */}
+                    {showPasswordInput && upcoming.is_private === "1" && (
+                        <div className="mt-4 relative pl-4 pr-4 pb-4">
+                            <input
+                                type={showPasswords.password ? "text" : "password"}
+                                placeholder="Enter Password"
+                                value={password} // Bind the value to the state
+                                onChange={(e) => setPassword(e.target.value)} // Update password state
+                                className="w-full h-[2.3rem] rounded-md border border-color-white text-white px-4 mt-2 outline-none bg-[#0d2539]"
+                            />
+
+                            <span
+                                className="absolute top-[23%] right-7 transform -translate-y-[50%] cursor-pointer text-[#F77F00]"
+                                onClick={() => togglePasswordVisibility("password")}
+                            >
+                                {showPasswords.password ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                            </span>
+
+                            {/* Submit Button for Password */}
+                            <div className="mt-4 flex justify-center">
+                                <button
+                                    onClick={handlePasswordSubmit}
+                                    className="bg-lightOrange text-white w-[16rem] h-[2.3rem] rounded-md"
+                                >
+                                    Submit Password
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
 
                 </div>
 

@@ -15,23 +15,20 @@ const upcoming = () => {
   const [conventions, setConvention] = useState([]);
   const [selectedOption, setSelectedOption] = useState('Sort by Country...');
   const [filteredConventions, setFilteredConventions] = useState([]);
-  const [attendance, setAttendance] = useState();
-  const [AgendaItems, setItems] = useState([]);
-  const [AccommodationItem, setAccommodation] = useState([]);
-  const [EventItem, setEvent] = useState([]);
-  const [GameItem, setGame] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
+  const [selectedDateSort, setSelectedDateSort] = useState(""); // State for selected date sort
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false); // State for dropdown visibility
+
+  const toggleDateDropdown = () => {
+    setIsDateDropdownOpen(!isDateDropdownOpen); // Toggle dropdown visibility
+  };
 
 
   useEffect((id) => {
     fetchConventions();
-    fetchAgendas();
-    fetchAccommodation();
-    fetchEvent();
-    fetchGame();
     fetchAnnouncements();
   }, []);
 
@@ -99,6 +96,36 @@ const upcoming = () => {
 
 
 
+  const handleSort = (sortType) => {
+    setSelectedDateSort(sortType); // Update selected sort option
+    setIsDateDropdownOpen(false); // Close dropdown
+
+    // Clone conventions array for sorting
+    let sortedConventions = [...conventions];
+
+    if (sortType === "Nearest" || sortType === "Furthest") {
+      sortedConventions.sort((a, b) => {
+        const dateA = new Date(a.convention_dates[0]);
+        const dateB = new Date(b.convention_dates[0]);
+        return sortType === "Nearest" ? dateA - dateB : dateB - dateA;
+      });
+    } else if (sortType === "A to Z") {
+      sortedConventions.sort((a, b) =>
+        a.convention_name.localeCompare(b.convention_name)
+      );
+    } else if (sortType === "Z to A") {
+      sortedConventions.sort((a, b) =>
+        b.convention_name.localeCompare(a.convention_name)
+      );
+    }
+
+    setFilteredConventions(sortedConventions); // Update sorted conventions
+  };
+
+
+
+
+
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
   };
@@ -120,7 +147,7 @@ const upcoming = () => {
       const data = await response.json();
       setConvention(data);
       setFilteredConventions(data); // Initially show all conventions
-      // console.log(data);
+      console.log('conventions', data)
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {
@@ -169,81 +196,11 @@ const upcoming = () => {
       // console.error('Error fetching attendance data:', error);
     }
   };
-  const fetchAgendas = async () => {
-    try {
-      const response = await fetchWithAuth(`/user/convention_agenda`);
-      if (!response.ok) throw new Error('Failed to fetch agendas');
 
-      const data = await response.json();
-      // console.log('Agenda Items', data);
-      if (Array.isArray(data)) {
-        setItems(data);  // Only set if the response is an array
-      } else {
-        // console.error('Invalid data structure:', data);
-        setItems([]);
-      }
-    } catch (error) {
-      // console.error('Error fetching agendas:', error);
-      setItems([]);
-    }
-  };
 
-  const fetchAccommodation = async () => {
-    try {
-      const response = await fetchWithAuth(`/user/convention_accommodation`);
-      if (!response.ok) throw new Error('Failed to fetch accommodation');
 
-      const data = await response.json();
-      // console.log('Agenda Items', data);
-      if (Array.isArray(data)) {
-        setAccommodation(data);  // Only set if the response is an array
-      } else {
-        // console.error('Invalid data structure:', data);
-        setItems([]);
-      }
-    } catch (error) {
-      // console.error('Error fetching agendas:', error);
-      setItems([]);
-    }
-  };
 
-  const fetchEvent = async () => {
-    try {
-      const response = await fetchWithAuth(`/user/convention_event`);
-      if (!response.ok) throw new Error('Failed to fetch Event');
 
-      const data = await response.json();
-      // console.log('Agenda Event', data);
-      if (Array.isArray(data)) {
-        setEvent(data);  // Only set if the response is an array
-      } else {
-        // console.error('Invalid data structure:', data);
-        setItems([]);
-      }
-    } catch (error) {
-      // console.error('Error fetching agendas:', error);
-      setItems([]);
-    }
-  };
-
-  const fetchGame = async () => {
-    try {
-      const response = await fetchWithAuth(`/user/convention_game`);
-      if (!response.ok) throw new Error('Failed to fetch Game');
-
-      const data = await response.json();
-      // console.log('Agenda Games', data);
-      if (Array.isArray(data)) {
-        setGame(data);  // Only set if the response is an array
-      } else {
-        // console.error('Invalid data structure:', data);
-        setGame([]);
-      }
-    } catch (error) {
-      // console.error('Error fetching games:', error);
-      setGame([]);
-    }
-  };
 
   const fetchAnnouncements = async () => {
     setLoading(true);
@@ -318,63 +275,111 @@ const upcoming = () => {
               />
             </div>
           )}
-          <div className='flex justify-between items-center flex-col md:flex-row gap-y-2'>
+          <div className="flex justify-between items-center flex-col md:flex-row gap-y-2">
 
-            <h1 className='text-white text-2xl font-semibold'>Upcoming Conventions</h1>
+            {/* Heading */}
+            <h1 className="text-white text-2xl font-semibold">Upcoming Conventions</h1>
 
-            {/* Sort by Dropdown moved to the right */}
-            <div className="relative">
-              <button
-                type="button"
-                className="w-full lg:w-72 text-white border-2 px-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between"
-                onClick={toggleDropdown}
-              >
-                {selectedOption || "Select a country"}
-                <img src={drop} alt="Dropdown icon" />
-              </button>
-
-              {isDropdownOpen && (
-                <div
-                  className="absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50 max-h-64 overflow-y-auto"
-                  style={{ maxHeight: "300px" }} // Maximum height for the dropdown
+            {/* Sort Options */}
+            <div className="flex flex-wrap gap-4 items-center">
+              {/* Sort by Date Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  className="w-full lg:w-72 text-white border-2 px-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between"
+                  onClick={toggleDateDropdown} // Toggle dropdown visibility
                 >
-                  {/* Search Input */}
-                  <div className="p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 bg-darkBlue text-white rounded"
-                      placeholder="Search for a country..."
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                    />
-                  </div>
+                  {selectedDateSort || "Sort by Date....."}
+                  <img src={drop} alt="Dropdown icon" />
+                </button>
 
-                  {/* Country List */}
-                  <ul className="divide-y divide-gray-600">
-                    <li
-                      className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
-                      onClick={() => handleOptionClick("All")}
-                    >
-                      All
-                    </li>
-                    {filteredCountries.map((country) => (
+                {isDateDropdownOpen && (
+                  <div
+                    className="absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50 max-h-64 overflow-y-auto"
+                  >
+                    <ul className="divide-y divide-gray-600">
                       <li
-                        key={country.value}
                         className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
-                        onClick={() => handleOptionClick(country.value)}
+                        onClick={() => handleSort("Nearest")}
                       >
-                        {country.label}
+                        Nearest Date
                       </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                      <li
+                        className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                        onClick={() => handleSort("Furthest")}
+                      >
+                        Furthest Date
+                      </li>
+                      <li
+                        className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                        onClick={() => handleSort("A to Z")}
+                      >
+                        Name (A to Z)
+                      </li>
+                      <li
+                        className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                        onClick={() => handleSort("Z to A")}
+                      >
+                        Name (Z to A)
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+
+
+              {/* Sort by Country Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  className="w-full lg:w-72 text-white border-2 px-5 border-[#707070] text-lg md:text-xl lg:text-2xl py-2 md:py-3 flex items-center justify-between"
+                  onClick={toggleDropdown}
+                >
+                  {selectedOption || "Select a country"}
+                  <img src={drop} alt="Dropdown icon" />
+                </button>
+
+                {isDropdownOpen && (
+                  <div
+                    className="absolute text-white w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl z-50 max-h-64 overflow-y-auto"
+                    style={{ maxHeight: "300px" }}
+                  >
+                    {/* Search Input */}
+                    <div className="p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border bg-darkBlue text-white rounded"
+                        placeholder="Search for a country..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                      />
+                    </div>
+
+                    {/* Country List */}
+                    <ul className="divide-y divide-gray-600">
+                      <li
+                        className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                        onClick={() => handleOptionClick("All")}
+                      >
+                        All
+                      </li>
+                      {filteredCountries.map((country) => (
+                        <li
+                          key={country.value}
+                          className="p-2 hover:bg-gray-100 cursor-pointer hover:text-black"
+                          onClick={() => handleOptionClick(country.value)}
+                        >
+                          {country.label}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
-
-
-
-
           </div>
+
 
           {/* Conditionally Render Convention List or Empty State */}
           {filteredConventions.length > 0 ? (
@@ -411,6 +416,20 @@ const upcoming = () => {
                   </div>
 
                   {/* 4th Column */}
+                  <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
+                    {convention.convention_is_private === "1" ? (
+                      <button className='bg-red w-20 text-white px-2 py-1 rounded'>
+                        Private
+                      </button>
+                    ) : (
+                      <button className='bg-[#4CAF50] w-20 text-white px-2 py-1 rounded'>
+                        Public
+                      </button>
+                    )}
+                  </div>
+
+
+                  {/* 5th Column */}
                   <div className='relative flex items-center cursor-pointer'>
                     <p onClick={() => handleShowSub(convention.id)} className='text-white text-sm mr-1'>
                       Activity
@@ -422,42 +441,26 @@ const upcoming = () => {
 
                     {showSub.show && showSub.conventionId === convention.id && (
                       <div className='absolute top-[2rem] left-0 md:left-[-4rem] bg-black p-4 w-48 z-50 rounded-md shadow-lg'>
-                        <Link
-                          to={`/convention/attendance/${convention.id}`}
-                          className='block mb-1 cursor-pointer text-white text-sm'
-                        >
-                          Your attendance
-                        </Link>
-                        {attendance && attendance.length > 0 && (
-                          <>
-                            <Link
-                              to={`/next/agenda/${convention.id}`}
-                              className='block mb-1 cursor-pointer text-white text-sm'
-                            >
-                              Agenda
-                            </Link>
-                            <Link
-                              to={`/accomodation/${convention.id}`}
-                              className='block mb-1 cursor-pointer text-white text-sm'
-                            >
-                              Accommodations
-                            </Link>
-                            <Link
-                              to={`/event/${convention.id}`}
-                              className='block mb-1 cursor-pointer text-white text-sm'
-                            >
-                              Events
-                            </Link>
-                            <Link
-                              to={`/game/sale/${convention.id}`}
-                              className='block mb-1 cursor-pointer text-white text-sm'
-                            >
-                              Games for sale
-                            </Link>
-                          </>
+                        {convention.convention_is_private === "1" ? (
+                          // Navigate to single upcoming convention if private
+                          <Link
+                            to={`/single-upcoming-convention/${convention.id}`}
+                            className='block mb-1 cursor-pointer text-white text-sm'
+                          >
+                            View Convention
+                          </Link>
+                        ) : (
+                          // Navigate to attendance if not private
+                          <Link
+                            to={`/convention/attendance/${convention.id}`}
+                            className='block mb-1 cursor-pointer text-white text-sm'
+                          >
+                            Your attendance
+                          </Link>
                         )}
                       </div>
                     )}
+
                   </div>
                 </div>
               ))}

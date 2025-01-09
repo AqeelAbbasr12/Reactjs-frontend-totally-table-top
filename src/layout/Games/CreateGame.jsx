@@ -136,40 +136,9 @@ const CreateGame = () => {
       ...prevState,
       [name]: value,
       // Ensure currency_tag is updated whenever currency changes
-      // currency_tag: name === "currency" ? getCurrencySymbol(value) : prevState.currency_tag
+      currency_tag: name === "currency" ? getCurrencySymbol(value) : prevState.currency_tag
     }));
   };
-
-  // Handle file change for individual image uploads
-
-  // const handleFileChange = async (index, event) => {
-  //   const file = event.target.files[0];
-
-  //   if (file) {
-  //     // Check if the file size exceeds 10 MB (10 * 1024 * 1024 bytes)
-  //     if (file.size > 10 * 1024 * 1024) {
-  //       toastr.warning("Your image is greater than 10 MB.");
-  //       return; // Exit if the file is too large
-  //     }
-
-  //     try {
-  //       // No compression, just save the original file
-  //       const newImagePreviews = [...imagePreviews];
-  //       newImagePreviews[index] = URL.createObjectURL(file);
-  //       setImagePreviews(newImagePreviews);
-
-  //       // Update formData with the original image file
-  //       setFormData((prevData) => {
-  //         const updatedImages = [...prevData.game_images];
-  //         updatedImages[index] = file; // Save the original file object
-  //         return { ...prevData, game_images: updatedImages };
-  //       });
-  //     } catch (error) {
-  //       console.error("Error handling file:", error);
-  //       toastr.error("Failed to process the image.");
-  //     }
-  //   }
-  // };
 
 
 
@@ -221,6 +190,12 @@ const CreateGame = () => {
     }
   };
 
+  useEffect(() => {
+    setFormData((prevState) => ({
+      ...prevState,
+      currency_tag: getCurrencySymbol(prevState.currency),
+    }));
+  }, [formData.currency]);
 
 
 

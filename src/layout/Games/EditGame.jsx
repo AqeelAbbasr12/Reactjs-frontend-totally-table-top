@@ -37,10 +37,10 @@ const EditGame = () => {
     currency_tag: '',
     condition: '',
     desc: '',
-    game_images: [], // Store images as an array
-    game_image_id: [], // Store images as an array
+    game_images: [], 
+    game_image_id: [], 
   });
-  const [formErrors, setFormErrors] = useState({}); // State for form errors
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     fetchGame(game_id);
@@ -88,7 +88,7 @@ const EditGame = () => {
 
       const data = await response.json();
       // Transform data into the format required by react-select
-      // console.log(data);
+      console.log(data);
       // setGames(data);
       setFormData({
         name: data.name || '',
@@ -239,20 +239,162 @@ const EditGame = () => {
     }
   };
 
+  useEffect(() => {
+    fetchConventions(convention_id);
 
-  // Dynamic currency symbol mapping
-  const getCurrencySymbol = (currency) => {
-    switch (currency) {
-      case "USD":
-        return "$";
-      case "EUR":
-        return "€";
-      case "GBP":
-        return "£";
-      default:
-        return "$";
+    if (convention.state) {
+      const countryCurrency = countryToCurrency[convention.state];
+      if (countryCurrency) {
+        setFormData(prevData => ({
+          ...prevData,
+          currency: countryCurrency
+        }));
+      }
     }
+  }, [convention.state]);
+
+
+
+  const countryToCurrency = {
+    "Argentina": "ARS",
+    "Australia": "AUD",
+    "Austria": "EUR",
+    "Belgium": "EUR",
+    "Brazil": "BRL",
+    "Bulgaria": "BGN",
+    "Canada": "CAD",
+    "Chile": "CLP",
+    "Colombia": "COP",
+    "Croatia": "HRK",
+    "Cyprus": "CYP",
+    "Czech Republic": "CZK",
+    "Denmark": "DKK",
+    "Estonia": "EEK",
+    "Finland": "FIM",
+    "France": "EUR",  // France uses Euro
+    "Germany": "EUR", // Germany uses Euro
+    "Greece": "EUR",  // Greece uses Euro
+    "Hungary": "HUF",
+    "Iceland": "ISK",
+    "Ireland": "IEP",
+    "Italy": "ITL",
+    "Japan": "JPY",
+    "Latvia": "LVL",
+    "Lithuania": "LTL",
+    "Luxembourg": "LUF",
+    "Malta": "MTL",
+    "Mexico": "MXN",
+    "Netherlands": "NLG",
+    "Norway": "NOK",
+    "Peru": "PEN",
+    "Poland": "PLN",
+    "Portugal": "PTE",
+    "Romania": "ROL",
+    "Slovakia": "SKK",
+    "Slovenia": "SIT",
+    "Spain": "ESP",
+    "Sweden": "SEK",
+    "Switzerland": "CHF",
+    "Thailand": "THB",
+    "United Kingdom": "GBP",
+    "USA": "USD",
+    "Uruguay": "UYU",
+    "Venezuela": "VEF"
   };
+
+    // Dynamic currency symbol mapping
+    const getCurrencySymbol = (currency) => {
+      switch (currency) {
+        case "USD":
+          return "$";
+        case "ARS":
+          return "$";
+        case "AUD":
+          return "A$";
+        case "EUR":
+          return "€";
+        case "GBP":
+          return "£";
+        case "BRL":
+          return "R$";
+        case "BGN":
+          return "лв";
+        case "CAD":
+          return "C$";
+        case "CLP":
+          return "$";
+        case "COP":
+          return "$";
+        case "HRK":
+          return "kn";
+        case "CYP":
+          return "£";
+        case "CZK":
+          return "Kč";
+        case "DKK":
+          return "kr";
+        case "EEK":
+          return "kr";
+        case "FIM":
+          return "mk";
+        case "FRF":
+          return "₣";
+        case "DEM":
+          return "DM";
+        case "GRD":
+          return "₯";
+        case "HUF":
+          return "Ft";
+        case "ISK":
+          return "kr";
+        case "IEP":
+          return "£";
+        case "ITL":
+          return "₤";
+        case "JPY":
+          return "¥";
+        case "LVL":
+          return "Ls";
+        case "LTL":
+          return "Lt";
+        case "LUF":
+          return "₣";
+        case "MTL":
+          return "₤";
+        case "MXN":
+          return "$";
+        case "NLG":
+          return "ƒ";
+        case "NOK":
+          return "kr";
+        case "PEN":
+          return "S/.";
+        case "PLN":
+          return "zł";
+        case "PTE":
+          return "₣";
+        case "ROL":
+          return "lei";
+        case "SKK":
+          return "Sk";
+        case "SIT":
+          return "€";
+        case "ESP":
+          return "₧";
+        case "SEK":
+          return "kr";
+        case "CHF":
+          return "₣";
+        case "THB":
+          return "฿";
+        case "UYU":
+          return "$U";
+        case "VEF":
+          return "Bs";
+        default:
+          return "$"; // Fallback for unsupported currencies
+      }
+    };
 
   const validateForm = () => {
     const errors = {};
@@ -436,9 +578,52 @@ const EditGame = () => {
                     onChange={handleChange}  // Update currency on change
                     className="h-full appearance-none rounded-md py-0 pl-2 pr-8 text-white outline-none bg-darkBlue"
                   >
-                    <option selected value="USD">USD</option>
+                    <option value="USD">USD</option>
+                    <option value="ARS">ARS</option>
+                    <option value="AUD">AUD</option>
                     <option value="EUR">EUR</option>
                     <option value="GBP">GBP</option>
+                    <option value="BRL">BRL</option>
+                    <option value="BGN">BGN</option>
+                    <option value="CAD">CAD</option>
+                    <option value="CLP">CLP</option>
+                    <option value="COP">COP</option>
+                    <option value="HRK">HRK</option>
+                    <option value="CYP">CYP</option>
+                    <option value="CZK">CZK</option>
+                    <option value="DKK">DKK</option>
+                    <option value="EEK">EEK</option>
+                    <option value="FIM">FIM</option>
+                    <option value="FRF">FRF</option>
+                    <option value="DEM">DEM</option>
+                    <option value="GRD">GRD</option>
+                    <option value="HUF">HUF</option>
+                    <option value="ISK">ISK</option>
+                    <option value="IEP">IEP</option>
+                    <option value="ITL">ITL</option>
+                    <option value="JPY">JPY</option>
+                    <option value="LVL">LVL</option>
+                    <option value="LTL">LTL</option>
+                    <option value="LUF">LUF</option>
+                    <option value="MTL">MTL</option>
+                    <option value="MXN">MXN</option>
+                    <option value="NLG">NLG</option>
+                    <option value="NOK">NOK</option>
+                    <option value="PEN">PEN</option>
+                    <option value="PLN">PLN</option>
+                    <option value="PTE">PTE</option>
+                    <option value="ROL">ROL</option>
+                    <option value="SKK">SKK</option>
+                    <option value="SIT">SIT</option>
+                    <option value="ESP">ESP</option>
+                    <option value="SEK">SEK</option>
+                    <option value="CHF">CHF</option>
+                    <option value="THB">THB</option>
+                    <option value="GBP">GBP</option>
+                    <option value="USD">USD</option>
+                    <option value="UYU">UYU</option>
+                    <option value="VEF">VEF</option>
+
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <img

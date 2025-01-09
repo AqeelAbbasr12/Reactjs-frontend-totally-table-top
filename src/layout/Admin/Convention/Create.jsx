@@ -9,33 +9,49 @@ import toastr from 'toastr';
 import { FaTrash } from 'react-icons/fa';
 import Navbar from '../../../components/Admin/Navbar';
 import imageCompression from 'browser-image-compression';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Create() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('Invisible to users');
+     // Toggle private state
     const [formErrors, setFormErrors] = useState({});
     const [dates, setDates] = useState(['']);
     const [imagePreview, setImagePreview] = useState(null);
     const navigate = useNavigate();
     const [loading, setLoading] = useState();
     const [formData, setFormData] = useState({
-        name: '',          // Convention name
-        description: '',   // Convention description
-        location: '',      // Convention location
-        website: '',       // Convention website
-        state: '',       // Convention website
-        fb_url: '',       // Convention website
-        ig_url: '',       // Convention website
-        logo: null,        // Convention logo (initially null for file)
-        dates: [], // Convention dates array (with 3 empty date strings)
-        feature: 0         // Feature flag (initially set to 0)
+        name: '',
+        description: '',
+        location: '',
+        website: '',
+        state: '',
+        fb_url: '',
+        ig_url: '',
+        logo: null,
+        dates: [],
+        feature: 0,
+        is_private: false,
+        password: '',
     });
+
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+
+    });
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prevState) => ({
+            ...prevState,
+            [field]: !prevState[field],
+        }));
+    };
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
+
 
     const addDateField = () => {
         setDates([...dates, '']); // Add an empty string to the dates array
@@ -107,11 +123,11 @@ function Create() {
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
+        const { name, value, type, checked } = e.target;
+
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === "checkbox" ? checked : value, // Handle checkbox values
         }));
     };
 
@@ -142,12 +158,7 @@ function Create() {
             errors.description = 'Convention Description is required';
         }
 
-        // if (!formData.location) {
-        //     toastr.error('Convention Location is required');
-        //     errors.location = 'Convention Location is required';
-        // }
 
-       
 
         if (!formData.state) {
             toastr.error('Convention State is required');
@@ -161,12 +172,19 @@ function Create() {
             errors.website = 'Please enter a valid URL';
         }
 
-     
-
-
         if (!formData.dates || formData.dates.length === 0 || !formData.dates.some(date => date)) {
             errors.dates = 'At least one Convention Date is required';
             toastr.error('At least one Convention Date is required');
+        }
+
+        if (formData.is_private) {
+            if (!formData.password) {
+                toastr.error('Password is required for private conventions');
+                errors.password = 'Password is required for private conventions';
+            } else if (formData.password.length < 6) {
+                toastr.error('Password must be at least 6 characters long');
+                errors.password = 'Password must be at least 6 characters long';
+            }
         }
 
         setFormErrors(errors);
@@ -189,7 +207,11 @@ function Create() {
         formDataToSend.append('state', formData.state); // Changed from location_website to website
         formDataToSend.append('fb_url', formData.fb_url); // Changed from location_website to website
         formDataToSend.append('ig_url', formData.ig_url); // Changed from location_website to website
-
+        // Handle private and password fields
+        formDataToSend.append('is_private', formData.is_private ? 1 : 0);
+        if (formData.is_private && formData.password) {
+            formDataToSend.append('password', formData.password);
+        }
         // Since the original fields didn't have 'from_date' and 'to_date', you may want to send the dates as a single array
         formDataToSend.append('date', formData.dates); // Send date array as a JSON string
         formDataToSend.append('feature', formData.feature || 0); // Assuming you have a feature field
@@ -226,7 +248,6 @@ function Create() {
             toastr.success('Convnetion created successfully!');
 
             // Clear form fields, image preview, and form errors
-            // Clear form fields, image preview, and form errors
             setFormData({
                 name: '', // Changed from location_name to name
                 description: '', // Changed from location_address to description
@@ -238,6 +259,8 @@ function Create() {
                 logo: null, // Changed from location_image to logo
                 dates: [], // Initialize as an empty array
                 feature: 0, // Initialize feature if needed, adjust according to your logic
+                is_private: false,
+                password: '',
             });
             setImagePreview(null);
             setFormErrors({});
@@ -547,6 +570,54 @@ function Create() {
                                                 </button>
                                             </div>
                                         </div>
+                                        {/*  */}
+                                        {/* Private Toggle */}
+                                        <div className="mt-6 flex items-center gap-4">
+                                            <span className="text-lg leading-10 md:text-28 md:leading-35 tracking-[0.56px]">Private</span>
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="is_private"
+                                                    checked={formData.is_private} // Bind to formData
+                                                    onChange={handleChange} // Use the same handleChange function
+                                                    className="hidden"
+                                                />
+                                                <span
+                                                    className={`relative inline-flex items-center h-[36px] rounded-full w-[54px] transition-colors duration-300 ease-in-out ${formData.is_private ? 'bg-[#F77F00]' : 'bg-gray-400'}`}
+                                                >
+                                                    <span
+                                                        className={`inline-block w-5 h-5 transform rounded-full transition-transform duration-300 ease-in-out ${formData.is_private ? 'bg-white translate-x-6' : 'bg-blue-600 translate-x-2'}`}
+                                                    ></span>
+                                                </span>
+                                            </label>
+                                        </div>
+
+
+                                        {formData.is_private && (
+                                            <div className="mt-4 relative">
+                                                <Input
+                                                    type={showPasswords.password ? "text" : "password"}
+                                                    name="password"
+                                                    holder="Enter password"
+                                                    value={formData.password}
+                                                    onChange={handleChange}
+                                                    className="w-full px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
+                                                />
+                                                <span
+                                                    className="absolute top-[40%] right-3 transform -translate-y-[50%] cursor-pointer text-[#F77F00]"
+                                                    onClick={() => togglePasswordVisibility("password")}
+                                                >
+                                                    {showPasswords.password ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                                                </span>
+
+                                            </div>
+                                        )}
+
+                                        {formErrors.password && (
+                                            <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                {formErrors.password}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

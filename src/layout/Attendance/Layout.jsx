@@ -9,6 +9,7 @@ import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
 import { useParams } from 'react-router-dom';
 import { TiTick } from 'react-icons/ti'
+import toastr from 'toastr';
 import { fetchWithAuth } from '../../services/apiService';
 
 
@@ -38,12 +39,12 @@ const Layout = () => {
 
     const handleShowSub = (id) => {
         setShowSub((prev) => ({
-          show: prev.conventionId === id ? !prev.show : true,
-          conventionId: id
+            show: prev.conventionId === id ? !prev.show : true,
+            conventionId: id
         }));
         fetchAttendanceData(id);
         fetchAgendas(id);
-      };
+    };
 
     //Fetch Convention
     const fetchConventions = async (convention_id) => {
@@ -63,13 +64,26 @@ const Layout = () => {
 
             const data = await response.json();
             setConvention(data);
-            //   console.log(data);
+
+            if (data.convention_is_private === '1') {
+                const storedPassword = localStorage.getItem('ConventionPassword');
+
+                // If storedPassword doesn't exist or doesn't match, redirect to the specific convention page
+                if (!storedPassword || storedPassword !== data.convention_password) {
+                    toastr.error('Incorrect password or password is missing. Redirecting...');
+                    window.location.href = `/single-upcoming-convention/${data.id}`;
+                }
+                localStorage.removeItem('ConventionPassword');
+            }
+
+            // console.log('convention', data);
         } catch (error) {
             // console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
     };
+
 
     // Fetch saved attendance data
     const fetchAttendanceData = async (convention_id) => {
@@ -100,7 +114,7 @@ const Layout = () => {
         try {
             const response = await fetchWithAuth(`/user/convention_agenda/${convention_id}`);
             if (!response.ok) throw new Error('Failed to fetch agendas');
-    
+
             const data = await response.json();
             // console.log('Agenda Items', data);
             if (Array.isArray(data)) {
@@ -201,119 +215,119 @@ const Layout = () => {
             )}
             <Navbar type={"verified"} />
 
-            
+
 
             <div className='bg-black md:px-[2rem] px-[1rem] flex items-center gap-x-4 py-3'>
                 <a href="/profile" className='text-white'>
-                Account
+                    Account
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
                 <a href="/user/convention" className='text-white'>
-                Your conventions
+                    Your conventions
                 </a>
                 <BsFillCaretDownFill className=' text-lightOrange -rotate-90' />
 
-                
+
             </div>
 
 
             <div className='md:px-[2rem] h-[50rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] pt-3'>
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full flex-wrap p-4">
-  {/* Convention Logo and Name */}
-  <div className="flex items-center gap-x-4 mb-3 sm:mb-0">
-    <div className="min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
-      <img
-        src={convention.convention_logo || ConventionImage}
-        alt=""
-        className="w-[3rem] h-[3rem] rounded-full object-cover"
-      />
-    </div>
-    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate">
-      {convention.convention_name}
-    </h1>
-  </div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full flex-wrap p-4">
+                    {/* Convention Logo and Name */}
+                    <div className="flex items-center gap-x-4 mb-3 sm:mb-0">
+                        <div className="min-w-[3rem] min-h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
+                            <img
+                                src={convention.convention_logo || ConventionImage}
+                                alt=""
+                                className="w-[3rem] h-[3rem] rounded-full object-cover"
+                            />
+                        </div>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate">
+                            {convention.convention_name}
+                        </h1>
+                    </div>
 
-  {/* Actions Dropdown */}
-  <div className="relative flex items-center gap-x-3 mt-3 sm:mt-0">
-    <p
-      onClick={() => handleShowSub(convention.id)}
-      className="text-white cursor-pointer"
-    >
-      Actions
-    </p>
-    <BsFillCaretDownFill className="text-lightOrange rotate-360" />
+                    {/* Actions Dropdown */}
+                    <div className="relative flex items-center gap-x-3 mt-3 sm:mt-0">
+                        <p
+                            onClick={() => handleShowSub(convention.id)}
+                            className="text-white cursor-pointer"
+                        >
+                            Actions
+                        </p>
+                        <BsFillCaretDownFill className="text-lightOrange rotate-360" />
 
-    {/* Dropdown Menu */}
-    {showSub.show && showSub.conventionId === convention.id && (
-      <div className="absolute top-10 left-0 sm:left-auto sm:right-0 bg-black p-4 w-48 z-50 rounded-md shadow-lg">
-        <Link
-          to={`/convention/attendance/${convention.id}`}
-          className="block mb-1 cursor-pointer text-white text-sm"
-        >
-          Your attendance
-        </Link>
-        {attendance && attendance.length > 0 && (
-          <>
-            <Link
-              to={`/next/agenda/${convention.id}`}
-              className="block mb-1 cursor-pointer text-white text-sm"
-            >
-              Agenda
-            </Link>
-            <Link
-              to={`/accomodation/${convention.id}`}
-              className="block mb-1 cursor-pointer text-white text-sm"
-            >
-              Accommodations
-            </Link>
-            <Link
-              to={`/event/${convention.id}`}
-              className="block mb-1 cursor-pointer text-white text-sm"
-            >
-              Tables
-            </Link>
-            <Link
-              to={`/game/sale/${convention.id}`}
-              className="block mb-1 cursor-pointer text-white text-sm"
-            >
-              Games for sale
-            </Link>
-          </>
-        )}
-      </div>
-    )}
-  </div>
-</div>
+                        {/* Dropdown Menu */}
+                        {showSub.show && showSub.conventionId === convention.id && (
+                            <div className="absolute top-10 left-0 sm:left-auto sm:right-0 bg-black p-4 w-48 z-50 rounded-md shadow-lg">
+                                <Link
+                                    to={`/convention/attendance/${convention.id}`}
+                                    className="block mb-1 cursor-pointer text-white text-sm"
+                                >
+                                    Your attendance
+                                </Link>
+                                {attendance && attendance.length > 0 && (
+                                    <>
+                                        <Link
+                                            to={`/next/agenda/${convention.id}`}
+                                            className="block mb-1 cursor-pointer text-white text-sm"
+                                        >
+                                            Agenda
+                                        </Link>
+                                        <Link
+                                            to={`/accomodation/${convention.id}`}
+                                            className="block mb-1 cursor-pointer text-white text-sm"
+                                        >
+                                            Accommodations
+                                        </Link>
+                                        <Link
+                                            to={`/event/${convention.id}`}
+                                            className="block mb-1 cursor-pointer text-white text-sm"
+                                        >
+                                            Tables
+                                        </Link>
+                                        <Link
+                                            to={`/game/sale/${convention.id}`}
+                                            className="block mb-1 cursor-pointer text-white text-sm"
+                                        >
+                                            Games for sale
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
 
                 <div className='w-[100%] bg-[#0d2539]  px-3 py-5 rounded-md mt-6'>
 
-                <div className='flex justify-between items-center'>
-      <div className='flex gap-x-3 items-center'>
-        {/* Conditional Rendering */}
-        <div className='w-[2rem] h-[2rem] flex justify-center items-center rounded-full bg-lightOrange'>
-          {attendance && attendance.length > 0 ? (
-            <TiTick className='text-[#0d2539]' />
-          ) : (
-            <span className='text-[#0d2539] text-xl font-bold'>?</span>
-          )}
-        </div>
-        
-        <p className='text-white'>
-          {attendance && attendance.length > 0 ? "You’re going!" : "Do you wish to attend?"}
-        </p>
-      </div>
+                    <div className='flex justify-between items-center'>
+                        <div className='flex gap-x-3 items-center'>
+                            {/* Conditional Rendering */}
+                            <div className='w-[2rem] h-[2rem] flex justify-center items-center rounded-full bg-lightOrange'>
+                                {attendance && attendance.length > 0 ? (
+                                    <TiTick className='text-[#0d2539]' />
+                                ) : (
+                                    <span className='text-[#0d2539] text-xl font-bold'>?</span>
+                                )}
+                            </div>
 
-      <div>
-        <Button
-          onClickFunc={() => { nav(`/conventionAttendance/${convention.id}`); }}
-          title={attendance && attendance.length > 0 ? "Change" : "Confirm here"}
-          className='w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white'
-        />
-      </div>
-    </div>
+                            <p className='text-white'>
+                                {attendance && attendance.length > 0 ? "You’re going!" : "Do you wish to attend?"}
+                            </p>
+                        </div>
+
+                        <div>
+                            <Button
+                                onClickFunc={() => { nav(`/conventionAttendance/${convention.id}`); }}
+                                title={attendance && attendance.length > 0 ? "Change" : "Confirm here"}
+                                className='w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white'
+                            />
+                        </div>
+                    </div>
 
                     {attendance && attendance.length > 0 ? (
                         <p className='text-white mt-2'>
@@ -345,18 +359,18 @@ const Layout = () => {
                                 <p className='text-white'>Agenda</p>
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                 {/* Conditionally render text based on the length of AgendaItems */}
+                                {/* Conditionally render text based on the length of AgendaItems */}
                                 <p className='text-white'>
                                     {AgendaItems.length > 0
                                         ? `Started, you have created ${AgendaItems.length} Agenda`
                                         : 'Not Started'}
                                 </p>
-    
-                                <Button 
-                                    onClickFunc={() => { nav(`/next/agenda/${convention_id}`) }} 
-                                    title={"Create"} 
-                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
-                                    />
+
+                                <Button
+                                    onClickFunc={() => { nav(`/next/agenda/${convention_id}`) }}
+                                    title={"Create"}
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
+                                />
                             </div>
                         </div>
                         <div className='flex-1 bg-[#0d2539] p-3 rounded-md sm:mt-0 mt-3'>
@@ -370,11 +384,11 @@ const Layout = () => {
                                         ? `${accommodations.length} Stay`
                                         : '0 Stay'}
                                 </p>
-                                <Button 
-                                    onClickFunc={() => { nav(`/accomodation/${convention_id}`) }} 
-                                    title={"Edit"} 
-                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
-                                    />
+                                <Button
+                                    onClickFunc={() => { nav(`/accomodation/${convention_id}`) }}
+                                    title={"Edit"}
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
+                                />
                             </div>
                         </div>
                     </div>
@@ -386,20 +400,20 @@ const Layout = () => {
                             <div className='flex items-center gap-x-4'>
                                 <FaCalendarAlt className='text-white' />
                                 <p className='text-white'>Tables</p>
-                                
+
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                
+
                                 <p className='text-white'>
                                     {events.length > 0
                                         ? `Started, you have created ${events.length} Table(s)`
                                         : 'Not Started'}
                                 </p>
-                                <Button 
-                                    onClickFunc={() => { nav(`/event/${convention_id}`) }} 
-                                    title={"Create"} 
-                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
-                                    />
+                                <Button
+                                    onClickFunc={() => { nav(`/event/${convention_id}`) }}
+                                    title={"Create"}
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
+                                />
                             </div>
                         </div>
                         <div className='flex-1 bg-[#0d2539] p-3 rounded-md sm:mt-0 mt-3'>
@@ -408,23 +422,23 @@ const Layout = () => {
                                 <p className='text-white'>Games</p>
                             </div>
                             <div className='flex justify-between items-center mt-3'>
-                                
+
                                 <p className='text-white'>
                                     {games.length > 0
                                         ? `${games.length} For Sale`
                                         : '0 For Sale'}
                                 </p>
-                                <Button 
-                                    onClickFunc={() => { nav(`/game/sale/${convention_id}`) }} 
-                                    title={"Games"} 
-                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`} 
-                                    />
+                                <Button
+                                    onClickFunc={() => { nav(`/game/sale/${convention_id}`) }}
+                                    title={"Games"}
+                                    className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
+                                />
                             </div>
                         </div>
                     </div>
                 )}
 
-               
+
 
             </div>
 

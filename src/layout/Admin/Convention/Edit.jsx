@@ -11,6 +11,7 @@ import { fetchWithAuth } from '../../../services/apiService';
 import { FaTrash } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
 import Select from 'react-select'; // Import react-select
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -32,8 +33,22 @@ function Edit() {
         state: '',
         logo: null,
         dates: [],
-        feature: 0
+        feature: 0,
+        is_private: false,
+        password: '',
     });
+
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+
+    });
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prevState) => ({
+            ...prevState,
+            [field]: !prevState[field],
+        }));
+    };
+
 
     useEffect(() => {
         fetchConventions(convention_id);
@@ -105,7 +120,7 @@ function Edit() {
 
             const data = await response.json();
 
-            // console.log(data);
+            console.log('COnvention Record', data);
 
             setFormData({
                 name: data.name || '',
@@ -118,7 +133,11 @@ function Edit() {
                 state: data.state || '',
                 active: data.active || '',
                 feature: data.feature || '',
+                password: data.password || '',
+                is_private: data.is_private === '1',
             });
+
+
 
             setImagePreview(data.logo);
             setSelectedOption(data.active);
@@ -182,12 +201,13 @@ function Edit() {
             }
         }
     };
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        // console.log(`Input Name: ${name}, Input Value: ${value}`); // Log the input name and value
+        const { name, value, type, checked } = e.target;
+
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === "checkbox" ? checked : value, // Handle checkbox values
         }));
     };
 
@@ -235,12 +255,7 @@ function Edit() {
             errors.description = 'Convention Description is required';
         }
 
-        // if (!formData.location) {
-        //     toastr.error('Convention Location is required');
-        //     errors.location = 'Convention Location is required';
-        // }
 
-      
 
         if (!formData.state) {
             toastr.error('Convention State is required');
@@ -268,6 +283,17 @@ function Edit() {
             errors.dates = 'At least one Convention Date is required';
         }
 
+        if (formData.is_private) {
+            if (!formData.password) {
+                toastr.error('Password is required for private conventions');
+                errors.password = 'Password is required for private conventions';
+            } else if (formData.password.length < 6) {
+                toastr.error('Password must be at least 6 characters long');
+                errors.password = 'Password must be at least 6 characters long';
+            }
+        }
+
+
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -290,6 +316,10 @@ function Edit() {
         formDataToSend.append('fb_url', formData.fb_url); // Changed from location_website to website
         formDataToSend.append('ig_url', formData.ig_url); // Changed from location_website to website
 
+        formDataToSend.append('is_private', formData.is_private ? 1 : 0);
+        if (formData.is_private && formData.password) {
+            formDataToSend.append('password', formData.password);
+        }
         // Since the original fields didn't have 'from_date' and 'to_date', you may want to send the dates as a single array
         formDataToSend.append('date', formData.dates); // Send date array as a JSON string
         formDataToSend.append('feature', formData.feature || 0); // Assuming you have a feature field
@@ -337,6 +367,8 @@ function Edit() {
                 logo: null, // Changed from location_image to logo
                 dates: [], // Initialize as an empty array
                 feature: 0, // Initialize feature if needed, adjust according to your logic
+                is_private: false,
+                password: '',
             });
             setImagePreview(null);
             setFormErrors({});
@@ -623,7 +655,7 @@ function Edit() {
                                                 </button>
                                             )}
                                             <div
-                                                className={`relative inline-flex items-center h-[36px] rounded-full w-[54px] transition-colors duration-300 ease-in-out ${formData.feature === "1" ? 'bg-yellow-500' : 'bg-gray-300'}`}
+                                                className={`relative inline-flex items-center h-[36px] rounded-full w-[54px] transition-colors duration-300 ease-in-out ${formData.feature === "1" ? 'bg-[#F77F00]' : 'bg-gray-300'}`}
                                                 onClick={handleToggle} // Call handleToggle on click
                                             >
                                                 <span className={`inline-block w-5 h-5 transform rounded-full transition-transform duration-300 ease-in-out ${formData.feature === "1" ? 'bg-white translate-x-6' : 'bg-blue-600 translate-x-2'}`} />
@@ -671,16 +703,57 @@ function Edit() {
                                                 </div>
                                             ))}
                                             {/* Uncomment if you want to add more dates dynamically */}
-                                            {/* <div className='mt-5 flex justify-start'>
-                        <button
-                            type="button"
-                            className='w-[26rem] mt-2 h-[2.3rem] text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer'
-                            onClick={addDateField}
-                        >
-                            Add another date
-                        </button>
-                    </div> */}
+
                                         </div>
+                                        {/* Private Toggle */}
+                                        <div className="mt-6 flex items-center gap-4">
+                                            <span className="text-lg leading-10 md:text-28 md:leading-35 tracking-[0.56px]">Private</span>
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="is_private"
+                                                    checked={formData.is_private} // Binding to formData's boolean value
+                                                    onChange={handleChange}
+                                                    className="hidden"
+                                                />
+                                                <span
+                                                    className={`relative inline-flex items-center h-[36px] rounded-full w-[54px] transition-colors duration-300 ease-in-out ${formData.is_private ? 'bg-[#F77F00]' : 'bg-gray-300'}`}
+                                                >
+                                                    <span
+                                                        className={`inline-block w-5 h-5 transform rounded-full transition-transform duration-300 ease-in-out ${formData.is_private ? 'bg-white translate-x-6' : 'bg-blue-600 translate-x-2'}`}
+                                                    ></span>
+                                                </span>
+                                            </label>
+                                        </div>
+
+
+
+                                        {formData.is_private && (
+                                            <div className="mt-4 relative">
+                                                <Input
+                                                    type={showPasswords.password ? "text" : "password"}
+                                                    name="password"
+                                                    holder='Enter Password'
+                                                    value={formData.password}
+                                                    onChange={handleChange}
+                                                    className="w-full px-3 py-2 border border-[#707070] bg-[#102F47] text-white"
+                                                />
+
+                                                <span
+                                                    className="absolute top-[40%] right-3 transform -translate-y-[50%] cursor-pointer text-[#F77F00]"
+                                                    onClick={() => togglePasswordVisibility("password")}
+                                                >
+                                                    {showPasswords.password ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                                                </span>
+
+                                            </div>
+                                        )}
+
+                                        {formErrors.password && (
+                                            <p className="text-red text-sm sm:text-base mt-1 ml-2 sm:ml-[3rem]">
+                                                {formErrors.password}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

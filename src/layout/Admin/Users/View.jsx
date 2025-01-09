@@ -801,8 +801,7 @@ const handleBlock = async (userId, status) => {
                               <span
                                 className='text-lightOrange  ml-1 cursor-pointer'>
                                 {feedItem.convention_game.game_name}
-                              </span>
-                              under
+                              </span> under
                               <span
                                 className='text-lightOrange  ml-1 cursor-pointer'>
                                 {feedItem.convention_game.convention_name}

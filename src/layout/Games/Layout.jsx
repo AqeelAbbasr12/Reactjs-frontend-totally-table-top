@@ -280,11 +280,14 @@ const Layout = () => {
                                             title={"Edit"}
                                             className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
                                         />
-                                        <Button
-                                            onClickFunc={() => handleDelete(game.id)}
-                                            title={"Delete"}
-                                            className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
-                                        />
+                                        {game.game_status === "publish" && (
+  <Button
+    onClickFunc={() => handleDelete(game.id)}
+    title={"Delete"}
+    className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
+  />
+)}
+
                                     </div>
                                 </div>
 

@@ -131,7 +131,7 @@ const ConventionAttendance = () => {
             const data = await response.json();
             toastr.success(data.message || 'Attendance updated successfully!');
             // console.log('Response from server:', data);
-            nav(-1);
+            nav('/user/convention');
             // Additional handling on success, like navigation or resetting form
         } catch (error) {
             // console.error('Error submitting attendance:', error);

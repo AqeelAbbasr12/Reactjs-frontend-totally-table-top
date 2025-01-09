@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import img1 from '../../../assets/Announcement.svg';
-import img2 from '../../../assets/Convention.svg';
 import ConventionImage from '../../../assets/traditional.png'
 import drop from '../../../assets/icon-caret-down.svg';
 import { useNavigate } from 'react-router-dom';
@@ -315,12 +313,14 @@ function Convention({ onSearch, Convention, search, path }) {
                       <div className="flex items-center gap-x-20 justify-self-end">
                         {/* Feature status */}
                         <td className="font-mulish text-sm leading-7 md:text-lg md:leading-33">
-                          {convention.feature === "1" ? (
-                            <button className="bg-[#F3C15F] text-black px-2 py-1 rounded">
-                              Featured
+                          {convention.is_private === "1" ? (
+                            <button className="bg-red w-20 text-white px-2 py-1 rounded">
+                              Private
                             </button>
                           ) : (
-                            ''
+                            <button className="bg-green-500 w-20 text-white px-2 py-1 rounded">
+                              Public
+                            </button>
                           )}
                         </td>
                         {/* Active status */}
