@@ -391,9 +391,7 @@ function Create() {
                                         {formErrors.location}
                                     </p>
                                 )}
-
-
-
+                                
                                 {/* Convention Website */}
                                 <div className='my-[18px] md:my-[38px] w-11/12 bg-[#102F47] mx-auto h-12 sm:h-73 flex items-center mt-3 sm:mt-[38px]'>
                                     <Input holder='Convention website… e.g. https://www.totallytabletop.com' name="website" onChange={handleChange} />

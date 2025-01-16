@@ -81,39 +81,39 @@ const Layout = () => {
 
     const applyFilters = () => {
         let filtered = [...games];
-    
+
         // Search filter
         if (searchQuery) {
             filtered = filtered.filter(game =>
                 game.game_name.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
-    
+
         // Country filter
         if (selectedCountry) {
-    
+
             filtered = filtered.filter(game => {
                 const convention = conventions.find(c => c.id === game.convention_id);
                 return convention && convention.convention_state === selectedCountry;
             });
         }
-    
+
         // Convention filter
         if (selectedConvention) {
             filtered = filtered.filter(game => game.convention_id === selectedConvention);
         }
-    
+
         // Condition filter
         if (selectedConditions.length > 0) {
             filtered = filtered.filter(game =>
                 selectedConditions.includes(game.game_condition)
             );
         }
-    
+
         setFilteredGames(filtered);
     };
-    
-    
+
+
 
 
     return (
@@ -197,10 +197,21 @@ const Layout = () => {
 
 
                                                     </span>
+
+                                                    {game.game_sold_date && (
+                                                        <span className="py-2 mx-2 text-lightOrange font-bold">
+                                                            Date: {game.game_sold_date}
+                                                        </span>
+                                                    )}
+
+                                                    {game.game_sold_time && (
+                                                        <span className="py-2 mx-2 text-lightOrange font-bold">
+                                                            Time: {game.game_sold_time}
+                                                        </span>
+                                                    )}
+
                                                     <span className="py-2 mx-2 text-white font-bold">
                                                         Country: {game.convention_state}
-
-
 
                                                     </span>
                                                 </p>
@@ -245,7 +256,7 @@ const Layout = () => {
                             className={"w-full h-[2.3rem] rounded-md px-2 bg-darkBlue outline-none text-white"}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        
+
                         <h1 className=' text-white font-semibold mt-2 mb-2'>Show By Convention</h1>
                         <select
                             className="w-full h-[2.3rem] bg-darkBlue text-white rounded-md"

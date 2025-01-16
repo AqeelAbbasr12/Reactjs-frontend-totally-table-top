@@ -37,8 +37,8 @@ const EditGame = () => {
     currency_tag: '',
     condition: '',
     desc: '',
-    game_images: [], 
-    game_image_id: [], 
+    game_images: [],
+    game_image_id: [],
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -50,27 +50,27 @@ const EditGame = () => {
   const fetchConventions = async (convention_id) => {
     setLoading(true);
     try {
-        const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+      const response = await fetchWithAuth(`/user/convention/${convention_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
+      });
 
-        const data = await response.json();
-        setConvention(data);
-        // console.log(data);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setConvention(data);
+
     } catch (error) {
-        console.error('Error fetching conventions data:', error);
+      console.error('Error fetching conventions data:', error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
   const fetchGame = async (game_id) => {
     setLoading(true); // Show loading spinner while fetching
     try {
@@ -88,11 +88,13 @@ const EditGame = () => {
 
       const data = await response.json();
       // Transform data into the format required by react-select
-      console.log(data);
+      console.log('Games', data)
+
       // setGames(data);
       setFormData({
         name: data.name || '',
         price: data.price || '',
+        status: data.status || '',
         currency: data.currency || '',
         currency_tag: data.currency_tag || '',
         condition: data.condition || '',
@@ -100,6 +102,8 @@ const EditGame = () => {
         game_images: [], // Keep empty initially for file input
         game_image_id: data.gameImages.map((img) => img.game_image_id) || [], // Set image IDs
       });
+
+
 
       // Set image previews from server
       setImagePreviews(data.gameImages.map((img) => img.game_image) || []); // Set preview images
@@ -125,14 +129,14 @@ const EditGame = () => {
 
   const handleFileChange = async (e, index) => {
     const file = e.target.files[0];
-  
+
     if (file) {
       // Check if the file size exceeds 20 MB (20 * 1024 * 1024 bytes)
       if (file.size > 20 * 1024 * 1024) {
         toastr.warning("Your image is greater than 20 MB.");
         return; // Exit if the file is too large
       }
-  
+
       try {
         // Compress the image
         const options = {
@@ -142,24 +146,24 @@ const EditGame = () => {
         };
         const compressedFile = await imageCompression(file, options);
         const newPreview = URL.createObjectURL(compressedFile); // Use compressed file for preview
-  
+
         // Update previews and form data
         setImagePreviews((prevPreviews) => {
           const updatedPreviews = [...prevPreviews];
           updatedPreviews[index] = newPreview; // Update specific index
           return updatedPreviews;
         });
-  
+
         setFormData((prevData) => {
           const updatedImages = [...prevData.game_images];
           const updatedImageIds = [...prevData.game_image_id]; // Clone existing image IDs
-  
+
           // Update the file at the specific index
           updatedImages[index] = compressedFile; // Use compressed file
-  
+
           // Keep the image ID if it exists, to track the changed image
           const imageId = updatedImageIds[index] !== null ? updatedImageIds[index] : null;
-  
+
           // Add file and image ID only for this index where the file is changed
           return {
             ...prevData,
@@ -302,99 +306,99 @@ const EditGame = () => {
     "Venezuela": "VEF"
   };
 
-    // Dynamic currency symbol mapping
-    const getCurrencySymbol = (currency) => {
-      switch (currency) {
-        case "USD":
-          return "$";
-        case "ARS":
-          return "$";
-        case "AUD":
-          return "A$";
-        case "EUR":
-          return "€";
-        case "GBP":
-          return "£";
-        case "BRL":
-          return "R$";
-        case "BGN":
-          return "лв";
-        case "CAD":
-          return "C$";
-        case "CLP":
-          return "$";
-        case "COP":
-          return "$";
-        case "HRK":
-          return "kn";
-        case "CYP":
-          return "£";
-        case "CZK":
-          return "Kč";
-        case "DKK":
-          return "kr";
-        case "EEK":
-          return "kr";
-        case "FIM":
-          return "mk";
-        case "FRF":
-          return "₣";
-        case "DEM":
-          return "DM";
-        case "GRD":
-          return "₯";
-        case "HUF":
-          return "Ft";
-        case "ISK":
-          return "kr";
-        case "IEP":
-          return "£";
-        case "ITL":
-          return "₤";
-        case "JPY":
-          return "¥";
-        case "LVL":
-          return "Ls";
-        case "LTL":
-          return "Lt";
-        case "LUF":
-          return "₣";
-        case "MTL":
-          return "₤";
-        case "MXN":
-          return "$";
-        case "NLG":
-          return "ƒ";
-        case "NOK":
-          return "kr";
-        case "PEN":
-          return "S/.";
-        case "PLN":
-          return "zł";
-        case "PTE":
-          return "₣";
-        case "ROL":
-          return "lei";
-        case "SKK":
-          return "Sk";
-        case "SIT":
-          return "€";
-        case "ESP":
-          return "₧";
-        case "SEK":
-          return "kr";
-        case "CHF":
-          return "₣";
-        case "THB":
-          return "฿";
-        case "UYU":
-          return "$U";
-        case "VEF":
-          return "Bs";
-        default:
-          return "$"; // Fallback for unsupported currencies
-      }
-    };
+  // Dynamic currency symbol mapping
+  const getCurrencySymbol = (currency) => {
+    switch (currency) {
+      case "USD":
+        return "$";
+      case "ARS":
+        return "$";
+      case "AUD":
+        return "A$";
+      case "EUR":
+        return "€";
+      case "GBP":
+        return "£";
+      case "BRL":
+        return "R$";
+      case "BGN":
+        return "лв";
+      case "CAD":
+        return "C$";
+      case "CLP":
+        return "$";
+      case "COP":
+        return "$";
+      case "HRK":
+        return "kn";
+      case "CYP":
+        return "£";
+      case "CZK":
+        return "Kč";
+      case "DKK":
+        return "kr";
+      case "EEK":
+        return "kr";
+      case "FIM":
+        return "mk";
+      case "FRF":
+        return "₣";
+      case "DEM":
+        return "DM";
+      case "GRD":
+        return "₯";
+      case "HUF":
+        return "Ft";
+      case "ISK":
+        return "kr";
+      case "IEP":
+        return "£";
+      case "ITL":
+        return "₤";
+      case "JPY":
+        return "¥";
+      case "LVL":
+        return "Ls";
+      case "LTL":
+        return "Lt";
+      case "LUF":
+        return "₣";
+      case "MTL":
+        return "₤";
+      case "MXN":
+        return "$";
+      case "NLG":
+        return "ƒ";
+      case "NOK":
+        return "kr";
+      case "PEN":
+        return "S/.";
+      case "PLN":
+        return "zł";
+      case "PTE":
+        return "₣";
+      case "ROL":
+        return "lei";
+      case "SKK":
+        return "Sk";
+      case "SIT":
+        return "€";
+      case "ESP":
+        return "₧";
+      case "SEK":
+        return "kr";
+      case "CHF":
+        return "₣";
+      case "THB":
+        return "฿";
+      case "UYU":
+        return "$U";
+      case "VEF":
+        return "Bs";
+      default:
+        return "$"; // Fallback for unsupported currencies
+    }
+  };
 
   const validateForm = () => {
     const errors = {};
@@ -521,11 +525,11 @@ const EditGame = () => {
       <div className="md:px-[2rem] px-[1rem] bg-darkBlue md:h-[86vh] w-[100vw] py-3 flex justify-center md:items-center overflow-y-auto">
         <form
           className="sm:w-[50%] w-[100%] bg-[#0d2539] px-3 py-5 rounded-md mt-6 md:mt-36 min-h-screen overflow-auto"
-           onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
         >
           <div className="flex justify-center items-center">
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
-            <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
+              <img src={convention.convention_logo || ConventionImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />
             </div>
             <div className="w-[3rem] h-[3rem] rounded-full bg-lightOrange flex justify-center items-center">
               <FaList className="text-white" />
@@ -717,23 +721,27 @@ const EditGame = () => {
 
 
           <div className="flex justify-center items-center mt-4">
-          <button
-          type="submit"
-          className={`w-[12rem] h-[3rem] rounded-md text-white ${
-            isLoading ? 'bg-gray-500' : 'bg-lightOrange'
-          }`}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex justify-center items-center gap-2">
-              <FaSpinner className="animate-spin" />
-              Processing...
-            </div>
-          ) : (
-            'Update Game'
-          )}
-        </button>
+            {formData.status === "sold" ? (
+              <p className="text-red">When the game is sold, you can't update it.</p>
+            ) : (
+              <button
+                type="submit"
+                className={`w-[12rem] h-[3rem] rounded-md text-white ${isLoading ? 'bg-gray-500' : 'bg-lightOrange'
+                  }`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex justify-center items-center gap-2">
+                    <FaSpinner className="animate-spin" />
+                    Processing...
+                  </div>
+                ) : (
+                  'Update Game'
+                )}
+              </button>
+            )}
           </div>
+
         </form>
       </div>
     </div>

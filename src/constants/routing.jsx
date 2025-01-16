@@ -77,6 +77,7 @@ import AdminSingleGamePage from '../pages/Admin/AdminSingleGamePage';
 import AdminMessagesPage from '../pages/Admin/AdminMessagePage';
 import AdminSingleEventPage from '../pages/Admin/AdminSingleEventPage';
 import ViewAccomodationPage from '../pages/ViewAccomodationPage';
+import ToolsPage from '../pages/Admin/ToolsPage';
 
 
 export const routing = [
@@ -154,6 +155,8 @@ export const routing = [
   { id: 26, link: "/admin/game/single/:game_id", element: <AdminSingleGamePage />, protected: true },
   { id: 49, link: "/admin/messages/:receiver_id?", element: <AdminMessagesPage />, protected: true },
   { id: 26, link: "/admin/event/single/:event_id", element: <AdminSingleEventPage />, protected: true },
+  // Tools
+  { id: 49, link: "/admin/tools", element: <ToolsPage />, protected: true },
 
 ];
 

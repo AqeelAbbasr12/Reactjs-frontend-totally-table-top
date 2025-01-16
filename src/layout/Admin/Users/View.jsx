@@ -118,43 +118,43 @@ function View() {
   const handleDeleteGame = async (gameId) => {
     // Show Swal confirmation dialog
     Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action will permanently delete the game!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
+      title: 'Are you sure?',
+      text: 'This action will permanently delete the game!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                // API call to delete the game
-                const response = await fetchWithAuth(`/admin/delete_game/${gameId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Assuming JWT token
-                    },
-                });
+      if (result.isConfirmed) {
+        try {
+          // API call to delete the game
+          const response = await fetchWithAuth(`/admin/delete_game/${gameId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Assuming JWT token
+            },
+          });
 
-                // Handle API response
-                if (response.ok) {
-                    Swal.fire('Deleted!', 'Game has been successfully deleted.', 'success');
-                    fetchUser(user_id);
-                } else {
-                    const data = await response.json();
-                    Swal.fire('Error!', data.message || 'Failed to delete the game.', 'error');
-                }
-            } catch (error) {
-                Swal.fire('Error!', 'An error occurred. Please try again later.', 'error');
-            }
+          // Handle API response
+          if (response.ok) {
+            Swal.fire('Deleted!', 'Game has been successfully deleted.', 'success');
+            fetchUser(user_id);
+          } else {
+            const data = await response.json();
+            Swal.fire('Error!', data.message || 'Failed to delete the game.', 'error');
+          }
+        } catch (error) {
+          Swal.fire('Error!', 'An error occurred. Please try again later.', 'error');
         }
+      }
     });
-};
+  };
 
-const handleDeleteEvent = async (eventId) => {
-  // Show Swal confirmation dialog
-  Swal.fire({
+  const handleDeleteEvent = async (eventId) => {
+    // Show Swal confirmation dialog
+    Swal.fire({
       title: 'Are you sure?',
       text: 'This action will permanently delete the table!',
       icon: 'warning',
@@ -162,80 +162,80 @@ const handleDeleteEvent = async (eventId) => {
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Yes, delete it!',
-  }).then(async (result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-          try {
-              // API call to delete the event
-              const response = await fetchWithAuth(`/admin/delete_event/${eventId}`, {
-                  method: 'DELETE',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Assuming JWT token
-                  },
-              });
+        try {
+          // API call to delete the event
+          const response = await fetchWithAuth(`/admin/delete_event/${eventId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Assuming JWT token
+            },
+          });
 
-              // Handle API response
-              if (response.ok) {
-                  Swal.fire('Deleted!', 'Table has been successfully deleted.', 'success');
-                  fetchUser(user_id);
-              } else {
-                  const data = await response.json();
-                  Swal.fire('Error!', data.message || 'Failed to delete the table.', 'error');
-              }
-          } catch (error) {
-              Swal.fire('Error!', 'An error occurred. Please try again later.', 'error');
+          // Handle API response
+          if (response.ok) {
+            Swal.fire('Deleted!', 'Table has been successfully deleted.', 'success');
+            fetchUser(user_id);
+          } else {
+            const data = await response.json();
+            Swal.fire('Error!', data.message || 'Failed to delete the table.', 'error');
           }
-      }
-  });
-};
-
-const handleBlock = async (userId, status) => {
-  // Show confirmation popup using SweetAlert2
-  const action = status === 'blocked' ? 'block' : 'unblock'; // Dynamic action text
-
-  Swal.fire({
-    title: `Are you sure?`,
-    text: `Do you want to ${action} this user?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: status === 'blocked' ? '#d33' : '#28a745', // Red for block, green for unblock
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: `Yes, ${action.charAt(0).toUpperCase() + action.slice(1)}!`,
-    cancelButtonText: 'Cancel',
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        // API call to update user status
-        const response = await fetchWithAuth(`/admin/block_user/${userId}`, {
-          method: 'PUT', // Use PUT since you're updating the status
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-          },
-          body: JSON.stringify({ status: status }), // Send the updated status ('blocked' or 'active')
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          fetchUser(userId); // Refresh the user data
-          // Success message
-          Swal.fire(
-            `${action.charAt(0).toUpperCase() + action.slice(1)}ed!`,
-            `The user has been ${action}ed successfully.`,
-            'success'
-          );
-        } else {
-          // Error message
-          Swal.fire('Error!', data.message || `Failed to ${action} the user.`, 'error');
+        } catch (error) {
+          Swal.fire('Error!', 'An error occurred. Please try again later.', 'error');
         }
-      } catch (error) {
-        // Handle network errors
-        Swal.fire('Error!', 'Something went wrong. Please try again later.', 'error');
       }
-    }
-  });
-};
+    });
+  };
+
+  const handleBlock = async (userId, status) => {
+    // Show confirmation popup using SweetAlert2
+    const action = status === 'blocked' ? 'block' : 'unblock'; // Dynamic action text
+
+    Swal.fire({
+      title: `Are you sure?`,
+      text: `Do you want to ${action} this user?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: status === 'blocked' ? '#d33' : '#28a745', // Red for block, green for unblock
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: `Yes, ${action.charAt(0).toUpperCase() + action.slice(1)}!`,
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // API call to update user status
+          const response = await fetchWithAuth(`/admin/block_user/${userId}`, {
+            method: 'PUT', // Use PUT since you're updating the status
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            },
+            body: JSON.stringify({ status: status }), // Send the updated status ('blocked' or 'active')
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            fetchUser(userId); // Refresh the user data
+            // Success message
+            Swal.fire(
+              `${action.charAt(0).toUpperCase() + action.slice(1)}ed!`,
+              `The user has been ${action}ed successfully.`,
+              'success'
+            );
+          } else {
+            // Error message
+            Swal.fire('Error!', data.message || `Failed to ${action} the user.`, 'error');
+          }
+        } catch (error) {
+          // Handle network errors
+          Swal.fire('Error!', 'Something went wrong. Please try again later.', 'error');
+        }
+      }
+    });
+  };
 
 
 
@@ -283,6 +283,28 @@ const handleBlock = async (userId, status) => {
 
     return `${weekday}, ${day}${suffix}, ${month}, ${year}`;
   };
+  const formatDateMember = (dateString) => {
+    const createdDate = new Date(dateString);
+    const currentDate = new Date();
+
+    const diffTime = currentDate - createdDate;
+    const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365)); // Convert ms to years
+    const diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30)); // Convert ms to months
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert ms to days
+
+    if (diffYears >= 1) {
+      return `Member Since ${diffYears} year${diffYears > 1 ? "s" : ""}`;
+    } else if (diffMonths >= 1) {
+      return `Member Since ${diffMonths} month${diffMonths > 1 ? "s" : ""}`;
+    } else {
+      return `Joined ${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    }
+  };
+
+
+
+
+
 
   return (
     <div className="bg-[#102F47] w-full min-h-screen text-white">
@@ -303,7 +325,7 @@ const handleBlock = async (userId, status) => {
               Comprehensive information about the User.
             </p>
           </div>
-         
+
         </div>
 
 
@@ -317,33 +339,34 @@ const handleBlock = async (userId, status) => {
             <p className="text-lg mb-2">
               <span className="font-semibold">User Name:</span>{" "}
               <span className="text-lightOrange">{user?.name || ""}</span>
-              {user?.name && (
+
+              {user?.name && !user?.deleted_at && (
                 <button
                   className="ml-4 px-3 py-1 text-sm bg-red text-white rounded hover:bg-red-600 transition"
-                 
                   onClick={() => {
-                    nav(`/admin/messages/${user?.id}`);  // Removed the extra curly brace here
-                }}
+                    nav(`/admin/messages/${user?.id}`);
+                  }}
                 >
-                  
                   Send Warning Message
                 </button>
               )}
-              {user?.status !== 'blocked' ? (
-  <button
-    className="ml-4 px-3 py-1 text-sm bg-red text-white rounded hover:bg-red-600 transition"
-    onClick={() => handleBlock(user?.id, 'blocked')}
-  >
-    Block User
-  </button>
-) : (
-  <button
-    className="ml-4 px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-    onClick={() => handleBlock(user?.id, 'active')}
-  >
-    Unblock User
-  </button>
-)}
+
+              {user?.status !== 'blocked' && !user?.deleted_at ? (
+                <button
+                  className="ml-4 px-3 py-1 text-sm bg-red text-white rounded hover:bg-red-600 transition"
+                  onClick={() => handleBlock(user?.id, 'blocked')}
+                >
+                  Block User
+                </button>
+              ) : user?.status === 'blocked' && !user?.deleted_at ? (
+                <button
+                  className="ml-4 px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  onClick={() => handleBlock(user?.id, 'active')}
+                >
+                  Unblock User
+                </button>
+              ) : null}
+
 
             </p>
             {/* First Name */}
@@ -369,6 +392,21 @@ const handleBlock = async (userId, status) => {
               <span className="text-lightOrange">{user?.created_at || ""}</span>
             </p>
 
+              {/* Deleted */}
+            {user?.deleted_at && (
+              <p className="text-lg mb-2">
+                <span className="font-semibold text-red">Deleted At:</span>{" "}
+                <span className="text-red">{user?.deleted_at || ""}</span>
+              </p>
+            )}
+            {/* Member Since */}
+            <p className="text-lg mb-2">
+              <span className="text-lightOrange">
+                {user?.created_at ? formatDateMember(user.created_at) : "N/A"}
+              </span>
+            </p>
+
+
           </div>
           <div className="bg-darkBlue p-6 rounded-lg shadow-lg">
             <h2 className="text-xl md:text-2xl font-semibold mb-4">Additional Information</h2>
@@ -376,23 +414,28 @@ const handleBlock = async (userId, status) => {
 
               {/* status */}
               <p className="text-lg mb-2">
-  <span className="font-semibold">Status:</span>{" "}
-  {user?.status === "blocked" ? (
-    <button
-      className="ml-4 px-3 py-1 text-sm bg-red text-white rounded hover:bg-red transition"
-     
-    >
-      Blocked
-    </button>
-  ) : (
-    <button
-      className="ml-4 px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-      
-    >
-      Active
-    </button>
-  )}
-</p>
+                <span className="font-semibold">Status:</span>{" "}
+                {user?.deleted_at ? (
+                  <button
+                    className="ml-4 px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                  >
+                    Deleted
+                  </button>
+                ) : user?.status === "blocked" ? (
+                  <button
+                    className="ml-4 px-3 py-1 text-sm bg-red text-white rounded hover:bg-red-600 transition"
+                  >
+                    Blocked
+                  </button>
+                ) : (
+                  <button
+                    className="ml-4 px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  >
+                    Active
+                  </button>
+                )}
+
+              </p>
 
 
               {/* Location */}
@@ -481,7 +524,7 @@ const handleBlock = async (userId, status) => {
                     Remove Attendance
                   </button>
 
-                  
+
                 </div>
 
 
@@ -508,7 +551,7 @@ const handleBlock = async (userId, status) => {
           <div className='flex-1 md:order-1 order-2'>
             {games.map((game) => (
               <div
-                
+
                 className='rounded-md bg-[#0D2539] cursor-pointer flex gap-x-5 items-left mb-2 p-3'
               >
                 <img
@@ -518,7 +561,7 @@ const handleBlock = async (userId, status) => {
                 />
                 <div>
                   <p className='py-2 mx-2 text-white text-sm'
-                  onClick={() => window.open(`/admin/game/single/${game.id}`, '_blank')}
+                    onClick={() => window.open(`/admin/game/single/${game.id}`, '_blank')}
                   >
                     {game.game_name}
                     <span className="py-2 mx-2 text-white font-bold">
@@ -541,11 +584,11 @@ const handleBlock = async (userId, status) => {
                   </div>
                   <div className='relative pt-2 flex items-center gap-x-2'>
 
-                  <button
-                    onClick={() => handleDeleteGame(game.id)} // Pass game ID dynamically
-                    className='px-4 py-2 bg-red text-white text-sm font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'>
-                    Remove Game
-                  </button>
+                    <button
+                      onClick={() => handleDeleteGame(game.id)} // Pass game ID dynamically
+                      className='px-4 py-2 bg-red text-white text-sm font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'>
+                      Remove Game
+                    </button>
 
                   </div>
                 </div>
@@ -568,7 +611,7 @@ const handleBlock = async (userId, status) => {
         )}
 
         {events
-          
+
           .map((event) => (
             <div
               key={event.id}
@@ -577,7 +620,7 @@ const handleBlock = async (userId, status) => {
               {/* Event Details */}
               <div className="w-full sm:w-auto" >
                 <h1 className="text-lg font-semibold text-white cursor-pointer break-all flex items-center gap-2"
-                onClick={() => window.open(`/admin/event/single/${event.id}`, '_blank')}
+                  onClick={() => window.open(`/admin/event/single/${event.id}`, '_blank')}
                 >
                   {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
                   <span className="text-lightOrange">Space ({event.event_space})</span>
@@ -614,14 +657,14 @@ const handleBlock = async (userId, status) => {
 
                 {/* Action Buttons */}
                 <div className='relative pt-2 flex items-center gap-x-2'>
-                    {/* Delete Attendance Button */}
-                    <button
-                      onClick={() => handleDeleteEvent(event.id)} // Pass IDs dynamically
-                      className='px-4 py-2 bg-red text-white text-sm font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'>
-                      Remove Table
-                    </button>
+                  {/* Delete Attendance Button */}
+                  <button
+                    onClick={() => handleDeleteEvent(event.id)} // Pass IDs dynamically
+                    className='px-4 py-2 bg-red text-white text-sm font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'>
+                    Remove Table
+                  </button>
 
-                  </div>
+                </div>
               </div>
 
               {/* Event Image */}
@@ -669,7 +712,7 @@ const handleBlock = async (userId, status) => {
                           <div>
                             <p className='text-white'>
                               <span className='text-lightOrange'>{user?.name || ""}</span> will attending <span
-                                
+
                                 className='text-lightOrange  ml-1 cursor-pointer'
                               >
                                 {feedItem.convention_attendance?.convention_name}

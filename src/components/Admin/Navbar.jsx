@@ -51,6 +51,11 @@ function Navbar() {
       name: "Messages",
       path: "/admin/messages"
     },
+    {
+      id: 7,
+      name: "Tools",
+      path: "/admin/tools"
+    },
   ]
   const [isOpen, setIsOpen] = useState(false);
   const toggler = () => {
@@ -105,7 +110,7 @@ function Navbar() {
       }
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setUser(data);
     } catch (error) {
       // console.error('Error fetching user data:', error);

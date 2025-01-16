@@ -14,14 +14,13 @@ import { fetchWithAuth } from '../../services/apiService';
 
 const NextAgenda = () => {
     const [loading, setLoading] = useState(true);
-    const { convention_id } = useParams();  // Get convention_id from URL params
+    const { convention_id } = useParams(); 
     const [conventions, setConvention] = useState({});
     const [agendaName, setAgenda] = useState({});
-      // Agenda item input state
     const nav = useNavigate();
 
     useEffect(() => {
-        fetchConventions(convention_id);  // Fetch convention details using convention_id
+        fetchConventions(convention_id); 
         fetchAgendaName(convention_id);
     }, [convention_id]);
 

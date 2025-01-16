@@ -61,9 +61,10 @@ const Profile = () => {
     const { name, checked } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: checked, // Update the value to true/false based on checked
+      [name]: checked ? "1" : "0", // Convert boolean to "1" or "0"
     }));
   };
+
 
 
   const [errors, setErrors] = useState({});
@@ -86,9 +87,11 @@ const Profile = () => {
         }
 
         const data = await response.json();
-        // console.log(data);
 
+        // Update user data state
         setUserData(data);
+
+        // Initialize form data
         setFormData({
           first_name: data.first_name || '',
           last_name: data.last_name || '',
@@ -96,19 +99,24 @@ const Profile = () => {
           location: data.location || '',
           bio: data.bio || '',
           country: data.country || '',
-          newsletter_info: data.newsletter_info === "true",
-          promotional_info: data.promotional_info === "true",
+          newsletter_info: data.newsletter_info === "1" ? "1" : "0", // Map to "1" or "0"
+          promotional_info: data.promotional_info === "1" ? "1" : "0", // Map to "1" or "0"
           profilePicture: data.profile_picture || '',
         });
-        setLoading(false); // Set loading to false once data is fetched
+
+        // Stop loading once data is fetched
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        setLoading(false); // Set loading to false even if there's an error
+
+        // Ensure loading stops even on error
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, []); // Dependency array is empty to run only on component mount
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -218,6 +226,7 @@ const Profile = () => {
       });
 
       const result = await response.json();
+      console.log(result);
 
       if (response.ok) {
         toastr.success('Profile Updated Successfully');
@@ -570,7 +579,7 @@ const Profile = () => {
                   <input
                     type="checkbox"
                     name="newsletter_info"
-                    checked={formData.newsletter_info}
+                    checked={formData.newsletter_info === "1"} // Convert "1"/"0" to boolean
                     onChange={handleCheckboxChange}
                     className="mr-2 w-5 h-5 rounded bg-darkBlue border-gray-600"
                   />
@@ -582,13 +591,14 @@ const Profile = () => {
                   <input
                     type="checkbox"
                     name="promotional_info"
-                    checked={formData.promotional_info}
+                    checked={formData.promotional_info === "1"} // Convert "1"/"0" to boolean
                     onChange={handleCheckboxChange}
                     className="mr-2 w-5 h-5 rounded bg-darkBlue border-gray-600"
                   />
                   Do you wish to receive promotional information from selected partners?
                 </label>
               </div>
+
 
 
 

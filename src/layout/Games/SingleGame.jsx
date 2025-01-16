@@ -182,8 +182,12 @@ const SingleGame = () => {
 
                     </div>
                     <p className='text-white mt-2'>{formatGameDate(game.game_created_at)} Game</p>
+                    {/* Updated description text */}
+                    <p className="text-white mt-3 break-words whitespace-pre-wrap w-full max-w-full">
+                        {formatDescription(game.game_desc)}
+                    </p>
 
-                    <p className='text-white mt-3'>{formatDescription(game.game_desc)}</p>
+
 
                     <div className='flex items-center gap-x-4 mt-4'>
                         <img src={game.user_image || FaceImage} alt="" className='w-[3rem] h-[3rem] rounded-full object-cover' />

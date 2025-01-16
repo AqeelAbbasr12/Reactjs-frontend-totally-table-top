@@ -64,8 +64,10 @@ const Layout = () => {
 
             const data = await response.json();
             setConvention(data);
+            console.log('Convention', data);
 
-            if (data.convention_is_private === '1') {
+            // New combined condition
+            if (data.convention_is_private === '1' && data.is_attendance_mark !== 1) {
                 const storedPassword = localStorage.getItem('ConventionPassword');
 
                 // If storedPassword doesn't exist or doesn't match, redirect to the specific convention page
@@ -76,13 +78,13 @@ const Layout = () => {
                 localStorage.removeItem('ConventionPassword');
             }
 
-            // console.log('convention', data);
         } catch (error) {
-            // console.error('Error fetching conventions data:', error);
+            console.error('Error fetching conventions data:', error);
         } finally {
             setLoading(false);
         }
     };
+
 
 
     // Fetch saved attendance data

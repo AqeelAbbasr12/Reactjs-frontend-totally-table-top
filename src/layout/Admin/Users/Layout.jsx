@@ -24,7 +24,7 @@ function layout({ onSearch }) {
   }, []);
 
 
- 
+
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
@@ -43,7 +43,7 @@ function layout({ onSearch }) {
       }));
     }
   };
-  
+
 
   // Function to handle search input change
   const handleSearchChange = (e) => {
@@ -113,9 +113,9 @@ function layout({ onSearch }) {
             },
             body: JSON.stringify({ status: newStatus }), // Pass updated status
           });
-  
+
           const data = await response.json();
-  
+
           if (response.ok) {
             Swal.fire(
               newStatus === 'blocked' ? 'Blocked!' : 'Unblocked!',
@@ -156,9 +156,9 @@ function layout({ onSearch }) {
               Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Bearer token for auth
             },
           });
-  
+
           const data = await response.json();
-  
+
           if (response.ok) {
             // Success message
             Swal.fire('Deleted!', 'The user has been deleted successfully.', 'success');
@@ -175,8 +175,8 @@ function layout({ onSearch }) {
       }
     });
   };
-  
-  
+
+
 
   return (
     <div className="bg-[#102F47] w-full opacity-100 min-h-screen">
@@ -223,7 +223,7 @@ function layout({ onSearch }) {
               {isDropdownOpen && (
                 <div className='absolute w-full lg:w-72 mt-2 bg-[#102F47] border border-gray-300 shadow-lg text-lg md:text-xl lg:text-2xl'>
                   <ul>
-                    
+
                     <li
                       className='p-2 hover:bg-gray-100 cursor-pointer hover:text-black'
                       onClick={() => handleOptionClick('Sort by Block')}
@@ -299,21 +299,24 @@ function layout({ onSearch }) {
                           <td className="font-mulish text-sm leading-5 md:text-26 md:leading-33 truncate">
                             <span className="text-lightOrange truncate block w-full overflow-hidden">
                               {/* Conditionally Render Button */}
-                              {user.status === 'blocked' ? (
-                                <button
-                                  className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-                                  onClick={() => handleBlockUnblock(user.id, 'active')} // Unblock
-                                >
-                                  Unblock {user.username}
-                                </button>
-                              ) : (
-                                <button
-                                  className="px-3 py-1 text-sm bg-red text-white rounded hover:bg-red transition"
-                                  onClick={() => handleBlockUnblock(user.id, 'blocked')} // Block
-                                >
-                                  Block {user.username}
-                                </button>
-                              )}
+                              {!user.deleted_at ? (
+                                user.status === 'blocked' ? (
+                                  <button
+                                    className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                                    onClick={() => handleBlockUnblock(user.id, 'active')} // Unblock
+                                  >
+                                    Unblock {user.username}
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="px-3 py-1 text-sm bg-red text-white rounded hover:bg-red transition"
+                                    onClick={() => handleBlockUnblock(user.id, 'blocked')} // Block
+                                  >
+                                    Block {user.username}
+                                  </button>
+                                )
+                              ) : null}
+
                             </span>
                           </td>
                         </div>
@@ -322,12 +325,24 @@ function layout({ onSearch }) {
                       </div>
                       <div className="flex items-center gap-x-20 justify-self-end">
                         {/* Delete Button */}
-                        <td
-                          className="font-mulish text-lg leading-10 md:text-26 md:leading-47 text-[#C53A33] cursor-pointer"
-                          onClick={() => handleDeleteClick(user.id)} // Trigger delete on click
-                        >
-                          Delete
+                        <td className="font-mulish text-lg leading-10 md:text-26 md:leading-47 text-[#C53A33] cursor-pointer">
+                          {!user.deleted_at ? (
+                            <span
+                              onClick={() => handleDeleteClick(user.id)} // Trigger delete on click
+                              className="cursor-pointer"
+                            >
+                              Delete
+                            </span>
+                          ) : (
+                            <button
+                              className="ml-4 px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                              disabled // Disables the button if the user is deleted
+                            >
+                              Deleted
+                            </button>
+                          )}
                         </td>
+
 
                         {/* Edit Button */}
                         <td

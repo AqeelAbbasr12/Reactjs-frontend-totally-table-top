@@ -66,7 +66,7 @@ const Layout = () => {
 
             const data = await response.json();
             // Transform data into the format required by react-select
-            // console.log(data);
+            console.log(data);
             setGames(data);
         } catch (error) {
             // console.error('Error fetching Events data:', error);
@@ -165,8 +165,8 @@ const Layout = () => {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
                 body: JSON.stringify({
-                    status: 'sold',        // Set the status to 'sold'
-                    sold_price: soldPrice // Add sold_price field
+                    status: 'sold',       
+                    sold_price: soldPrice 
                 })
             });
 
@@ -251,12 +251,15 @@ const Layout = () => {
                                         <div className="w-[1px] h-[1rem] bg-white"></div>
                                         <p className="text-white">{game.game_condition}</p>
                                         <div className='w-[1px] h-[1rem] bg-white'></div>
-                                        <p className='text-red'>
-                                            Sold Price
-                                            <span className="ml-1"> {/* Adds a margin-left for spacing */}
-                                                {game.game_currency_symbol}{game.sold_price}
-                                            </span>
-                                        </p>
+
+                                        {game.game_status === "sold" && (
+                                            <p className="text-red">
+                                                Sold Price
+                                                <span className="ml-1">
+                                                    {game.game_currency_symbol}{game.sold_price}
+                                                </span>
+                                            </p>
+                                        )}
                                     </div>
 
                                     {/* Buttons Section */}
@@ -281,12 +284,12 @@ const Layout = () => {
                                             className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-lightOrange text-white"
                                         />
                                         {game.game_status === "publish" && (
-  <Button
-    onClickFunc={() => handleDelete(game.id)}
-    title={"Delete"}
-    className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
-  />
-)}
+                                            <Button
+                                                onClickFunc={() => handleDelete(game.id)}
+                                                title={"Delete"}
+                                                className="w-full sm:w-[8rem] h-[2.3rem] rounded-md border border-red text-white"
+                                            />
+                                        )}
 
                                     </div>
                                 </div>
