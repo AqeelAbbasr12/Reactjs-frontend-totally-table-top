@@ -9,6 +9,7 @@ import toastr from 'toastr';
 import { useParams } from 'react-router-dom';
 import { IoMdFlag } from 'react-icons/io';
 import Swal from 'sweetalert2';
+import { AiOutlineClose } from "react-icons/ai";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -356,9 +357,10 @@ const Layout = () => {
 
             // Construct the pre-written message using 'data' directly
             if (data && data.name && data.convention_name) {
-                const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
+                const preWrittenMessage = `Game Name:  "${data.name}" under the Convention Name: "${data.convention_name}"`;
+                // const preWrittenMessage = `Hello, I can see you have this game ${data.name} available to buy at the ${data.convention_name}, please may I ask if it is 100% complete and would you accept ${data.currency_tag}${data.price}? Thank you. ${data.sender_name}.`;
                 // console.log(preWrittenMessage);
-                // setReplyContent(preWrittenMessage)
+                setReplyContent(preWrittenMessage)
 
             } else {
                 console.error('Invalid game data:', data);
@@ -405,43 +407,56 @@ const Layout = () => {
                                     className="w-full p-2 rounded-md text-white bg-[#0d2539] border border-gray-500 outline-none"
                                 />
                             </div>
-                            {filteredFriends.map((friend, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer 
-                                ${selectedFriend?.id === friend.id ? 'border-lightOrange' : 'border-gray-500'}`}
-                                    onClick={() => handleFriendClick(friend)}
-                                >
-                                    <div className='flex justify-between items-center'>
-                                        <div className='flex items-center gap-x-3'>
-                                            <img
-                                                src={friend.profile_image || FaceImage}
-                                                alt="Friend"
-                                                className='w-[2rem] h-[2rem] rounded-full object-cover'
-                                            />
-                                            <div className='flex items-center gap-x-2'>
-                                                <p className='text-white'>{friend.user_name}</p>
-                                                {friend.message_count > 0 && (
-                                                    <span className='bg-red text-white text-xs font-bold py-0.5 px-2 rounded-full'>
-                                                        {friend.message_count}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
+                            {filteredFriends
+                                .sort((a, b) => b.message_count - a.message_count)
+                                .map((friend, index) => (
+                                    <div
+                                        key={index}
+                                        className={`flex flex-col mb-2 border-b border-gray-500 pb-2 cursor-pointer 
+            ${selectedFriend?.id === friend.id ? 'border-lightOrange' : 'border-gray-500'}`}
+                                        onClick={() => handleFriendClick(friend)}
+                                    >
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex items-center gap-x-3'>
+                                                <img
+                                                    src={friend.profile_image || FaceImage}
+                                                    alt="Friend"
+                                                    className='w-[2rem] h-[2rem] rounded-full object-cover'
+                                                />
+                                                <div className='flex items-center gap-x-2'>
+                                                    <p className='text-white'>{friend.user_name}</p>
 
-                                        {friend.is_online == 1 && (
-                                            <div
-                                                className={`w-[1rem] h-[1rem] rounded-full ${friend.is_online == 1 ? 'bg-green-500' : 'bg-red'}`}
-                                            ></div>
-                                        )}
-                                        {friend.is_online == 0 && (
-                                            <span className='text-xs text-gray-400 ml-2'>
-                                                {formatDistanceToNow(new Date(friend.updated_at), { addSuffix: true })}
-                                            </span>
-                                        )}
+
+
+                                                    {friend.message_count > 0 && (
+                                                        <span className='bg-red text-white text-xs font-bold py-0.5 px-2 rounded-full'>
+                                                            {friend.message_count}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {friend.is_online == 1 && (
+                                                <div className="w-[1rem] h-[1rem] rounded-full bg-green-500"></div>
+                                            )}
+                                            {friend.is_online == 0 && (
+                                                <span className='text-xs text-gray-400 ml-2'>
+                                                    {formatDistanceToNow(new Date(friend.updated_at), { addSuffix: true })}
+                                                </span>
+                                            )}
+                                            {/* Cross Icon to close the chat */}
+                                            <AiOutlineClose
+                                                size={18}
+                                                className="text-red cursor-pointer hover:text-red-500"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedFriend(null);
+                                                }}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+
                         </div>
 
                         <MessageComponent onNewMessage={handleNewMessage} />
@@ -554,7 +569,6 @@ const Layout = () => {
                                 </div>
                             )}
                         </div>
-
                     </div>
                 </div>
             </div>

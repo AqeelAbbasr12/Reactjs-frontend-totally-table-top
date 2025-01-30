@@ -48,6 +48,7 @@ const Layout = () => {
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             setGames(data);
+            // console.log('games ', data);
         } catch (error) {
             console.error('Error fetching games:', error);
         } finally {
@@ -99,6 +100,10 @@ const Layout = () => {
         }
 
         setFilteredGames(filtered);
+    };
+
+    const handleUserClick = () => {
+        nav(`/salesbyuser`);
     };
 
     return (
@@ -159,11 +164,22 @@ const Layout = () => {
                                                 <p className='py-2 mx-2 text-white text-sm'>
                                                     {game.game_name}
                                                     <span className="py-2 mx-2 text-white font-bold">
-                                                        Sold By: {game.user_name}
+                                                        Sold By:
+                                                        <span
+                                                            className="cursor-pointer text-lightOrange hover:underline ml-2" // Adds a gap between "Sold By:" and the username
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent navigation to `/game/single/${game.id}`
+                                                                window.open(`/salesbyuser/${game.user_id}`, "_blank"); // Open in a new tab
+                                                            }}
+                                                        >
+                                                            {game.user_name}
+                                                        </span>
                                                         {game.game_status === "sold" && (
                                                             <span className="text-red font-bold ml-2">(SOLD)</span>
                                                         )}
                                                     </span>
+
+
                                                 </p>
                                                 <div className='flex gap-x-2 items-center mx-2'>
                                                     <p className='text-white'>
@@ -177,6 +193,7 @@ const Layout = () => {
                                         </div>
                                     ))}
                                 </div>
+
 
                         ) : (
                             <div className='w-[100%] h-[52.5vh] mt-4 bg-[#0d2539] rounded-md flex justify-center items-center flex-col'>

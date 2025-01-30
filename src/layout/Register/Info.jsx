@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import Navbar from '../../components/Navbar'
 import PCImage from '../../assets/Pc.png'
-import logo from '../../assets/Large_logo.png'
+import info from '../../assets/info.png'
 import Calendar from '../../assets/calendar.svg'
 import Bag from '../../assets/bag.svg'
 import Sell from '../../assets/sell.svg'
@@ -43,10 +43,10 @@ const Info = () => {
                     <h1 className='text-3xl font-semibold text-white'>Why Create An Account ?</h1>
                     <p className='text-white mt-4 w-[100%] md:w-[60%]'>Effectively organize your time at conventions so you can get the most out of each day </p>
                     <p className='text-white mt-4 w-[100%] md:w-[60%]'>Show your friends which conventions your are attending for next 12 months </p>
-                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Show weeks in advance the list of games you have for sale at an upcoming convention</p>
-                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Create a personalized agenda for all the stands you wish to visit a convention </p>
-                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Directly connect with friends at the convention and set a time to play games together</p>
-                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Share your accomodation information with your friends to keep the gaming going till late </p>
+                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Advertise weeks in advance the list of games you have for sale at an upcoming convention</p>
+                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Create a personalized agenda for all the stands and events you wish to visit </p>
+                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Quickly and easily find a games table to join or host</p>
+                    <p className='text-white mt-4 w-[100%] md:w-[60%]'>Totally TableTop is completely free to use! </p>
                     <div className='flex gap-x-[1rem] md:gap-x-[2rem] items-center mt-4'>
                         <div>
                             <Button onClickFunc={() => nav("/register-form")} title={"Create an account"} className={"w-[10rem] text-sm md:w-[13rem] h-[2.3rem] rounded-md text-white bg-lightOrange"} />
@@ -60,8 +60,13 @@ const Info = () => {
                     </div>
                 </div>
                 <div className='md:mt-0 mt-4'>
-                    <img src={logo} alt="" className='min-h-[20rem]' />
+                    <img
+                        src={info}
+                        alt=""
+                        className='w-full max-w-[33rem] h-auto max-h-[25rem] object-contain mx-auto'
+                    />
                 </div>
+
             </header>
 
             <div ref={sectionRef} className='bg-[#0d2539] w-[100%] p-[1rem] md:p-[2rem]'>

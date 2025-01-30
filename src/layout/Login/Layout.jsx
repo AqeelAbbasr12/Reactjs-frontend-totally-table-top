@@ -55,7 +55,7 @@ const Layout = () => {
         localStorage.setItem('current_user_id', result.user_id);
         // Navigate to the home page or handle successful login
         toastr.success('success', 'Log in successfully');
-        nav("/home");
+        nav("/user/convention");
 
       } else {
         // Handle validation errors
@@ -83,8 +83,8 @@ const Layout = () => {
             </div>
             {/* HEADING  */}
             <div>
-              <h1 className='text-5xl text-white font-semibold'>Totally TableTop</h1>
-              <p className='text-gray-400 ml-2 mt-2'>CONVENTIONS, MANAGED</p>
+              <h1 className='text-5xl mt-6 text-white font-semibold'>Totally TableTop</h1>
+              {/* <p className='text-gray-400 ml-2 mt-2'>CONVENTIONS, MANAGED</p> */}
             </div>
           </div>
           {/* TICK  */}
@@ -101,6 +101,8 @@ const Layout = () => {
             ))
           }
           <Link className='text-white mt-[1rem] md:flex hidden' to={"/register"}>Find out more</Link>
+
+          <h1 className='text-4xl text-gray-400 ml-2 mt-4'>CONVENTIONS, MANAGED</h1>
         </div>
 
         <div className='md:w-[40%] w-[100%] md:block flex justify-center items-center flex-col'>

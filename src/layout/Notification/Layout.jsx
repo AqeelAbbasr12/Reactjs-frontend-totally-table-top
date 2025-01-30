@@ -161,6 +161,38 @@ const Layout = () => {
         }
     };
 
+    const markAsRead = async (notificationId) => {
+        try {
+          // Creating the request body if needed (in case your API expects a body)
+          const formDataToSend = new FormData();
+          formDataToSend.append('notification_id', notificationId);
+      
+          // Making the API call to mark the notification as read
+          const response = await fetch(`${API_BASE_URL}/user/mark_as_read/${notificationId}`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Authorization header with Bearer token
+            },
+            body: formDataToSend, // Attach any necessary form data if required
+          });
+      
+          // Check if the response is successful
+          if (response.ok) {
+            const data = await response.json();
+            toastr.success(data.message || 'Notification Mark As Read');
+            fetchNotificationData();
+            
+            // You can update the UI here if necessary
+            // For example, you can change the notification's "read" status or remove it from the list
+          } else {
+            console.error('Failed to mark notification as read:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error marking notification as read:', error);
+        }
+      };
+      
+
     return (
         <div className="flex flex-col w-full min-h-screen overflow-y-auto bg-[#0d2539]">
             <Navbar type={"verified"} />
@@ -168,77 +200,85 @@ const Layout = () => {
                 <div className="flex-1 rounded-md px-2 mb-2 w-full md:mt-0 mt-4">
                     <h1 className="text-white text-2xl font-semibold">Notifications ({notificationData.length} new)</h1>
                     <div className="mt-6">
-                        
+
                         {notificationData.map((notification, index) => (
                             <div key={index} className="bg-[#0d2539] w-[100%] rounded-md p-3 flex justify-between sm:flex-row flex-col mb-3">
                                 <div className="flex items-center gap-x-4">
                                     <div className="w-[1.5rem] h-[1.5rem] rounded-full bg-red"></div>
                                     <img src={notification.user_image || FaceImage} alt="" className="w-[3rem] h-[3rem] rounded-full object-cover" />
-                                    <p className="text-white"><span className="text-lightOrange">{notification.sender_name}</span> {notification.content}</p>
+                                    <p className="text-white">
+                                        <span className="text-lightOrange">{notification.sender_name}</span> {notification.content}
+                                    </p>
                                 </div>
-                                {/* condition applied */}
+
+                                {/* condition applied for friend_request */}
                                 {notification.type === 'friend_request' && (
                                     <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
                                         <Button
-                                            title={
-                                                loadingId === notification.friend_request_id ? 'Ignoring...' : 'Ignore'
-                                            }
+                                            title={loadingId === notification.friend_request_id ? 'Ignoring...' : 'Ignore'}
                                             className="text-white cursor-pointer"
                                             onClickFunc={() => ignoreFriendRequest(notification.friend_request_id, notification.id)}
                                             loading={loadingId === notification.friend_request_id}
                                         />
                                         <Button
-                                            title={
-                                                loadingId === notification.friend_request_id ? 'Accepting...' : 'Accept'
-                                            }
+                                            title={loadingId === notification.friend_request_id ? 'Accepting...' : 'Accept'}
                                             className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
                                             onClickFunc={() => acceptFriendRequest(notification.friend_request_id, notification.id)}
                                             loading={loadingId === notification.friend_request_id}
                                         />
                                     </div>
-                                 )} 
-                                 {notification.type === 'invitation' && (
+                                )}
+
+                                {/* condition applied for invitation */}
+                                {notification.type === 'invitation' && (
                                     <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
                                         <Button
-                                            title={
-                                                loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'
-                                            }
+                                            title={loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'}
                                             className="text-white cursor-pointer"
                                             onClickFunc={() => ignoreInvitation(notification.invitation_id, notification.id)}
                                             loading={loadingId === notification.invitation_id}
                                         />
                                         <Button
-                                            title={
-                                                loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'
-                                            }
+                                            title={loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'}
                                             className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
                                             onClickFunc={() => acceptInvitation(notification.invitation_id, notification.id)}
                                             loading={loadingId === notification.invitation_id}
                                         />
                                     </div>
-                                 )} 
-                                 {notification.type === 'table_request' && (
+                                )}
+
+                                {/* condition applied for table_request */}
+                                {notification.type === 'table_request' && (
                                     <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
                                         <Button
-                                            title={
-                                                loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'
-                                            }
+                                            title={loadingId === notification.invitation_id ? 'Ignoring...' : 'Ignore'}
                                             className="text-white cursor-pointer"
                                             onClickFunc={() => ignoreInvitation(notification.invitation_id, notification.id)}
                                             loading={loadingId === notification.invitation_id}
                                         />
                                         <Button
-                                            title={
-                                                loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'
-                                            }
+                                            title={loadingId === notification.invitation_id ? 'Accepting...' : 'Accept'}
                                             className={'w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2'}
                                             onClickFunc={() => acceptInvitation(notification.invitation_id, notification.id)}
                                             loading={loadingId === notification.invitation_id}
                                         />
                                     </div>
-                                 )} 
+                                )}
+
+                                {/* Mark as Read button for other types */}
+                                {['friend_request', 'invitation', 'table_request'].indexOf(notification.type) === -1 && (
+                                    <div className="flex gap-x-4 items-center sm:mt-0 mt-3">
+                                        <button
+                                            className="w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange sm:mt-0 mt-2"
+                                            onClick={() => markAsRead(notification.id)}
+                                        >
+                                            Mark as Read
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
+
                     </div>
                 </div>
             </div>

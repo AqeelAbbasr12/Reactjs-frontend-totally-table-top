@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import Button from '../../components/Button'
 import { fetchWithAuth } from "../../services/apiService";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 
 const SingleGame = () => {
@@ -173,6 +175,7 @@ const SingleGame = () => {
                         <div className='w-[1px] h-[1rem]  bg-white'></div>
                         <p className='text-white font-semibold'>{game.game_condition}</p>
                         <div className='w-[1px] h-[1rem] bg-white'></div>
+
                         <p className='text-red font-semibold'>
                             Sold Price
                             <span className="ml-1"> {/* Adds a margin-left for spacing */}
@@ -242,36 +245,46 @@ const SingleGame = () => {
                                     <p className='text-white font-semibold'>{game.game_currency_symbol}{game.game_price}</p>
                                     <p className='text-white'>{game.game_condition}</p>
                                 </div>
-                                {game.user_id !== currentUserId && (
-                                    <div>
-                                        <Button
-                                            onClickFunc={() => {
-                                                nav(`/messages/${game.user_id}/game/${game.id}`);
-                                            }}
-                                            title={"Enquire Now"}
-                                            className={`text-white bg-lightOrange w-[7rem] h-[2.3rem] rounded-md`}
-                                        />
-                                    </div>
-                                )}
+
                             </>
                         )}
 
                     </div>
                     {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Game Images</h2> */}
-                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 m-2'>
-                        {game.game_images && game.game_images.slice(1).map((image, index) => ( // Splice the first image
-                            <div key={index} className='relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer'>
-                                <img
-                                    src={image || ConventionImage}
-                                    alt={`Game Image ${index + 1}`}
-                                    className='w-full h-[10rem] object-cover'
-                                // onClick={() => nav(`${image}`)} // Redirect to new page with image
-                                />
-                            </div>
-                        ))}
-                    </div>
+                    <PhotoProvider>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 m-2">
+                            {game.game_images &&
+                                game.game_images.slice(1).map((image, index) => (
+                                    <div
+                                        key={index}
+                                        className="relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer"
+                                    >
+                                        <PhotoView src={image || ConventionImage}>
+                                            <img
+                                                src={image || ConventionImage}
+                                                alt={`Game Image ${index + 1}`}
+                                                className="w-full h-[10rem] object-cover"
+                                            />
+                                        </PhotoView>
+                                    </div>
+                                ))}
+                        </div>
+                    </PhotoProvider>
 
+                    <div className="mt-4 mb-4 flex justify-center">
+                        {game.game_status !== 'sold' && game.user_id !== currentUserId && (
+                            <Button
+                                onClickFunc={() => {
+                                    nav(`/messages/${game.user_id}/game/${game.id}`);
+                                }}
+                                title="Enquire Now"
+                                className="text-white bg-lightOrange w-[10rem] h-[2.5rem] rounded-md text-center"
+                            />
+                        )}
+                    </div>
                 </div>
+
+
 
             </div>
 

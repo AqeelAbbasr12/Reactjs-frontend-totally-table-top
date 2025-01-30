@@ -22,10 +22,17 @@ const FindATable = () => {
     const [popupStates, setPopupStates] = useState({});
     const [activeEventId, setActiveEventId] = useState(null);
     const [conventions, setConventions] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
+
 
     useEffect(() => {
         fetchFindTable();
         fetchConventions();
+
+        const userId = localStorage.getItem('current_user_id');
+        if (userId) {
+            setCurrentUserId(Number(userId)); // Convert to a number if your `event_user_id` is a number
+        }
     }, []);
 
 
@@ -245,27 +252,33 @@ const FindATable = () => {
                                                 {event.event_name} on {formatDate(event.event_date).split(",")[0]}{" "}
                                                 <span className="text-lightOrange">Space ({event.event_space})</span>
 
-                                                {/* Flag Icon with Hover Popup */}
-                                                <div
-                                                    className="relative"
-                                                    onMouseEnter={() => handleMouseEnter(event.id)}
-                                                    onMouseLeave={() => handleMouseLeave(event.id)}
-                                                >
-                                                    <IoMdFlag
-                                                        size={24}
-                                                        color="#F77F00"
-                                                        className="cursor-pointer"
-                                                        onClick={() => handleReportTable(event.id)} // Unique ID passed
-                                                    />
+                                                {/* Conditional Rendering */}
+                                                {event.event_user_id === currentUserId ? (
+                                                    <span className="text-green-500 font-medium">Listed by You</span>
+                                                ) : (
+                                                    // Flag Icon with Hover Popup
+                                                    <div
+                                                        className="relative"
+                                                        onMouseEnter={() => handleMouseEnter(event.id)}
+                                                        onMouseLeave={() => handleMouseLeave(event.id)}
+                                                    >
+                                                        <IoMdFlag
+                                                            size={24}
+                                                            color="#F77F00"
+                                                            className="cursor-pointer"
+                                                            onClick={() => handleReportTable(event.id)} // Unique ID passed
+                                                        />
 
-                                                    {/* Hover Popup (Unique for each row) */}
-                                                    {popupStates[event.id] && (
-                                                        <div className="absolute bottom-[120%] left-0 transform translate-x-0 w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
-                                                            <p className="text-black text-center">Report a Table</p>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                        {/* Hover Popup (Unique for each row) */}
+                                                        {popupStates[event.id] && (
+                                                            <div className="absolute bottom-[120%] left-0 transform translate-x-0 w-[150px] bg-white p-2 rounded-md shadow-lg z-10 mt-2">
+                                                                <p className="text-black text-center">Report a Table</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </h1>
+
 
 
 
@@ -296,13 +309,15 @@ const FindATable = () => {
 
 
                                             {/* Action Buttons */}
-                                            <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
-                                                <Button
-                                                    onClickFunc={() => handleSubmit(event.id)}
-                                                    title={"+"}
-                                                    className="w-[2rem] h-[2rem] rounded-full border border-lightOrange text-white"
-                                                />
-                                            </div>
+                                            {event.event_user_id !== currentUserId && (
+                                                <div className="flex flex-wrap items-center gap-3 mt-4 w-full">
+                                                    <Button
+                                                        onClickFunc={() => handleSubmit(event.id)}
+                                                        title={"+"}
+                                                        className="w-[2rem] h-[2rem] rounded-full border border-lightOrange text-white"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Event Image */}

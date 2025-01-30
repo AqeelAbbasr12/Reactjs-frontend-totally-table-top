@@ -78,6 +78,9 @@ import AdminMessagesPage from '../pages/Admin/AdminMessagePage';
 import AdminSingleEventPage from '../pages/Admin/AdminSingleEventPage';
 import ViewAccomodationPage from '../pages/ViewAccomodationPage';
 import ToolsPage from '../pages/Admin/ToolsPage';
+import SalesByUserPage from '../pages/SalesByUserPage';
+import SoldByUserPage from '../pages/SoldByUserPage';
+import SalesByConventionPage from '../pages/SalesByConventionPage';
 
 
 export const routing = [
@@ -116,7 +119,10 @@ export const routing = [
   { id: 28, link: "/findfriends", element: <FindFriendPage />, protected: true },
   { id: 29, link: "/notification", element: <NotificationPage />, protected: true },
   { id: 30, link: "/sales", element: <SalesPage />, protected: true },
+  { id: 30, link: "/salesbyuser/:user_id", element: <SalesByUserPage />, protected: true },
+  { id: 30, link: "/salesbyconvention/:convention_id", element: <SalesByConventionPage />, protected: true },
   { id: 30, link: "/sold", element: <SoldPage />, protected: true },
+  { id: 30, link: "/soldbyuser/:user_id", element: <SoldByUserPage />, protected: true },
   { id: 31, link: "/feed/:friendId?", element: <FeedPage />, protected: true },
   { id: 32, link: "/profile", element: <ProfilePage />, protected: true },
   { id: 33, link: "/ownFeed", element: <OwnFeedPage />, protected: true },

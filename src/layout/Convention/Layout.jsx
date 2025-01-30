@@ -8,6 +8,10 @@ import { FaBuilding, FaCalendarAlt, FaDiceFive, FaList } from 'react-icons/fa';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { fetchWithAuth } from '../../services/apiService';
 import ImageCross from '../../assets/red-cross.png'
+import circel1Image from '../../assets/circel1.svg'
+import circel2Image from '../../assets/circel2.svg'
+import circel3Image from '../../assets/circel3.svg'
+import circel4Image from '../../assets/circel4.svg'
 
 const Layout = () => {
   const [loading, setLoading] = useState(true);
@@ -17,8 +21,12 @@ const Layout = () => {
   const [AccommodationItem, setAccommodation] = useState([]);
   const [EventItem, setEvent] = useState([]);
   const [GameItem, setGame] = useState([]);
+  const [hasVisitedSales, setHasVisitedSales] = useState(false);
   const [announcements, setAnnouncements] = useState([]);
+  const [userData, setUserData] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
   const [showSub, setShowSub] = useState({ show: false, conventionId: null });
+  const nav = useNavigate();
 
   useEffect((id) => {
     fetchConventions();
@@ -27,7 +35,133 @@ const Layout = () => {
     fetchEvent();
     fetchGame();
     fetchAnnouncements();
+    fetchProfile();
+
+    // Load hasVisitedSales from localStorage
+    const visitedSales = localStorage.getItem("hasVisitedSales");
+    if (visitedSales) {
+      setHasVisitedSales(JSON.parse(visitedSales));
+    }
   }, []);
+
+
+  // Update the current step based on user data and sales visit
+  useEffect(() => {
+    if (!userData) return;
+
+
+    if (userData.is_visited_sale_game === '1') {
+      setCurrentStep(5); // Sales visited - move to Step 5
+    } else if (userData.is_steps_complete === '1') {
+      setCurrentStep(6); // Friends step
+    } else if (userData.total_friends_for_step > 0) {
+      setCurrentStep(4); // Friends step
+    } else if (userData.total_attendance > 0) {
+      setCurrentStep(3); // Attendance step
+    } else if (userData.bio && userData.profile_picture) {
+      setCurrentStep(2); // Profile setup step
+    } else {
+      setCurrentStep(1); // Default step
+    }
+
+  }, [userData, hasVisitedSales]);
+
+  const handleSalesVisit = async () => {
+    try {
+      // Prepare data for API request
+      const requestBody = {
+        is_visited_sale_game: true, // Update the required variable
+      };
+
+      // Call the API to update the profile
+      const response = await fetchWithAuth("/user/update-game-visit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+        },
+        body: JSON.stringify(requestBody), // Send the updated variable
+      });
+
+      // Handle API response
+      const data = await response.json();
+      if (response.ok) {
+        // If API call is successful
+        console.log("Profile updated successfully:", data);
+        // Set the current step and navigate
+        nav("/sales"); // Navigate to sales page
+      } else {
+        // Handle API errors
+        console.error("Error updating profile:", data);
+        Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+      }
+    } catch (error) {
+      // Handle network errors
+      console.error("Network error:", error);
+      Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+    }
+  };
+
+  const handleStepComplete = async () => {
+    try {
+      // Prepare data for API request
+      const requestBody = {
+        is_steps_complete: true, // Update the required variable
+      };
+
+      // Call the API to update the profile
+      const response = await fetchWithAuth("/user/steps-completed", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+        },
+        body: JSON.stringify(requestBody), // Send the updated variable
+      });
+
+      // Handle API response
+      const data = await response.json();
+      if (response.ok) {
+        // If API call is successful
+        console.log("Profile updated successfully:", data);
+        // Set the current step and navigate
+        setCurrentStep(6);
+      } else {
+        // Handle API errors
+        console.error("Error updating profile:", data);
+        Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+      }
+    } catch (error) {
+      // Handle network errors
+      console.error("Network error:", error);
+      Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+    }
+  };
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWithAuth(`/user/get`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setUserData(data); // Store user data for step logic
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchConventions = async () => {
     setLoading(true);
@@ -46,6 +180,7 @@ const Layout = () => {
 
       const data = await response.json();
       setConvention(data);
+      console.log('Convention', data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {
@@ -180,7 +315,7 @@ const Layout = () => {
 
       const data = await response.json();
 
-      console.log('announcement',data);
+      console.log('announcement', data);
       // Filter and sort the data
       const pictureAnnouncements = data.filter(
         (item) => item.type === 'Picture' && item.position_of_picture
@@ -218,7 +353,87 @@ const Layout = () => {
 
         {/* RIGHT */}
         <div className='flex-1 rounded-md px-2 mb-2 md:mt-0 mt-4 w-[100%]'>
+          {userData?.is_steps_complete !== '1' && (
+            <>
+              {currentStep === 1 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel1Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 1 of 4</p>
+                      <p className='text-white my-2'>Complete your profile to get started</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/profile")} title={"Complete Profile"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
+                </div>
+              )}
+              {currentStep === 2 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel2Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 2 of 4</p>
+                      <p className='text-white my-2'>Find conventions to attend</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/upcoming-convention")} title={"All conventions"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
+                </div>
+              )}
+              {currentStep === 3 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel3Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 3 of 4</p>
+                      <p className='text-white my-2'>Find and connect with friends</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={() => nav("/findfriends")} title={"Find friends"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
+                </div>
+              )}
+              {currentStep === 4 && (
+                <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md my-2 flex justify-between items-center p-5'>
+                  <div className='flex'>
+                    <img src={circel4Image} alt="" />
+                    <div className='ml-5 mt-3'>
+                      <p className='text-gray-400'>Step 4 of 4</p>
+                      <p className='text-white my-2'>Take a look at available games</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-x-4'>
+                    <Button onClickFunc={handleSalesVisit} title={"Games for sale"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
 
+          {currentStep === 5 && userData?.is_steps_complete !== '1' && (
+            <div className='bg-[#0d2539] w-[100%] lg:w-[80%] rounded-md p-2 my-2 flex justify-between items-center'>
+              <div className='ml-5 mt-3'>
+                <p className='text-white'>Setup complete</p>
+                <p className='text-white my-2'>You’ve completed the setup, enjoy your account!</p>
+              </div>
+              <div className='flex items-center gap-x-4'>
+                <Button
+                  onClickFunc={handleStepComplete}  // This will trigger handleStepComplete when clicked
+                  title={"Mark as Complete"}  // Button label
+                  className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} // Button styles
+                />
+              </div>
+            </div>
+          )}
+
+          {currentStep === 6 && (
+            // Display nothing or a message indicating the process is complete.
+            <div className="hidden"></div> // Or you can use another way to indicate completion if necessary
+          )}
           {/* Show loading spinner */}
           {loading ? (
             <div className="absolute inset-0 flex justify-center items-center bg-darkBlue bg-opacity-75 z-50">
@@ -227,17 +442,18 @@ const Layout = () => {
           ) : null}
           {/* Render 1st position at the top */}
           {announcements[0] && announcements[0].position_of_picture === '1st_position' && (
-            <div 
-            className='flex items-center gap-x-[1rem] my-[1rem]'
-            onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            <div
+              className='flex items-center gap-x-[1rem] my-[1rem] w-full'
+              onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
             >
               <img
                 src={announcements[0].advert_logo}
                 alt={announcements[0].name}
-                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+                className='w-full lg:w-full md:h-[12rem] min-w-[300px] object-cover rounded-md cursor-pointer'
               />
             </div>
           )}
+
 
           {/* Title */}
           <div className='flex justify-between items-center flex-wrap'>
@@ -291,7 +507,21 @@ const Layout = () => {
                     </Link>
                   </div>
 
-                  {/* 4th Column */}
+
+                  {/* 4th Column Button */}
+                  <div className='flex items-center gap-x-2 flex-1 mb-2 md:mb-0'>
+                    {convention.convention_game_total > 0 && (
+                      <button
+                        onClick={() => window.open(`/salesbyconvention/${convention.id}`, '_blank')}
+                        className='px-4 py-2 rounded text-white bg-orange-500'
+                      >
+                        Game For Sale
+                      </button>
+                    )}
+                  </div>
+
+
+                  {/* 5th Column */}
                   <div className='relative flex items-center cursor-pointer'>
                     <p onClick={() => handleShowSub(convention.id)} className='text-[#F3C15F] text-sm mr-1'>Activity</p>
                     <BsFillCaretDownFill className='text-[#F3C15F]' onClick={() => handleShowSub(convention.id)} />
@@ -325,17 +555,18 @@ const Layout = () => {
 
           {/* 3rd Position Advert Logo */}
           {announcements.length > 0 && announcements.find(a => a.position_of_picture === '3rd_position') && (
-            <div 
-            className='mt-6 flex justify-center'
-            onClick={() => window.open(announcements[0].url, '_blank')} // Open URL in new tab
+            <div
+              className='mt-6 flex justify-center w-full'
+              onClick={() => window.open(announcements.find(a => a.position_of_picture === '3rd_position').url, '_blank')} // Open URL in new tab
             >
               <img
                 src={announcements.find(a => a.position_of_picture === '3rd_position').advert_logo}
                 alt="3rd Position Ad"
-                className='w-[100%] lg:w-[100%] h-[12rem] rounded-md cursor-pointer'
+                className='w-full sm:w-auto lg:w-full md:h-[12rem] sm:min-w-[300px] lg:min-w-[100%] object-cover rounded-md cursor-pointer'
               />
             </div>
           )}
+
         </div>
       </div>
     </div>

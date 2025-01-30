@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Left from '../../components/Left';
 import FaceImage from '../../assets/profile.jpeg';
-import PostImageDefault from "../../assets/post.jpeg"; // Default image
 import MapIcon from '../../assets/mapMarker.png';
 import Input from '../../components/Input';
 import Swal from 'sweetalert2';
@@ -33,9 +32,6 @@ const Profile = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureURL, setProfilePictureURL] = useState(null);
   const [passwordErrors, setPasswordErrors] = useState({});
-  const [content, setContent] = useState('');
-  const [PostImage, setPostImage] = useState(null); // Store the uploaded file
-  const [PostImagePreview, setPostImagePreview] = useState(""); // Store preview URL
 
   const [passwordFormData, setPasswordFormData] = useState({
     cpassword: '',
@@ -176,28 +172,7 @@ const Profile = () => {
     }
   };
 
-  const handlePostImageChange = (e) => {
-    const file = e.target.files[0]; // Get the first selected file
 
-    console.log(file);
-    // Validate file type (e.g., only accept PNG or JPEG)
-    if (!file || !["image/jpeg", "image/png"].includes(file.type)) {
-      toastr.error("Invalid file type. Please upload a PNG or JPEG image.");
-      return;
-    }
-
-    // Validate file size (e.g., max 2MB)
-    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
-    if (file.size > maxSizeInBytes) {
-      toastr.error("File size exceeds 2MB. Please upload a smaller image.");
-      return;
-    }
-
-    // Generate and set the preview URL
-    const imagePreviewUrl = URL.createObjectURL(file);
-    setPostImage(file); // Store the file for uploading
-    setPostImagePreview(imagePreviewUrl); // Update the preview
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
@@ -302,50 +277,7 @@ const Profile = () => {
       setPasswordErrors({ form: 'An error occurred. Please try again.' });
     }
   };
-  const handlePost = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
 
-    // Validate input
-    if (!content.trim()) {
-      toastr.error("Please enter some content.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("content", content); // Add content
-      if (PostImage) {
-        formData.append("image", PostImage); // Add the image file
-      }
-
-      const response = await fetch(`${API_BASE_URL}/user/post`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include your token if needed
-        },
-        body: formData, // Send as multipart/form-data
-      });
-
-      if (!response.ok) {
-        const result = await response.json();
-        toastr.error("Failed to create post.");
-        throw new Error(result.message || "Failed to create post");
-      }
-
-
-      toastr.success("Post created successfully!");
-      setContent("");
-      setPostImage(null);
-      setPostImagePreview("");
-    } catch (error) {
-      console.error("Error creating post:", error);
-      alert("There was an error creating the post.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   // Define the handleDeleteProfile function
@@ -427,7 +359,16 @@ const Profile = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="w-full h-fit mt-4 bg-[#0d2539] rounded-md p-6">
-            <h1 className="text-white font-semibold text-lg mb-4">About You</h1>
+            <div className="flex items-center space-x-6 mb-4">
+              <h1 className="text-white font-semibold text-lg">About You</h1>
+              <h1
+                className="text-lightOrange font-semibold text-lg cursor-pointer"
+                onClick={() => nav('/settings')}
+              >
+                Settings
+              </h1>
+            </div>
+
             <div className="flex justify-between sm:flex-row flex-col">
               {/* Left Section */}
               <div className="flex-1">
@@ -718,67 +659,7 @@ const Profile = () => {
               />
             </div>
           </form>
-          {/* 3rd Form  */}
-          <form className="w-[100%] mt-4 bg-[#0d2539] rounded-md p-6" onSubmit={handlePost}>
-            <h1 className="text-white font-semibold mt-3">
-              Share updates and let anyone or friends know what's happening!
-            </h1>
-            <div className="w-[100%] bg-[#0d2539] py-5 mt-0 rounded-md mb-2">
-              <div className="flex flex-col md:flex-row gap-4">
-                {/* Profile Image and Textarea */}
-                <div className="flex flex-1 gap-x-4 items-stretch">
-                  {/* Textarea */}
-                  <textarea
-                    type="text"
-                    name="content"
-                    placeholder="Tell your friend what's happening...."
-                    className="flex-1 bg-[#102F47] text-white h-[12rem] pt-2 px-3 placeholder:text-start resize-none rounded-md"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                  />
-
-                  {/* Image and Upload Buttons */}
-                  <div className="flex flex-col items-center justify-between h-[12rem]">
-                    {/* Image Preview */}
-                    <div className="w-[10rem] h-[10rem] border-2 border-[#F77F00] rounded-md overflow-hidden flex items-center justify-center">
-                      <img
-                        src={PostImagePreview || PostImageDefault} // Show preview or default image
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* File Upload Input */}
-                    <input
-                      type="file"
-                      id="PostImageInput"
-                      className="hidden"
-                      onChange={handlePostImageChange}
-                      accept="image/png, image/jpeg"
-                    />
-
-                    {/* Upload Button */}
-                    <label
-                      htmlFor="PostImageInput"
-                      className="w-[10rem] h-[2.3rem] mt-2 text-white border border-[#F77F00] rounded-md flex items-center justify-center cursor-pointer"
-                    >
-                      Upload Photo
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex justify-between items-center mt-4">
-                <Button
-                  title={loading ? "Posting..." : "Post"}
-                  type="submit"
-                  disabled={loading}
-                  className="w-[8rem] h-[2.3rem] rounded-md bg-[#E78530] text-white"
-                />
-              </div>
-            </div>
-          </form>
+          
 
         </div>
       </div>

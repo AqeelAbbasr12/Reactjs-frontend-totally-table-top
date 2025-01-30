@@ -307,31 +307,30 @@ if (updatedConvention !== "Filter By..." && updatedConvention !== "Filter by All
       ];
 
       const rows = filteredUsers.map(user => {
-        // Combine all convention names into a single string
         const conventionInfo = user.conventions
-    ?.map(convention => {
-      const conventionNames = convention.convention_name;
-      const attendanceDates = convention.attendance_dates.join(', '); // Join all attendance dates for this convention
-      return `${conventionNames} (${attendanceDates})`; // Convention name followed by attendance dates in parentheses
-    })
-    .join(', ') || '';
-    return [
-      user.id,
-      user.first_name,
-      user.last_name,
-      user.username,
-      user.email,
-      user.status,
-      user.country,
-      user.location,
-      user.newsletter_info,
-      user.promotional_info,
-      user.is_steps_complete,
-      user.created_at,
-      user.deleted_at,
-      conventionInfo, // This now includes convention names and attendance dates together
-    ];
-  });
+        ?.map(convention => {
+          const conventionNames = convention.convention_name;
+          const attendanceDates = convention.attendance_dates.join(', '); // Join all attendance dates for this convention
+          return `${conventionNames} (${attendanceDates})`; // Convention name followed by attendance dates in parentheses
+        })
+        .join(', ') || '';
+        return [
+          user.id,
+          user.first_name,
+          user.last_name,
+          user.username,
+          user.email,
+          user.status,
+          user.country,
+          user.location,
+          user.newsletter_info,
+          user.promotional_info,
+          user.is_steps_complete,
+          user.created_at,
+          user.deleted_at,
+          conventionInfo, // This now includes convention names and attendance dates together
+        ];
+      });
       console.log(headers, rows);
 
 

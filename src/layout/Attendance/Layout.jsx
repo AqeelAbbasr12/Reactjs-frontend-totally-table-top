@@ -370,7 +370,8 @@ const Layout = () => {
 
                                 <Button
                                     onClickFunc={() => { nav(`/next/agenda/${convention_id}`) }}
-                                    title={"Create"}
+                                    
+                                    title={AgendaItems.length > 0 ? "View" : "Create"} // Dynamically set the button title
                                     className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
                                 />
                             </div>
@@ -406,16 +407,17 @@ const Layout = () => {
                             </div>
                             <div className='flex justify-between items-center mt-3'>
 
-                                <p className='text-white'>
+                                <p className="text-white">
                                     {events.length > 0
                                         ? `Started, you have created ${events.length} Table(s)`
-                                        : 'Not Started'}
+                                        : "Not Started"}
                                 </p>
                                 <Button
-                                    onClickFunc={() => { nav(`/event/${convention_id}`) }}
-                                    title={"Create"}
+                                    onClickFunc={() => nav(`/event/${convention_id}`)}
+                                    title={events.length > 0 ? "View" : "Create"} // Dynamically set the button title
                                     className={`w-[8rem] h-[2.3rem] rounded-md text-white border border-lightOrange`}
                                 />
+
                             </div>
                         </div>
                         <div className='flex-1 bg-[#0d2539] p-3 rounded-md sm:mt-0 mt-3'>

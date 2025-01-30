@@ -6,7 +6,7 @@ const PublicRoute = ({ element }) => {
 
   console.log('Is Authenticated:', isAuthenticated); // Log the isAuthenticated value
 
-  return !isAuthenticated ? <Navigate to="/home" replace /> : element; // Redirect if authenticated
+  return !isAuthenticated ? <Navigate to="/user/convention" replace /> : element; // Redirect if authenticated
 };
 
 export default PublicRoute;

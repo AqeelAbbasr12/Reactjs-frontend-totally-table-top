@@ -160,6 +160,27 @@ const Layout = () => {
                                                             {game.user_name}
                                                         </span>
                                                     </p>
+
+                                                    <p className='py-2 mx-2 text-white text-sm'>
+                                                    {game.game_name}
+                                                    <span className="py-2 mx-2 text-white font-bold">
+                                                        Sold By:
+                                                        <span
+                                                            className="cursor-pointer text-lightOrange hover:underline ml-2" // Adds a gap between "Sold By:" and the username
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent navigation to `/game/single/${game.id}`
+                                                                window.open(`/salesbyuser/${game.user_id}`, "_blank"); // Open in a new tab
+                                                            }}
+                                                        >
+                                                            {game.user_name}
+                                                        </span>
+                                                        {game.game_status === "sold" && (
+                                                            <span className="text-red font-bold ml-2">(SOLD)</span>
+                                                        )}
+                                                    </span>
+
+
+                                                </p>
                                                 </div>
                                                 <div className='flex gap-x-2 items-center mx-2'>
                                                     <p className='text-red'>
@@ -190,12 +211,19 @@ const Layout = () => {
                                                 <p className='py-2 mx-2 text-white text-sm'>
                                                     {game.game_name}
                                                     <span className="py-2 mx-2 text-white font-bold">
-                                                        Sold By: {game.user_name}
+                                                        Sold By:
+                                                        <span
+                                                            className="cursor-pointer text-lightOrange hover:underline ml-2" // Adds a gap between "Sold By:" and the username
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent navigation to `/game/single/${game.id}`
+                                                                window.open(`/soldbyuser/${game.user_id}`, "_blank"); // Open in a new tab
+                                                            }}
+                                                        >
+                                                            {game.user_name}
+                                                        </span>
                                                         {game.game_status === "sold" && (
                                                             <span className="text-red font-bold ml-2">(SOLD)</span>
                                                         )}
-
-
                                                     </span>
 
                                                     {game.game_sold_date && (

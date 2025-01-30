@@ -299,7 +299,7 @@ const Layout = () => {
                                     <img
                                         src={game.game_image}
                                         alt=""
-                                        className="h-[10rem] w-full sm:w-auto sm:absolute top-[20px] right-[20px] object-cover"
+                                        className="md:h-[10rem] w-full sm:w-auto sm:absolute top-[20px] right-[20px] object-cover"
                                     />
                                 </div>
                             </div>
