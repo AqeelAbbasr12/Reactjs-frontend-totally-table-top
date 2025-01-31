@@ -92,7 +92,7 @@ const Left = () => {
         <Link className='block mb-2 text-white cursor-pointer' to={"/friends"}>Friends</Link>
         <Link className='block mb-2 text-white cursor-pointer' to={"/activity"}>Activity</Link>
         {/* <Link className='block mb-2 text-white cursor-pointer' to={"/profile"}>Profile</Link> */}
-        <Link className='block mb-2 text-white cursor-pointer' to={"/settings"}>Settings</Link>
+        {/* <Link className='block mb-2 text-white cursor-pointer' to={"/settings"}>Settings</Link> */}
         <div className='w-[100%] h-[1px] bg-lightGray mt-4 mb-4'></div>
         <Link className='block mb-2 text-white cursor-pointer'><i>Quick Links</i></Link>
         <Link className='block mb-2 text-white cursor-pointer' to={"/upcoming-convention"}>Upcoming conventions</Link>

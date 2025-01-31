@@ -58,7 +58,7 @@ const Layout = () => {
       setCurrentStep(4); // Friends step
     } else if (userData.total_attendance > 0) {
       setCurrentStep(3); // Attendance step
-    } else if (userData.bio && userData.profile_picture) {
+    } else if (userData.is_visited_profile_page === '1') {
       setCurrentStep(2); // Profile setup step
     } else {
       setCurrentStep(1); // Default step
@@ -90,6 +90,42 @@ const Layout = () => {
         console.log("Profile updated successfully:", data);
         // Set the current step and navigate
         nav("/sales"); // Navigate to sales page
+      } else {
+        // Handle API errors
+        console.error("Error updating profile:", data);
+        Swal.fire("Error!", "Failed to update profile. Please try again.", "error");
+      }
+    } catch (error) {
+      // Handle network errors
+      console.error("Network error:", error);
+      Swal.fire("Error!", "Something went wrong. Please try again.", "error");
+    }
+  };
+
+  const handleProfileVisit = async () => {
+    try {
+      // Prepare data for API request
+      const requestBody = {
+        is_visited_profile_page: true, // Update the required variable
+      };
+
+      // Call the API to update the profile
+      const response = await fetchWithAuth("/user/update-profile-visit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include auth token if required
+        },
+        body: JSON.stringify(requestBody), // Send the updated variable
+      });
+
+      // Handle API response
+      const data = await response.json();
+      if (response.ok) {
+        // If API call is successful
+        console.log("Profile updated successfully:", data);
+        // Set the current step and navigate
+        nav("/profile"); // Navigate to sales page
       } else {
         // Handle API errors
         console.error("Error updating profile:", data);
@@ -154,7 +190,7 @@ const Layout = () => {
       }
 
       const data = await response.json();
-      console.log(data);
+      // console.log('Profile',data);
       setUserData(data); // Store user data for step logic
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -180,7 +216,7 @@ const Layout = () => {
 
       const data = await response.json();
       setConvention(data);
-      console.log('Convention', data);
+      // console.log('Convention', data);
     } catch (error) {
       // console.error('Error fetching conventions data:', error);
     } finally {
@@ -315,7 +351,7 @@ const Layout = () => {
 
       const data = await response.json();
 
-      console.log('announcement', data);
+      // console.log('announcement', data);
       // Filter and sort the data
       const pictureAnnouncements = data.filter(
         (item) => item.type === 'Picture' && item.position_of_picture
@@ -365,7 +401,7 @@ const Layout = () => {
                     </div>
                   </div>
                   <div className='flex items-center gap-x-4'>
-                    <Button onClickFunc={() => nav("/profile")} title={"Complete Profile"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
+                    <Button onClickFunc={handleProfileVisit} title={"Complete Profile"} className={"w-[10rem] h-[2.3rem] rounded-md bg-transparent text-white border border-lightOrange"} />
                   </div>
                 </div>
               )}
