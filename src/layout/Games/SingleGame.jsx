@@ -225,33 +225,40 @@ const SingleGame = () => {
                 </div>
 
                 {/* Right Section */}
-                <div className='h-fit bg-[#0d2539] rounded-md relative md:mt-0 mt-4 mb-4 md:mb-0 md:w-[30rem]'>
-                    {game.game_status === 'sold' && (
-                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[100px] border-t-red border-l-[100px] border-l-transparent">
-                            <p className="absolute top-[-85px] right-[0px] rotate-45 text-white font-bold text-lg">
-                                SOLD
-                            </p>
-                        </div>
-                    )}
-
-                    <img src={game.first_image || ConventionImage} alt="" className='w-full md:w-[54rem] object-cover' />
-
-                    <div className='flex justify-between items-center m-2'>
-                        {game.game_status === 'sold' ? (
-                            <p className='text-white font-semibold'>Sorry, this game is no longer available</p>
-                        ) : (
-                            <>
-                                <div>
-                                    <p className='text-white font-semibold'>{game.game_currency_symbol}{game.game_price}</p>
-                                    <p className='text-white'>{game.game_condition}</p>
-                                </div>
-
-                            </>
+                <PhotoProvider>
+                    <div className='h-fit bg-[#0d2539] rounded-md relative md:mt-0 mt-4 mb-4 md:mb-0 md:w-[30rem]'>
+                        {game.game_status === 'sold' && (
+                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[100px] border-t-red border-l-[100px] border-l-transparent">
+                                <p className="absolute top-[-85px] right-[0px] rotate-45 text-white font-bold text-lg">
+                                    SOLD
+                                </p>
+                            </div>
                         )}
 
-                    </div>
-                    {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Game Images</h2> */}
-                    <PhotoProvider>
+                        <PhotoView src={game.first_image || ConventionImage}>
+                            <img
+                                src={game.first_image || ConventionImage}
+                                alt="Main Game Image"
+                                className='w-full md:w-[54rem] object-cover cursor-pointer'
+                            />
+                        </PhotoView>
+
+                        <div className='flex justify-between items-center m-2'>
+                            {game.game_status === 'sold' ? (
+                                <p className='text-white font-semibold'>Sorry, this game is no longer available</p>
+                            ) : (
+                                <>
+                                    <div>
+                                        <p className='text-white font-semibold'>{game.game_currency_symbol}{game.game_price}</p>
+                                        <p className='text-white'>{game.game_condition}</p>
+                                    </div>
+
+                                </>
+                            )}
+
+                        </div>
+                        {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Game Images</h2> */}
+
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 m-2">
                             {game.game_images &&
                                 game.game_images.slice(1).map((image, index) => (
@@ -269,20 +276,21 @@ const SingleGame = () => {
                                     </div>
                                 ))}
                         </div>
-                    </PhotoProvider>
 
-                    <div className="mt-4 mb-4 flex justify-center">
-                        {game.game_status !== 'sold' && game.user_id !== currentUserId && (
-                            <Button
-                                onClickFunc={() => {
-                                    nav(`/messages/${game.user_id}/game/${game.id}`);
-                                }}
-                                title="Enquire Now"
-                                className="text-white bg-lightOrange w-[10rem] h-[2.5rem] rounded-md text-center"
-                            />
-                        )}
+
+                        <div className="mt-4 mb-4 flex justify-center">
+                            {game.game_status !== 'sold' && game.user_id !== currentUserId && (
+                                <Button
+                                    onClickFunc={() => {
+                                        nav(`/messages/${game.user_id}/game/${game.id}`);
+                                    }}
+                                    title="Enquire Now"
+                                    className="text-white bg-lightOrange w-[10rem] h-[2.5rem] rounded-md text-center"
+                                />
+                            )}
+                        </div>
                     </div>
-                </div>
+                </PhotoProvider>
 
 
 

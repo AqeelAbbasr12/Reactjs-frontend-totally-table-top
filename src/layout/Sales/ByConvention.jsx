@@ -18,6 +18,7 @@ const Layout = () => {
     const { game_id, convention_id } = useParams();
     const [loading, setLoading] = useState(false);
     const [games, setGames] = useState([]);
+    const [conventionName, setConventionName] = useState('');
     const [conventions, setConventions] = useState([]);
     const [filteredGames, setFilteredGames] = useState([]);
     const [currentView, setCurrentView] = useState("list");
@@ -47,7 +48,11 @@ const Layout = () => {
             });
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
+            console.log('Games', data);
             setGames(data);
+            if (data.length > 0) {
+                setConventionName(data[0].convention_name);
+            }
         } catch (error) {
             console.error('Error fetching games:', error);
         } finally {
@@ -111,7 +116,9 @@ const Layout = () => {
             <Navbar type={"verified"} />
             <div className='md:px-[2rem] px-[1rem] bg-darkBlue h-[86vh] w-[100vw] pt-3 overflow-y-auto'>
                 <div className='flex justify-between items-center'>
-                    <h1 className='text-3xl font-semibold text-white'>Games for sale by User</h1>
+                    <h1 className='text-3xl font-semibold text-white'>
+                        Games for sale at {conventionName || 'this convention'}
+                    </h1>
                     <div className='flex gap-x-2 items-center'>
                         <p className='text-white'>{filteredGames.length} games for sale</p>
                         <div className='border border-lightOrange flex items-center w-[fit] justify-center h-[2rem]'>

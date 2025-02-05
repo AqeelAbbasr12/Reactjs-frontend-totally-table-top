@@ -551,7 +551,7 @@ const Layout = () => {
                         onClick={() => window.open(`/salesbyconvention/${convention.id}`, '_blank')}
                         className='px-4 py-2 rounded text-white bg-orange-500'
                       >
-                        Game For Sale
+                        Games for sale
                       </button>
                     )}
                   </div>

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import { fetchWithAuth } from "../../services/apiService";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 import { FaHeart } from "react-icons/fa";
 import toastr from 'toastr';
 
@@ -203,32 +204,43 @@ const SingleAnnouncement = () => {
 
 
                 {/* Right Section */}
-                <div className='h-fit bg-[#0d2539] rounded-md relative md:mt-0 mt-4 mb-4 md:mb-0 md:w-[30rem]'>
+                <PhotoProvider>
+                    <div className='h-fit bg-[#0d2539] rounded-md relative md:mt-0 mt-4 mb-4 md:mb-0 md:w-[30rem]'>
 
-                    <img
-                        src={
+                        <PhotoView src={
                             announcement.type === 'Advert' ? announcement.promo_logo :
                                 announcement.type === 'Announcement' ? announcement.first_image :
                                     announcement.type === 'Picture' ? announcement.advert_logo :
-                                        ConventionImage // fallback to ConventionImage if no logos are available
-                        }
-                        alt="" className='w-full md:w-[54rem]' />
+                                        ConventionImage // Fallback image
+                        }>
+                            <img
+                                src={
+                                    announcement.type === 'Advert' ? announcement.promo_logo :
+                                        announcement.type === 'Announcement' ? announcement.first_image :
+                                            announcement.type === 'Picture' ? announcement.advert_logo :
+                                                ConventionImage
+                                }
+                                alt="Main Image"
+                                className='w-full md:w-[54rem] object-cover cursor-pointer'
+                            />
+                        </PhotoView>
+                        {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Feature Images</h2> */}
+                        <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 m-2'>
+                            {announcement.feature_logos && announcement.feature_logos.slice(1).map((image, index) => ( // Splice the first image
+                                <div key={index} className='relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer'>
+                                    <PhotoView src={image || ConventionImage}>
+                                        <img
+                                            src={image || ConventionImage}
+                                            alt={`Feature Image ${index + 1}`}
+                                            className='w-full h-[10rem] object-cover'
+                                        />
+                                    </PhotoView>
+                                </div>
+                            ))}
+                        </div>
 
-                    {/* <h2 className='text-white text-2xl mb-4 flex justify-between items-center m-2'>Feature Images</h2> */}
-                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 m-2'>
-                        {announcement.feature_logos && announcement.feature_logos.slice(1).map((image, index) => ( // Splice the first image
-                            <div key={index} className='relative rounded-md overflow-hidden bg-[#0D2539] cursor-pointer'>
-                                <img
-                                    src={image || ConventionImage}
-                                    alt={`Game Image ${index + 1}`}
-                                    className='w-full h-[10rem] object-cover'
-                                // onClick={() => nav(`${image}`)} // Redirect to new page with image
-                                />
-                            </div>
-                        ))}
                     </div>
-
-                </div>
+                </PhotoProvider>
             </div>
 
         </div>
